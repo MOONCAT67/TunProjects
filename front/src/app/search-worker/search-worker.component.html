@@ -1,0 +1,75 @@
+<div class="worker-search-container">
+  <div class="search-controls">
+    <input
+      type="text"
+      placeholder="Search by email..."
+      [(ngModel)]="searchEmail"
+      (input)="onSearch()"
+      class="search-bar"
+    />
+    <button class="nearby-btn" (click)="toggleNearbyWorkers()" [class.active]="showNearbyWorkers">
+      <i class="bi bi-geo-alt-fill"></i>
+      {{ showNearbyWorkers ? 'Show All Workers' : 'Workers in Your Area' }}
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">Loading workers...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <table class="worker-table" *ngIf="!isLoading && !error">
+    <thead>
+      <tr>
+        <th>Photo</th>
+        <th>Member name</th>
+        <th>Mobile</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th *ngIf="isTeamLeader">Operation</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let worker of filteredWorkers">
+        <tr>
+          <td>
+            <img [src]="worker.profile_picture || 'assets/profile.jpg'" alt="Profile" class="worker-photo" />
+          </td>
+          <td>{{ worker.fullname }}</td>
+          <td>{{ worker.phone_number }}</td>
+          <td>{{ worker.email }}</td>
+          <td>
+            <span [ngClass]="worker.is_online ? 'status-active' : 'status-inactive'">
+              {{ worker.is_online ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td *ngIf="isTeamLeader" class="operation-icons">
+            <button class="icon-btn" (click)="sendTeamRequest(worker)" title="Add to Team"><i class="bi bi-plus-circle"></i></button>
+          </td>
+          <td>
+            <button class="message-btn" (click)="openMessageModal(worker)">
+              <i class="fas fa-envelope"></i> Message
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="openMessageWorkerId === worker.id">
+          <td colspan="7" class="inline-message-box">
+            <input type="text"
+                   [(ngModel)]="messageInputs[worker.id]"
+                   [disabled]="isSendingMessage[worker.id]"
+                   placeholder="Contact worker and negotiate with him" />
+            <button class="send-arrow-btn"
+                    [disabled]="!messageInputs[worker.id] || isSendingMessage[worker.id]"
+                    (click)="sendMessageToWorker(worker)">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+            <span *ngIf="messageStatus[worker.id] === 'success'" class="msg-success">Message sent!</span>
+            <span *ngIf="messageStatus[worker.id] === 'error'" class="msg-error">Failed to send.</span>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+  <div *ngIf="!isLoading && !error && filteredWorkers.length === 0" class="no-results">
+    No workers found.
+  </div>
+</div>

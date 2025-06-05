@@ -1,0 +1,27 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Global styles for proper spacing with fixed navbar */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+
+/* Add padding to main content area */
+main {
+    padding-top: 140px; /* Doubled from 70px to 140px */
+    min-height: calc(100vh - 140px);
+}
+
+/* Ensure all components have proper spacing */
+app-root {
+    display: block;
+    min-height: 100vh;
+}
+
+/* Add some basic spacing to all sections */
+section {
+    padding: 20px;
+    margin-bottom: 20px;
+}

@@ -1,0 +1,123 @@
+<div class="task-form-container">
+  <h2>Create New Task</h2>
+
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="task-form">
+    <!-- Main Task Section -->
+    <div class="main-task-section">
+      <h3>Main Task</h3>
+      
+      <div class="form-group">
+        <label for="title">Task Title</label>
+        <input 
+          type="text" 
+          id="title" 
+          formControlName="title" 
+          placeholder="Enter task title"
+          [class.error]="taskForm.get('title')?.invalid && taskForm.get('title')?.touched"
+        >
+        <div class="error-message" *ngIf="taskForm.get('title')?.invalid && taskForm.get('title')?.touched">
+          Title is required and must be at least 3 characters long
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Task Description</label>
+        <textarea 
+          id="description" 
+          formControlName="description" 
+          placeholder="Enter task description"
+          rows="4"
+          [class.error]="taskForm.get('description')?.invalid && taskForm.get('description')?.touched"
+        ></textarea>
+        <div class="error-message" *ngIf="taskForm.get('description')?.invalid && taskForm.get('description')?.touched">
+          Description is required and must be at least 10 characters long
+        </div>
+      </div>
+
+      <div class="subtasks-toggle">
+        <label class="toggle-label">
+          <input type="checkbox" [checked]="hasSubtasks" (change)="toggleSubtasks()">
+          <span>Add Subtasks (Optional)</span>
+        </label>
+        <p class="subtasks-hint">You can create a task with or without subtasks. Toggle this option if you want to add subtasks.</p>
+      </div>
+    </div>
+
+    <!-- Subtasks Section -->
+    <div class="subtasks-section" *ngIf="hasSubtasks">
+      <div class="subtasks-header">
+        <h3>Subtasks</h3>
+        <button 
+          type="button" 
+          class="add-subtask-btn" 
+          (click)="addSubtask()"
+          [disabled]="subtasks.length >= maxSubtasks"
+        >
+          <i class="bi bi-plus-circle"></i>
+          Add Subtask
+        </button>
+      </div>
+
+      <div class="subtasks-list" formArrayName="subtasks">
+        <div *ngFor="let subtask of subtasks.controls; let i = index" [formGroupName]="i" class="subtask-item">
+          <div class="subtask-header">
+            <h4>Subtask {{i + 1}}</h4>
+            <button 
+              type="button" 
+              class="remove-subtask-btn" 
+              (click)="removeSubtask(i)"
+              [disabled]="subtasks.length === 1"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label [for]="'subtask-title-' + i">Subtask Title</label>
+            <input 
+              type="text" 
+              [id]="'subtask-title-' + i" 
+              formControlName="title" 
+              placeholder="Enter subtask title"
+              [class.error]="subtask.get('title')?.invalid && subtask.get('title')?.touched"
+            >
+            <div class="error-message" *ngIf="subtask.get('title')?.invalid && subtask.get('title')?.touched">
+              Title is required and must be at least 3 characters long
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label [for]="'subtask-description-' + i">Subtask Description</label>
+            <textarea 
+              [id]="'subtask-description-' + i" 
+              formControlName="description" 
+              placeholder="Enter subtask description"
+              rows="3"
+              [class.error]="subtask.get('description')?.invalid && subtask.get('description')?.touched"
+            ></textarea>
+            <div class="error-message" *ngIf="subtask.get('description')?.invalid && subtask.get('description')?.touched">
+              Description is required and must be at least 10 characters long
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-message" *ngIf="error">
+      {{ error }}
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-actions">
+      <button 
+        type="submit" 
+        class="submit-btn" 
+        [disabled]="taskForm.invalid || isSubmitting"
+      >
+        <i class="bi" [class.bi-check-circle]="!isSubmitting" [class.bi-arrow-repeat]="isSubmitting"></i>
+        {{ isSubmitting ? 'Creating Task...' : 'Create Task' }}
+      </button>
+    </div>
+  </form>
+</div>

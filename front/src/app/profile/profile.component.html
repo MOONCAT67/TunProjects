@@ -1,0 +1,189 @@
+<div class="profile-container" *ngIf="!loading && !error">
+  <div class="profile-header">
+    <div class="profile-cover"></div>
+    <div class="profile-info">
+      <div class="profile-picture-container">
+        <img [src]="profile.profile_picture || 'assets/default-avatar.png'" alt="Profile Picture" class="profile-picture">
+        <div class="verification-badge" *ngIf="profile.is_verified">
+          <i class="fas fa-check-circle"></i>
+          <span>Verified</span>
+        </div>
+      </div>
+      <div class="profile-details">
+        <h1>{{ profile.fullname }}</h1>
+        <p class="profile-description">{{ profile.profile_description || 'No description available' }}</p>
+        <div class="profile-meta">
+          <div class="meta-item" *ngIf="profile.location">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ profile.location }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-envelope"></i>
+            <span>{{ profile.email }}</span>
+          </div>
+          <div class="meta-item" *ngIf="profile.phone_number">
+            <i class="fas fa-phone"></i>
+            <span>{{ profile.phone_number }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="profile-content">
+    <!-- Skills Section -->
+    <section class="profile-section" *ngIf="profile.skills">
+      <h2>Skills</h2>
+      <div class="skills-container">
+        <span class="skill-tag" *ngFor="let skill of profile.skills.split(',')">
+          {{ skill.trim() }}
+        </span>
+      </div>
+    </section>
+
+    <!-- Job Categories Section -->
+    <section class="profile-section">
+      <h2>Job Categories</h2>
+      <div class="categories-grid">
+        <div class="category-card" *ngFor="let category of profile.jobCategories">
+          <div class="category-icon">
+            <i class="fas" [class]="category.category_icon"></i>
+          </div>
+          <div class="category-info">
+            <h3>{{ category.category_name }}</h3>
+            <p>{{ category.category_description }}</p>
+            <span class="experience">Experience: {{ category.years_experience }} years</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Certificates Section -->
+    <section class="profile-section" *ngIf="profile.certificates.length > 0">
+      <h2>Certificates</h2>
+      <div class="certificates-grid">
+        <div class="certificate-card" *ngFor="let cert of profile.certificates">
+          <div class="certificate-info">
+            <h3>{{ cert.certificate_name }}</h3>
+            <p class="issuer">{{ cert.issuing_organization }}</p>
+            <div class="certificate-dates">
+              <span>Issued: {{ cert.issue_date | date }}</span>
+              <span *ngIf="cert.expiration_date">Expires: {{ cert.expiration_date | date }}</span>
+            </div>
+          </div>
+          <a *ngIf="cert.certificate_url" [href]="cert.certificate_url" target="_blank" class="view-certificate">
+            View Certificate
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Past Projects Section -->
+    <section class="profile-section" *ngIf="profile.pastProjects.length > 0">
+      <h2>Past Projects</h2>
+      <div class="projects-grid">
+        <div class="project-card" *ngFor="let project of profile.pastProjects">
+          <h3>{{ project.project_name }}</h3>
+          <p>{{ project.project_description }}</p>
+          <div class="project-meta">
+            <span>Completed: {{ project.completion_date | date }}</span>
+            <a *ngIf="project.project_url" [href]="project.project_url" target="_blank" class="view-project">
+              View Project
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team Information Section -->
+    <section class="profile-section" *ngIf="profile.teamInfo !== 'solo worker'">
+      <h2>Team Information</h2>
+      <div class="team-card">
+        <div class="team-header">
+          <h3>{{ profile.teamInfo.name }}</h3>
+          <span class="team-role">{{ profile.teamInfo.team_role }}</span>
+        </div>
+        <p>{{ profile.teamInfo.description }}</p>
+        <div class="team-leader">
+          <img [src]="profile.teamInfo.leader_picture || 'assets/default-avatar.png'" alt="Team Leader" class="leader-picture">
+          <div class="leader-info">
+            <h4>{{ profile.teamInfo.leader_name }}</h4>
+            <span>Team Leader</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="profile-section">
+      <h2>Reviews</h2>
+      
+      <!-- Rating Summary -->
+      <div class="rating-summary mb-4">
+        <div class="d-flex align-items-center">
+          <div class="average-rating me-4">
+            <h3 class="mb-0">{{ averageRating.toFixed(1) }}</h3>
+            <div class="stars">
+              <i class="fas fa-star" *ngFor="let star of [].constructor(Math.floor(averageRating))"></i>
+              <i class="fas fa-star-half-alt" *ngIf="averageRating % 1 !== 0"></i>
+              <i class="far fa-star" *ngFor="let star of [].constructor(5 - Math.ceil(averageRating))"></i>
+            </div>
+            <p class="text-muted mb-0">{{ totalReviews }} {{ totalReviews === 1 ? 'review' : 'reviews' }}</p>
+          </div>
+          <div class="rating-bars" *ngIf="totalReviews > 0">
+            <div class="rating-bar" *ngFor="let rating of [5,4,3,2,1]">
+              <span class="rating-label">{{ rating }} stars</span>
+              <div class="progress" style="width: 200px;">
+                <div class="progress-bar bg-warning" [style.width.%]="getRatingPercentage(rating)"></div>
+              </div>
+              <span class="rating-count">{{ getRatingCount(rating) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews List -->
+      <div class="reviews-grid" *ngIf="profile.reviews.length > 0">
+        <div class="review-card" *ngFor="let review of profile.reviews">
+          <div class="reviewer-info">
+            <img [src]="review.client_picture || 'assets/default-avatar.png'" alt="Reviewer" class="reviewer-picture">
+            <div class="reviewer-details">
+              <h4>{{ review.client_name }}</h4>
+              <span class="job-category">{{ review.job_category_name }}</span>
+            </div>
+          </div>
+          <div class="review-content">
+            <div class="stars mb-2">
+              <i class="fas fa-star" *ngFor="let star of [].constructor(review.rating)"></i>
+              <i class="far fa-star" *ngFor="let star of [].constructor(5 - review.rating)"></i>
+            </div>
+            <p>{{ review.comment }}</p>
+            <div class="review-meta">
+              <span class="date">{{ review.created_at | date }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Reviews Message -->
+      <div class="no-reviews text-center py-5" *ngIf="profile.reviews.length === 0">
+        <i class="fas fa-star fa-3x text-muted mb-3"></i>
+        <h4>No Reviews Yet</h4>
+        <p class="text-muted">This user hasn't received any reviews yet.</p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="loading">
+  <div class="loading-spinner"></div>
+  <p>Loading profile...</p>
+</div>
+
+<!-- Error State -->
+<div class="error-container" *ngIf="error">
+  <p class="error-message">{{ error }}</p>
+  <button class="retry-btn" (click)="loadWorkerProfile(profile.id)">Retry</button>
+</div>

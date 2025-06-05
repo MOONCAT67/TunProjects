@@ -1,0 +1,157 @@
+<div class="post-project-container">
+  <div class="project-form-container">
+    <h2 *ngIf="!successMessageVisible">Post a New Project</h2>
+    <h2 *ngIf="successMessageVisible">Go see your projects</h2>
+
+    <!-- Success message popup -->
+    <div class="success-container" *ngIf="successMessageVisible">
+      <h2>🎉 Congratulations!</h2>
+      <p>Your project has been successfully posted.</p>
+      <button (click)="goToMyProjects()">Go see your projects</button>
+    </div>
+  
+    <!-- Error message -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+  
+    <!-- Loading spinner -->
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="spinner"></div>
+    </div>
+  
+    <!-- Form content -->
+    <div class="form-container" *ngIf="!successMessageVisible && !isLoading">
+      <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label>
+            Project Title:
+            <input 
+              type="text" 
+              placeholder="Project Title" 
+              formControlName="title"
+              [class.invalid]="projectForm.get('title')?.invalid && projectForm.get('title')?.touched"
+            />
+          </label>
+          <div *ngIf="projectForm.get('title')?.invalid && projectForm.get('title')?.touched" class="error-text">
+            Title is required and must be at least 5 characters
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label>
+            Budget (TND):
+            <input 
+              type="number" 
+              placeholder="Budget (TND)" 
+              formControlName="budget"
+              [class.invalid]="projectForm.get('budget')?.invalid && projectForm.get('budget')?.touched"
+            />
+          </label>
+          <div *ngIf="projectForm.get('budget')?.invalid && projectForm.get('budget')?.touched" class="error-text">
+            Budget is required and must be greater than 0
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label>
+            Address:
+            <input 
+              type="text" 
+              placeholder="Select project location on map" 
+              formControlName="address"
+              readonly
+              (click)="openMapModal()"
+              [class.invalid]="projectForm.get('address')?.invalid && projectForm.get('address')?.touched"
+              [value]="address_as_text"
+            />
+          </label>
+          <span class="location-icon" (click)="openMapModal()">
+            <i class="fas fa-map-marker-alt"></i>
+          </span>
+          <div *ngIf="projectForm.get('address')?.invalid && projectForm.get('address')?.touched" class="error-text">
+            Please select the project location on the map
+          </div>
+
+          <!-- Map Modal -->
+          <div class="map-modal-backdrop" *ngIf="showMapModal">
+            <div class="map-modal">
+              <div class="map-modal-header">
+                <span>Select project location</span>
+                <button type="button" class="close-btn" (click)="closeMapModal()">&times;</button>
+              </div>
+              <div id="map-modal"></div>
+              <div class="map-modal-actions">
+                <button type="button" (click)="selectCurrentLocation()">Select Current Location</button>
+                <button type="button" class="confirm-btn" (click)="confirmLocation()">Confirm Location</button>
+              </div>
+              <div class="selected-address">{{ selectedLocation }}</div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label>
+            Deadline:
+            <input 
+              type="date" 
+              formControlName="deadline"
+              [class.invalid]="projectForm.get('deadline')?.invalid && projectForm.get('deadline')?.touched"
+            />
+          </label>
+          <div *ngIf="projectForm.get('deadline')?.invalid && projectForm.get('deadline')?.touched" class="error-text">
+            Deadline is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label>
+            Description:
+            <textarea
+              placeholder="Describe your project"
+              formControlName="description"
+              rows="4"
+              [class.invalid]="projectForm.get('description')?.invalid && projectForm.get('description')?.touched"
+            ></textarea>
+          </label>
+          <div *ngIf="projectForm.get('description')?.invalid && projectForm.get('description')?.touched" class="error-text">
+            Description is required and must be at least 20 characters
+          </div>
+        </div>
+  
+        <!-- Job Categories Section -->
+        <div class="form-group">
+          <label>Required Jobs:</label>
+          <div class="job-selection">
+            <select (change)="addJob($any($event.target).value)">
+              <option value="" disabled>Select a job category</option>
+              <option *ngFor="let job of availableJobs" [value]="job.name">{{ job.name }}</option>
+            </select>
+          </div>
+  
+          <!-- Selected Jobs -->
+          <div class="selected-jobs" *ngIf="selectedJobs.length > 0">
+            <div *ngFor="let job of selectedJobs; let i = index" class="job-item">
+              <span>{{ job.name }}</span>
+              <div class="workers-input">
+                <label>Workers needed:</label>
+                <input 
+                  type="number" 
+                  [value]="job.workers_needed"
+                  (change)="updateWorkersNeeded(i, $any($event.target).value)"
+                  min="1"
+                />
+              </div>
+              <button type="button" class="remove-job" (click)="removeJob(i)">×</button>
+            </div>
+          </div>
+        </div>
+  
+        <button type="submit" [disabled]="projectForm.invalid || selectedJobs.length === 0">
+          Post Project
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+  

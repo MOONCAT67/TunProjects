@@ -1,0 +1,99 @@
+<div class="container">
+  <h2>Create Project Tasks</h2>
+  
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <span>Loading assignment options...</span>
+  </div>
+
+  <div *ngIf="!loading" class="tasks-container">
+    <div *ngFor="let task of tasks; let taskIndex = index" class="task-card">
+      <div class="task-header">
+        <h3>Task {{taskIndex + 1}}</h3>
+        <button class="delete-btn" (click)="removeTask(taskIndex)">Delete Task</button>
+      </div>
+
+      <div class="form-group">
+        <label>Title:</label>
+        <input type="text" [(ngModel)]="task.title" placeholder="Enter task title">
+      </div>
+
+      <div class="form-group">
+        <label>Description:</label>
+        <textarea [(ngModel)]="task.description" placeholder="Enter task description"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Deadline:</label>
+        <input type="datetime-local" [(ngModel)]="task.deadline">
+      </div>
+
+      <div class="form-group">
+        <label>Assigned To:</label>
+        <ng-container *ngIf="isTeamLeader && isInTeam; else notLeaderOrNoTeam">
+          <select [(ngModel)]="mainTaskAssignment" (ngModelChange)="onMainTaskAssignmentChange()" [disabled]="!isTeamLeader || !isInTeam">
+            <option value="self">Myself</option>
+            <option value="team">Team</option>
+          </select>
+          <div *ngIf="mainTaskAssignment === 'self'">
+            <span class="assigned-pill">{{ currentUser?.fullname }}</span>
+          </div>
+          <div *ngIf="mainTaskAssignment === 'team' && teamInfo">
+            <span class="assigned-pill team">{{ teamInfo.name }}</span>
+          </div>
+        </ng-container>
+        <ng-template #notLeaderOrNoTeam>
+          <span class="assigned-pill">{{ currentUser?.fullname }}</span>
+        </ng-template>
+      </div>
+
+      <div class="subtasks-section">
+        <h4>Subtasks</h4>
+        <button class="add-subtask-btn" (click)="addSubtask(taskIndex)">Add Subtask</button>
+
+        <div *ngFor="let subtask of task.subtasks; let subtaskIndex = index" class="subtask-card">
+          <div class="subtask-header">
+            <h5>Subtask {{subtaskIndex + 1}}</h5>
+            <button class="delete-btn" (click)="removeSubtask(taskIndex, subtaskIndex)">Delete</button>
+          </div>
+
+          <div class="form-group">
+            <label>Title:</label>
+            <input type="text" [(ngModel)]="subtask.title" placeholder="Enter subtask title">
+          </div>
+
+          <div class="form-group">
+            <label>Description:</label>
+            <textarea [(ngModel)]="subtask.description" placeholder="Enter subtask description"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Deadline:</label>
+            <input type="datetime-local" [(ngModel)]="subtask.deadline">
+          </div>
+
+          <div class="form-group">
+            <label>Assigned To:</label>
+            <ng-container *ngIf="subtaskAssignableMembers.length > 1">
+              <select [(ngModel)]="subtask.assigned_to">
+                <option *ngFor="let member of subtaskAssignableMembers" [value]="member.id">
+                  {{member.fullname}}
+                </option>
+              </select>
+            </ng-container>
+            <ng-container *ngIf="subtaskAssignableMembers.length <= 1">
+              <select disabled [(ngModel)]="subtask.assigned_to">
+                 <option *ngIf="currentUser" [value]="currentUser.id">{{ currentUser.fullname }}</option>
+              </select>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading" class="actions">
+    <button class="add-task-btn" (click)="addTask()">Add New Task</button>
+    <button class="submit-btn" (click)="submitTasks()" [disabled]="tasks.length === 0">Submit All Tasks</button>
+  </div>
+</div>

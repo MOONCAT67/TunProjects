@@ -1,0 +1,742 @@
+/* Common Styles */
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* Client Home Page Styles */
+.hero {
+  background: linear-gradient(135deg, #ff6b00 0%, #ff8f00 100%);
+  color: white;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.search-bar {
+  display: flex;
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.search-bar button {
+  padding: 1rem 2rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+  background-color: #444;
+}
+
+.categories {
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.categories h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  color: #333;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.category-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+}
+
+.category-card .icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.category-card h3 {
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.category-card p {
+  color: #666;
+}
+
+/* Worker Dashboard Styles */
+.worker-dashboard {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.welcome-section h1 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-section p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  background: #f8f9fa;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.stat-info h3 {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.top-workers-section,
+.trending-section {
+  margin-bottom: 3rem;
+}
+
+.top-workers-section h2,
+.trending-section h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.workers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.worker-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.worker-image {
+  height: 200px;
+  overflow: hidden;
+}
+
+.worker-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.worker-info {
+  padding: 1.5rem;
+}
+
+.worker-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.worker-rating {
+  color: #ff6b00;
+  margin-bottom: 0.5rem;
+}
+
+.worker-rating span {
+  margin-right: 2px;
+}
+
+.worker-rating span.filled {
+  color: #ff6b00;
+}
+
+.trending-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.trending-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.trending-icon {
+  font-size: 2rem;
+}
+
+.trending-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.trending-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero {
+    padding: 3rem 1rem;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .search-bar {
+    flex-direction: column;
+  }
+
+  .search-bar button {
+    width: 100%;
+  }
+
+  .categories {
+    padding: 2rem 1rem;
+  }
+
+  .worker-dashboard {
+    padding: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.body-section {
+    background-image: url('/assets/b.png');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white; /* Adjust text color as needed */
+}
+h1 {
+    color: black;
+   font-size: 50px;
+}
+
+button {
+    font-size: 20px; /* Increase font size for the button */
+    padding: 15px 30px; /* Add padding to make the button bigger */
+    background-color: #ff7300; /* You can adjust this color to your liking */
+    color: rgb(7, 2, 3); /* Button text color */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Make the button clickable */
+    transition: background-color 0.3s ease; /* Smooth color transition on hover */
+
+}
+
+button:hover {
+    background-color: #de9f6b; /* Darker color when the button is hovered */
+}
+
+
+
+.work-project-container {
+    display: flex;
+    align-items: center; /* Vertically center the content */
+    justify-content: space-between;
+    padding: 2rem;
+  }
+  
+  .left-column {
+    flex: 1;
+    display: flex;
+    justify-content: center; /* Center the image horizontally */
+  }
+  
+  .project-image {
+    height: auto; /* Make sure the image height adjusts naturally */
+    width: 100%; /* Stretch the image to fit the width of the column */
+    max-width: 100%; /* Prevent the image from overflowing */
+    object-fit: cover; /* Ensure the image maintains aspect ratio while filling the space */
+  }
+  .body-section {
+    justify-content: flex-start; /* aligns everything at the top */
+    padding-top: 50px; /* adjust how high you want */
+}
+
+  
+  .right-column {
+    flex: 1;
+    padding: 2rem;
+  }
+  
+  .feature {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+  
+  .icon {
+    font-size: 28px;
+    margin-right: 1rem;
+    line-height: 1.2;
+  }
+  
+  .text h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .text p {
+    margin: 0.2rem 0 0;
+    font-size: 15px;
+    color: #333;
+  }
+  
+  .buttons {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 14px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+  }
+  
+/* Primary Button */
+.btn.primary {
+    background-color: #fcbf8c;
+    color: black;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+  }
+  
+  .btn.primary:hover {
+    background-color: #e59a3a;  /* Darker shade of the primary color */
+    color: white;  /* Change text color when hovered */
+  }
+  
+  /* Secondary Button */
+  .btn.secondary {
+    background-color: white;
+    color: #fcbf8c;
+    border: 2px solid #fcbf8c;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+  }
+  
+  .btn.secondary:hover {
+    background-color: #fcbf8c;  /* Change background to primary color */
+    color: white;  /* Change text color when hovered */
+    border-color: #e59a3a;  /* Change border color on hover */
+  }
+  
+
+
+  /* Enterprise Section Layout */
+.enterprise-section {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 2rem auto;
+    max-width: 1100px;
+}
+
+/* Enterprise Section Layout */
+.enterprise-section {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 2rem auto;
+    max-width: 1400px; /* Increased max-width for a larger container */
+    width: 100%; /* Ensure full width utilization */
+}
+
+/* Left Half: Text content */
+.enterprise-left {
+    background-color: #fc8233; /* Orange background */
+    color: white;
+    padding: 2rem;
+    flex: 1;
+    min-width: 600px; /* Increased minimum width for the left column */
+}
+
+.enterprise-left .tagline {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.enterprise-left .headline {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    line-height: 1.2;
+}
+
+.enterprise-left .headline span {
+    color: #3b2d2d;
+}
+
+.enterprise-left .description {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.enterprise-left .features {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+    color: #fff;
+}
+
+.enterprise-left .features li {
+    margin-bottom: 0.8rem;
+    font-size: 14px;
+}
+
+.learn-more-btn {
+    background: white;
+    color: #fc8233;
+    border: none;
+    padding: 0.7rem 1.4rem;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+/* Right Half: Image section */
+.enterprise-right {
+    flex: 1;
+    min-width: 700px; /* Increased minimum width for the right column */
+}
+
+.enterprise-right img {
+    width: 100%; /* Ensure it fills the container */
+    height: 100%; /* Make the image take the full height */
+    object-fit: cover; /* Maintain the aspect ratio */
+}
+
+/* Work-project-container layout to ensure proper alignment */
+.work-project-container {
+    display: flex;
+    align-items: center; /* Vertically center the content */
+    justify-content: space-between;
+    padding: 2rem;
+}
+
+.left-column {
+    flex: 1;
+    display: flex;
+    justify-content: center; /* Center the image horizontally */
+}
+
+.project-image {
+    height: auto; /* Make sure the image height adjusts naturally */
+    width: 100%; /* Stretch the image to fit the width of the column */
+    max-width: 100%; /* Prevent the image from overflowing */
+    object-fit: cover; /* Ensure the image maintains aspect ratio */
+}
+
+.right-column {
+    flex: 1;
+    padding: 2rem;
+}
+
+/* Features Section */
+.feature {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+
+
+.why-us-section {
+    padding: 4rem 2rem;
+    background-color: #f9f9f9;
+    text-align: center;
+  }
+  
+  .why-us-section h2 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  .why-us-section p {
+    font-size: 1.2rem;
+    color: #555;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  
+
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+  }
+  h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  p a {
+    color: #007BFF;
+    text-decoration: none;
+  }
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    gap: 20px;
+    margin-top: 30px;
+  }
+  
+  .category-card {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    text-align: center;
+    transition: transform 0.2s ease;
+  }
+  .category-card:hover {
+    transform: translateY(-5px);
+  }
+  .star {
+    color: orange;
+    font-size: 20px;
+  }
+  .rating, .skills {
+    margin-top: 10px;
+  }
+  h2 {
+    font-size: 36px; /* Bigger font size */
+    font-weight: bold; /* Bold text */
+    margin-bottom: 20px;
+  }
+  
+  p {
+    font-size: 20px; /* Bigger font size */
+    font-weight: bold; /* Bold text */
+  }
+  
+  p a {
+    color: #e67e42; /* Adjust link color */
+    text-decoration: none; /* Remove underline */
+    font-weight: bold; /* Bold the link */
+  }
+  
+  p a:hover {
+    text-decoration: underline; /* Underline on hover */
+  }
+  
+
+  .how-it-works {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #f9f9fb;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .how-it-works h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2d2145;
+    margin-bottom: 30px;
+  }
+  
+  .steps {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 40px;
+  }
+  
+  .step {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .step .number {
+    font-size: 22px;
+    font-weight: bold;
+    color: #2d2145;
+    margin-bottom: 10px;
+  }
+  
+  .step img {
+    max-width: 100%;
+    border-radius: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .step h3 {
+    color: #2d2145;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  
+  .step p {
+    color: #666;
+    font-size: 15px;
+  }
+
+.become-partner-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.become-partner-btn:hover {
+  background-color: #0056b3;
+}
+
+.tunisia-map-section {
+  margin: 40px auto 30px auto;
+  max-width: 700px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 24px 18px 18px 18px;
+  text-align: center;
+}
+#tunisia-map {
+  width: 100%;
+  height: 380px;
+  border-radius: 12px;
+  margin: 0 auto 12px auto;
+  box-shadow: 0 2px 12px rgba(255,133,0,0.08);
+}
+.map-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: #222;
+  margin-top: 8px;
+}
+.legend-circle {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255,133,0,0.18);
+  border: 2px solid #ff8500;
+  margin-right: 8px;
+}
+@media (max-width: 800px) {
+  .tunisia-map-section {
+    max-width: 98vw;
+    padding: 10px 2vw 10px 2vw;
+  }
+  #tunisia-map {
+    height: 220px;
+  }
+}
+  

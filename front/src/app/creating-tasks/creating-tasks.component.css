@@ -1,0 +1,236 @@
+// Add styles for loading overlay and spinner
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 248, 240, 0.8); /* Beige with some transparency */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.spinner {
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #ff6600; /* Orange */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-overlay span {
+  margin-top: 20px;
+  color: #222; /* Black */
+  font-size: 1.2em;
+}
+
+body, .container {
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  background: #fff8f0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  background: #fff8f0;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+}
+
+h2 {
+  color: #ff6600;
+  margin-bottom: 30px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.tasks-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.task-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(255,102,0,0.07);
+  border: 1px solid #ffe5c2;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.task-header h3 {
+  margin: 0;
+  color: #222;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  color: #ff6600;
+  font-weight: 600;
+}
+
+input[type="text"],
+textarea,
+select,
+input[type="datetime-local"] {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #ffe5c2;
+  border-radius: 6px;
+  font-size: 15px;
+  background: #fff8f0;
+  color: #222;
+  transition: border 0.2s;
+}
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus,
+input[type="datetime-local"]:focus {
+  border-color: #ff6600;
+  outline: none;
+}
+
+select:disabled {
+  background: #f5e6d6;
+  color: #b3a18c;
+  border: 1.5px solid #ffe5c2;
+  cursor: not-allowed;
+}
+
+.assigned-pill {
+  display: inline-block;
+  background: #ff6600;
+  color: #fff;
+  padding: 4px 16px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 15px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.assigned-pill.team {
+  background: #222;
+  color: #ffe5c2;
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.subtasks-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1.5px solid #ffe5c2;
+}
+
+.subtask-card {
+  background: #fff8f0;
+  border-radius: 8px;
+  padding: 18px;
+  margin-top: 15px;
+  border: 1px solid #ffe5c2;
+}
+
+.subtask-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.subtask-header h5 {
+  margin: 0;
+  color: #222;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s;
+  font-size: 15px;
+}
+
+.add-task-btn {
+  background-color: #ff6600;
+  color: #fff;
+}
+
+.add-subtask-btn {
+  background-color: #222;
+  color: #ffe5c2;
+  margin-bottom: 15px;
+}
+
+.delete-btn {
+  background-color: #fff;
+  color: #ff6600;
+  border: 1.5px solid #ff6600;
+  padding: 4px 12px;
+  font-size: 13px;
+}
+
+.delete-btn:hover {
+  background: #ff6600;
+  color: #fff;
+}
+
+.submit-btn {
+  background-color: #222;
+  color: #ffe5c2;
+  padding: 14px 28px;
+  font-size: 17px;
+}
+
+.submit-btn:disabled {
+  background-color: #ccc;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.actions {
+  margin-top: 30px;
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+}
+
+button:hover:not(:disabled) {
+  opacity: 0.93;
+}
+
+@media (max-width: 800px) {
+  .container {
+    padding: 10px;
+  }
+  .task-card, .subtask-card {
+    padding: 10px;
+  }
+}

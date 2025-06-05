@@ -1,0 +1,816 @@
+/* Navbar style */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 3rem;
+    background-color: #f8f6f2;
+    color: #000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    font-family: 'Arial', sans-serif;
+    font-weight: normal;
+    height: 70px;
+    transition: all 0.3s ease-in-out;
+}
+.tt{
+    cursor: pointer;
+    text-decoration: none; 
+    color: inherit;
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+/* Logo style */
+.logo {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 26px;
+    font-weight: bold;
+    color: #000;
+    font-family: 'Arial', sans-serif;
+    margin-right: 2rem;
+}
+
+/* Logo icon style */
+.logo-icon {
+    height: 45px;
+    margin-right: 8px;
+}
+
+/* Orange color for logo text */
+.orange {
+    color: #ff8500;
+}
+
+/* Navigation links style */
+.nav-links {
+    display: flex;
+    gap: 1.8rem;
+    flex-grow: 1;
+    align-items: center;
+}
+
+.nav-links a {
+    color: #000;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease-in-out;
+    font-size: 1rem;
+    padding: 0.5rem 0;
+    position: relative;
+}
+
+.nav-links a:hover {
+    color: #ff8500;
+}
+
+/* Add simple underline animation on hover */
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #ff8500;
+    transition: width 0.2s ease-in-out;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+/* Right section (search, profile, etc.) */
+.right-section {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-family: 'Arial', sans-serif;
+    font-weight: normal;
+}
+
+/* Search container style */
+.search-container {
+    position: relative;
+    background-color: #fff;
+    border-radius: 20px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem 0 1rem;
+    height: 40px;
+    width: 250px;
+}
+
+/* Search input style */
+.search-container input {
+    padding: 0.5rem 0.5rem 0.5rem 0;
+    border: none;
+    background-color: transparent;
+    color: #000;
+    flex-grow: 1;
+    font-family: 'Arial', sans-serif;
+    font-weight: normal;
+    outline: none;
+}
+
+/* Search icon style */
+.search-container .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.search-container .icon i {
+    font-size: 1.1rem;
+}
+
+/* Notification icon style */
+.notification-container {
+    position: relative;
+}
+
+.notification-icon {
+    position: relative;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: color 0.2s ease-in-out;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-icon:hover {
+    color: #ff8500;
+}
+
+.notification-icon i {
+     font-size: 1.4rem;
+}
+
+/* Notification badge style */
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ff8500;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(255, 133, 0, 0.3);
+}
+
+/* Messages icon style */
+.messages-container {
+  position: relative;
+}
+
+.messages-icon {
+  position: relative;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: color 0.2s ease-in-out;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.messages-icon:hover {
+  color: #ff8500;
+}
+
+.messages-icon i {
+    font-size: 1.4rem;
+}
+
+/* Messages badge style */
+.messages-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff8500;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(255, 107, 0, 0.2);
+}
+
+/* Profile icon style */
+.profile-container {
+    position: relative;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 20px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.profile:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.profile i {
+     font-size: 1.8rem;
+     color: #000;
+}
+
+.user-name {
+    font-size: 1rem;
+    color: #000;
+    font-weight: 500;
+}
+
+/* Dropdown menu style (adjust colors to theme) */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 0.5rem 0;
+    min-width: 150px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 1000;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    color: #000;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.dropdown-menu a:hover {
+    background-color: #ffe5c2;
+    color: #ff8500;
+}
+
+/* Click outside directive styles */
+:host {
+    display: block;
+    margin-top: 140px;
+}
+
+/* Body margin reset and font */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    font-weight: normal;
+}
+.clickable {
+    cursor: pointer;
+  }
+  .logo a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+/* Worker Space Dropdown (adjust colors to theme) */
+.worker-space-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.worker-space-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: #000;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+  font-size: 1rem;
+}
+
+.worker-space-link:hover {
+  color: #ff8500;
+}
+
+.worker-space-link i {
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+  margin-left: 4px;
+  color: #ff8500;
+}
+
+.worker-space-link i.rotate {
+  transform: rotate(180deg);
+}
+
+.worker-space-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  min-width: 250px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.worker-space-menu.show {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  animation: slideDown 0.3s ease forwards;
+}
+
+.worker-space-menu a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  color: #000;
+  text-decoration: none;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.worker-space-menu a:hover {
+  background-color: #ffe5c2;
+  color: #ff8500;
+}
+
+.worker-space-menu a i {
+  width: 20px;
+  text-align: center;
+  color: #ff8500;
+}
+
+.worker-space-policy {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.worker-space-policy p {
+  font-size: 0.75rem;
+  color: #888;
+  margin: 0;
+  line-height: 1.4;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Notification dropdown (adjust colors to theme) */
+.notification-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 350px;
+  max-height: 500px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.notification-header {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f8f8;
+}
+
+.notification-header h3 {
+  margin: 0;
+  color: #000;
+  font-size: 1.1rem;
+}
+
+.unread-count {
+  background-color: #ff8500;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.notification-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.notification-item:hover {
+  background-color: #f8f8f8;
+}
+
+.notification-item.unread {
+  background-color: rgba(255, 133, 0, 0.05);
+}
+
+.notification-content {
+  margin-bottom: 10px;
+}
+
+.notification-content .message {
+  margin: 0 0 8px 0;
+  color: #333;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+
+.notification-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.read-status {
+  color: #25D366;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.mark-read-btn, .delete-btn, .sign-contract-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease-in-out;
+}
+
+.mark-read-btn {
+  background-color: #ff8500;
+  color: white;
+}
+
+.mark-read-btn:hover {
+  background-color: #ffb347;
+}
+
+.sign-contract-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.sign-contract-btn:hover {
+  background-color: #45a049;
+}
+
+.delete-btn {
+  background-color: #eee;
+  color: #666;
+}
+
+.delete-btn:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+/* Loading State */
+.loading-state {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+.loader {
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #ff8500;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Empty State */
+.empty-state {
+  padding: 30px;
+  text-align: center;
+  color: #666;
+}
+
+.empty-state i {
+  font-size: 2rem;
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+/* Scrollbar Styles */
+.notification-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+  background: #ff8500;
+  border-radius: 3px;
+}
+
+.notification-list::-webkit-scrollbar-thumb:hover {
+  background: #ffb347;
+}
+
+.messages-container {
+  position: relative;
+}
+
+.messages-icon {
+  position: relative;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: color 0.2s ease-in-out;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.messages-icon:hover {
+  color: #ff8500;
+}
+
+.messages-icon i {
+    font-size: 1.4rem;
+}
+
+/* Messages badge style */
+.messages-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff8500;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(255, 107, 0, 0.2);
+}
+
+/* Added styles for message and notification counts to match theme */
+.notification-badge, .messages-badge {
+    background-color: #ff8500;
+    color: white;
+}
+
+/* Adjusted profile icon size and color */
+.profile i {
+    font-size: 1.6rem;
+    color: #000;
+}
+
+/* Adjusted user name color */
+.user-name {
+    color: #000;
+}
+
+/* Ensured dropdowns match theme colors */
+.dropdown-menu, .worker-space-menu {
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-menu a, .worker-space-menu a {
+    color: #000;
+}
+
+.dropdown-menu a:hover, .worker-space-menu a:hover {
+    background-color: #ffe5c2;
+    color: #ff8500;
+}
+
+.worker-space-menu a i {
+    color: #ff8500;
+}
+
+.worker-space-policy {
+    border-top-color: #eee;
+}
+
+.worker-space-policy p {
+    color: #888;
+}
+
+/* Adjusted notification dropdown colors */
+.notification-dropdown {
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.notification-header {
+    border-bottom-color: #eee;
+    background-color: #f8f8f8;
+}
+
+.notification-header h3 {
+    color: #000;
+}
+
+.unread-count {
+    background-color: #ff8500;
+    color: white;
+}
+
+.notification-item {
+    border-bottom-color: #eee;
+}
+
+.notification-item:hover {
+    background-color: #f8f8f8;
+}
+
+.notification-item.unread {
+    background-color: rgba(255, 133, 0, 0.05);
+}
+
+.notification-content .message {
+    color: #333;
+}
+
+.notification-footer {
+    color: #666;
+}
+
+.mark-read-btn {
+    background-color: #ff8500;
+    color: white;
+}
+
+.mark-read-btn:hover {
+    background-color: #ffb347;
+}
+
+.delete-btn {
+    background-color: #eee;
+    color: #666;
+}
+
+.delete-btn:hover {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.loader {
+    border-top-color: #ff8500;
+}
+
+.empty-state i {
+    color: #ccc;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+    background: #ff8500;
+}
+
+.notification-list::-webkit-scrollbar-thumb:hover {
+    background: #ffb347;
+}
+
+/* Team Request Specific Styling */
+.team-request-item {
+  background-color: #f8f6f2;
+  border-left: 5px solid #ff6b00;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.team-request-content {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.request-header {
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 5px 0;
+  font-size: 1em;
+}
+
+.request-details {
+  color: #ff6b00;
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.sender-name,
+.team-name {
+  font-weight: bold;
+}
+
+.team-request-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.accept-button,
+.reject-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.accept-button {
+  background-color: #28a745;
+}
+
+.accept-button:hover {
+  background-color: #218838;
+}
+
+.reject-button {
+  background-color: #dc3545;
+}
+
+.reject-button:hover {
+  background-color: #c82333;
+}
+  

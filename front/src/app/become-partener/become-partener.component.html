@@ -1,0 +1,209 @@
+<div class="verification-form-container">
+  <div class="form-header">
+    <h1>Become a Partner</h1>
+    <p class="subtitle">Complete the form below to submit your verification request</p>
+  </div>
+
+  <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()" class="verification-form">
+    <!-- Request Description -->
+    <div class="form-section">
+      <h2>Request Description</h2>
+      <div class="form-group">
+        <label for="requestDescription">Tell us about yourself and why you want to become a partner</label>
+        <textarea
+          id="requestDescription"
+          formControlName="requestDescription"
+          rows="4"
+          placeholder="Describe your experience and motivation..."
+          [class.error]="verificationForm.get('requestDescription')?.invalid && verificationForm.get('requestDescription')?.touched"
+        ></textarea>
+        <div class="error-message" *ngIf="verificationForm.get('requestDescription')?.invalid && verificationForm.get('requestDescription')?.touched">
+          Please provide a description (minimum 10 characters)
+        </div>
+      </div>
+    </div>
+
+    <!-- Jobs Section -->
+    <div class="form-section" formArrayName="jobs">
+      <div class="section-header">
+        <h2>Your Skills & Experience</h2>
+        <button type="button" class="add-btn" (click)="addJob()">+ Add Another Job</button>
+      </div>
+
+      <div class="form-group" *ngFor="let job of jobs.controls; let i = index" [formGroupName]="i">
+        <div class="card">
+          <div class="card-header">
+            <h3>Job {{i + 1}}</h3>
+            <button type="button" class="remove-btn" (click)="removeJob(i)" *ngIf="jobs.length > 1">×</button>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-field">
+              <label [for]="'jobCategory' + i">Job Category</label>
+              <select [id]="'jobCategory' + i" formControlName="jobCategoryId">
+                <option value="">Select a job category</option>
+                <option *ngFor="let category of jobCategories" [value]="category.id">
+                  {{category.name}}
+                </option>
+              </select>
+              <div class="error-message" *ngIf="job.get('jobCategoryId')?.invalid && job.get('jobCategoryId')?.touched">
+                Please select a job category
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label [for]="'experience' + i">Years of Experience</label>
+              <input
+                type="number"
+                [id]="'experience' + i"
+                formControlName="experienceYears"
+                min="0"
+                max="50"
+                placeholder="Years"
+              >
+              <div class="error-message" *ngIf="job.get('experienceYears')?.invalid && job.get('experienceYears')?.touched">
+                Please enter valid years of experience (0-50)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certificates Section -->
+    <div class="form-section" formArrayName="certificates">
+      <div class="section-header">
+        <h2>Certifications</h2>
+        <button type="button" class="add-btn" (click)="addCertificate()">+ Add Another Certificate</button>
+      </div>
+
+      <div class="form-group" *ngFor="let certificate of certificates.controls; let i = index" [formGroupName]="i">
+        <div class="card">
+          <div class="card-header">
+            <h3>Certificate {{i + 1}}</h3>
+            <button type="button" class="remove-btn" (click)="removeCertificate(i)" *ngIf="certificates.length > 1">×</button>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label [for]="'certName' + i">Certificate Name</label>
+              <input
+                type="text"
+                [id]="'certName' + i"
+                formControlName="name"
+                placeholder="e.g., Plumbing Certification"
+              >
+              <div class="error-message" *ngIf="certificate.get('name')?.invalid && certificate.get('name')?.touched">
+                Please enter certificate name
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label [for]="'issuer' + i">Issuing Organization</label>
+              <input
+                type="text"
+                [id]="'issuer' + i"
+                formControlName="issuer"
+                placeholder="e.g., ABC Institute"
+              >
+              <div class="error-message" *ngIf="certificate.get('issuer')?.invalid && certificate.get('issuer')?.touched">
+                Please enter issuing organization
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label [for]="'certYear' + i">Year Obtained</label>
+              <input
+                type="number"
+                [id]="'certYear' + i"
+                formControlName="year"
+                min="1900"
+                [max]="currentYear"
+                placeholder="Year"
+              >
+              <div class="error-message" *ngIf="certificate.get('year')?.invalid && certificate.get('year')?.touched">
+                Please enter valid year
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Past Projects Section -->
+    <div class="form-section" formArrayName="pastProjects">
+      <div class="section-header">
+        <h2>Past Projects</h2>
+        <button type="button" class="add-btn" (click)="addPastProject()">+ Add Another Project</button>
+      </div>
+
+      <div class="form-group" *ngFor="let project of pastProjects.controls; let i = index" [formGroupName]="i">
+        <div class="card">
+          <div class="card-header">
+            <h3>Project {{i + 1}}</h3>
+            <button type="button" class="remove-btn" (click)="removePastProject(i)" *ngIf="pastProjects.length > 1">×</button>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field full-width">
+              <label [for]="'projectTitle' + i">Project Title</label>
+              <input
+                type="text"
+                [id]="'projectTitle' + i"
+                formControlName="title"
+                placeholder="e.g., House Renovation"
+              >
+              <div class="error-message" *ngIf="project.get('title')?.invalid && project.get('title')?.touched">
+                Please enter project title
+              </div>
+            </div>
+
+            <div class="form-field full-width">
+              <label [for]="'projectDesc' + i">Project Description</label>
+              <textarea
+                [id]="'projectDesc' + i"
+                formControlName="description"
+                rows="3"
+                placeholder="Describe the project and your role..."
+              ></textarea>
+              <div class="error-message" *ngIf="project.get('description')?.invalid && project.get('description')?.touched">
+                Please provide a description (minimum 10 characters)
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label [for]="'projectYear' + i">Year Completed</label>
+              <input
+                type="number"
+                [id]="'projectYear' + i"
+                formControlName="year"
+                min="1900"
+                [max]="currentYear"
+                placeholder="Year"
+              >
+              <div class="error-message" *ngIf="project.get('year')?.invalid && project.get('year')?.touched">
+                Please enter valid year
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-actions">
+      <button type="submit" class="submit-btn" [disabled]="loading">
+        <span *ngIf="!loading">Submit Verification Request</span>
+        <span *ngIf="loading">Submitting...</span>
+      </button>
+    </div>
+
+    <!-- Messages -->
+    <div class="messages">
+      <div class="error-message" *ngIf="error">{{ error }}</div>
+      <div class="success-message" *ngIf="success">
+        Your verification request has been submitted successfully! We will review it and get back to you soon.
+      </div>
+    </div>
+  </form>
+</div>

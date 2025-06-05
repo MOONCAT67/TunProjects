@@ -1,0 +1,90 @@
+<div class="worker-page-container">
+  <div class="page-header">
+    <h1>Available Projects</h1>
+    <p class="subtitle">Browse and apply for projects that match your skills</p>
+  </div>
+
+  <div class="filter-container">
+    <label for="job-filter">Filter by Job Category:</label>
+    <select id="job-filter" (change)="onJobFilterChange($event)">
+      <option [value]="null">All Categories</option>
+      <option *ngFor="let category of availableJobCategories" [value]="category.id">{{ category.name }}</option>
+    </select>
+  </div>
+
+  <!-- Debug Info -->
+  <div class="debug-info" *ngIf="projects.length > 0">
+    <p>Number of projects: {{ projects.length }}</p>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Loading available projects...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error">
+    <p class="error-message">{{ error }}</p>
+    <button class="retry-btn" (click)="loadAvailableProjects()">Retry</button>
+  </div>
+
+  <!-- Projects List -->
+  <div class="projects-container" *ngIf="!loading && !error">
+    <div class="projects-grid">
+      <div class="project-card" *ngFor="let project of projects; let i = index">
+        <!-- Project Map -->
+        <div class="project-map" [id]="'map-' + project.id"></div>
+        
+        <!-- Project Info -->
+        <div class="project-info">
+          <div class="project-header">
+            <h2>{{ project.title }}</h2>
+            <span class="project-status" [class.open]="project.status === 'open'">
+              {{ project.status | titlecase }}
+            </span>
+          </div>
+
+          <p class="project-description">{{ project.description }}</p>
+
+          <div class="required-jobs">
+            <h4>Required Job Categories:</h4>
+            <ul>
+              <li *ngFor="let job of project.required_jobs">
+                <span>{{ job.name }}</span>: {{ job.workers_needed }} workers needed
+              </li>
+            </ul>
+          </div>
+
+          <div class="project-details">
+            <div class="detail-item">
+              <i class="bi bi-calendar"></i>
+              <span>Deadline: {{ project.deadline | date:'mediumDate' }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="bi bi-cash"></i>
+              <span>Budget: ${{ project.budget }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="bi bi-people"></i>
+              <span>{{ project.application_count }} Applications</span>
+            </div>
+          </div>
+
+          <div class="project-actions">
+            <button class="view-details-btn" [routerLink]="['/projects', project.id]">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="projects.length === 0">
+      <i class="bi bi-folder-x"></i>
+      <p>No available projects at the moment.</p>
+      <p>Check back later for new opportunities!</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,68 @@
+<div class="teams-container">
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading teams...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && requestSentSuccess" class="alert success-alert">
+    Team request sent successfully!
+  </div>
+
+  <div *ngIf="!loading && !error" class="teams-list">
+    <div *ngFor="let team of teams" class="team-card">
+      <div class="team-info">
+        <h3>{{ team.name }}</h3>
+        <p>{{ team.description }}</p>
+      </div>
+      <button class="view-details-button" (click)="viewTeamDetails(team)">
+        View Team Details
+      </button>
+    </div>
+  </div>
+
+  <!-- Team Details Modal -->
+  <div *ngIf="showDetails && selectedTeam" class="team-details-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>{{ selectedTeam.name }}</h2>
+        <button class="close-button" (click)="closeDetails()">×</button>
+      </div>
+
+      <div class="team-leader-info" *ngIf="teamLeader">
+        <h3>Team Leader</h3>
+        <p>{{ teamLeader.fullname }}</p>
+      </div>
+
+      <div class="team-members-section">
+        <h3>Team Members</h3>
+        <div class="members-list">
+          <div *ngFor="let member of teamMembers" class="member-card">
+            <div class="member-info">
+              <img [src]="member.profile_picture || 'assets/profile.jpg'" alt="Member Avatar" class="member-avatar">
+              <div class="member-details">
+                <h4>{{ member.fullname }}</h4>
+                <p>{{ member.email }}</p>
+              </div>
+            </div>
+            <div class="member-jobs">
+              <div *ngFor="let job of member.jobs; let i = index" class="job-tag" [ngClass]="getJobColorClass(i)">
+                {{ job.category.name }} ({{ job.years_experience }} yrs)
+              </div>
+              <div *ngIf="!member.jobs?.length" class="no-jobs">No jobs listed</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="send-request-button" (click)="sendTeamRequest(selectedTeam.id)">
+          Send Team Request
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+<div class="team-container">
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading team information...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && teamData?.data" class="team-content">
+    <!-- Team Actions Bar (Moved to top) -->
+    <div class="team-actions-bar">
+      <div class="search-worker-container">
+        <input type="text" placeholder="Search workers..." />
+        <span class="search-icon"><i class="bi bi-search"></i></span>
+      </div>
+      <button class="action-button add-worker-button"><i class="bi bi-person-plus"></i> Add Worker</button>
+      <button class="action-button tasks-button"
+              [routerLink]="['/team-tasks', teamData?.data?.team?.id, getCurrentUserId()]"
+              [disabled]="!teamData?.data?.team?.id || !getCurrentUserId()">
+        <i class="bi bi-list-task"></i> Team Tasks
+      </button>
+      <button class="action-button projects-button"
+              [routerLink]="['/team-projects', teamData?.data?.team?.id]"
+              [disabled]="!teamData?.data?.team?.id">
+        <i class="bi bi-folder2-open"></i> Team Projects
+      </button>
+      <button class="action-button leave-team-button"><i class="bi bi-box-arrow-right"></i> Leave Team</button>
+    </div>
+
+    <!-- Team Members List (Table-like display) -->
+    <div class="team-members-table-container">
+      <h2>Team Members</h2>
+      <div class="team-members-table">
+        <!-- Table Header -->
+        <div class="table-header">
+          <div class="header-cell">Member</div>
+          <div class="header-cell">Role</div>
+          <div class="header-cell">Talents/Jobs</div>
+          <div class="header-cell">Email</div>
+          <div class="header-cell">Joined At</div>
+          <div class="header-cell"></div>
+        </div>
+
+        <!-- All Members Rows (including leader) -->
+        <div class="table-row" *ngFor="let member of teamData?.data?.members" [class.is-current-user]="member.id === getCurrentUserId()">
+          <div class="cell member-cell">
+            <div class="member-avatar-small">
+              <img [src]="member.profile_picture || 'assets/profile.jpg'" alt="Member Avatar">
+            </div>
+            <span>{{ member.fullname }}</span>
+          </div>
+          <div class="cell role-cell">{{ member.is_leader ? 'Team Leader' : member.role }}</div>
+          <div class="cell jobs-cell">
+            <div *ngFor="let job of member.jobs; let i = index" class="job-entry">
+              <span class="job-title" [ngClass]="getJobColorClass(i)">{{ job.category.name }}</span>
+              <span class="job-experience">({{ job.years_experience }} yrs)</span>
+            </div>
+            <div *ngIf="!member.jobs?.length" class="no-jobs">No jobs listed</div>
+          </div>
+          <div class="cell email-cell">{{ member.email }}</div>
+          <div class="cell joined-cell">{{ member.joined_at | date:'mediumDate' }}</div>
+          <div class="cell actions-cell"></div>
+        </div>
+
+        <!-- Message if no members found -->
+        <div class="table-row" *ngIf="!teamData?.data?.members?.length">
+          <div class="cell no-members-cell">No team members found.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !error && (!teamData?.data || !teamData?.data?.members?.length)" class="no-team">
+    <h2>This space is only for teams</h2>
+    <img src="assets/team.png" alt="Team illustration" class="no-team-illustration">
+    <p>Create a new team or join an existing one to access this workspace.</p>
+    <button class="join-team-button" routerLink="/get-team">Create/join team</button>
+  </div>
+</div>

@@ -1,0 +1,287 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.admin-dashboard {
+  font-family: 'Inter', Arial, sans-serif;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: 6rem;
+  background: linear-gradient(120deg, #f8fafc 0%, #f3f0ff 100%);
+  min-height: 100vh;
+}
+
+h1 {
+  color: #1a1a2e;
+  margin-bottom: 2rem;
+  font-size: 2.7rem;
+  font-weight: 700;
+  text-align: center;
+  position: relative;
+  padding-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 4px;
+  background: linear-gradient(90deg, #ff6b00 0%, #ff8533 100%);
+  border-radius: 2px;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 1rem;
+  justify-content: center;
+}
+
+.tabs button {
+  padding: 0.9rem 2rem;
+  border: none;
+  background: none;
+  color: #7b7b93;
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(.4,0,.2,1);
+  border-radius: 10px 10px 0 0;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.tabs button:hover {
+  background: #fff3e6;
+  color: #ff6b00;
+}
+
+.tabs button.active {
+  background: linear-gradient(90deg, #ff6b00 0%, #ff8533 100%);
+  color: white;
+  box-shadow: 0 4px 16px 0 rgba(255, 107, 0, 0.08);
+}
+
+/* Loading and Error States */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #7b7b93;
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.error-message {
+  background: #fff0f0;
+  color: #e74c3c;
+  padding: 1.1rem;
+  border-radius: 10px;
+  margin-bottom: 1.2rem;
+  border: 1px solid #fadbd8;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Request Cards */
+.request-card, .client-card, .project-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.7rem 2rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 4px 24px 0 rgba(44, 62, 80, 0.07);
+  border: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: box-shadow 0.2s;
+}
+
+.request-card:hover, .client-card:hover, .project-card:hover {
+  box-shadow: 0 8px 32px 0 rgba(255, 107, 0, 0.13);
+  border-color: #ffecd6;
+}
+
+.request-info, .client-info, .project-info {
+  flex: 1;
+}
+
+.request-info h3, .client-info h3, .project-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: #1a1a2e;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.date {
+  color: #b0b0c3;
+  font-size: 0.97rem;
+  margin-top: 0.5rem;
+}
+
+.view-btn {
+  background: linear-gradient(90deg, #ff6b00 0%, #ff8533 100%);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.3rem;
+  border-radius: 24px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px 0 rgba(255, 107, 0, 0.10);
+}
+
+.view-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 16px rgba(255, 107, 0, 0.18);
+}
+
+/* Request Details Modal */
+.request-details {
+  background: white;
+  border-radius: 18px;
+  padding: 2.5rem 2.2rem 2rem 2.2rem;
+  box-shadow: 0 8px 40px 0 rgba(44, 62, 80, 0.13);
+  position: relative;
+  max-width: 700px;
+  margin: 2rem auto;
+  border: 1.5px solid #f3e6ff;
+  animation: fadeIn 0.4s cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: none; }
+}
+
+.close-btn {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #b0b0c3;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #ff6b00;
+}
+
+.details-section {
+  margin-bottom: 2.2rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1.5px solid #f3e6ff;
+}
+
+.details-section h3 {
+  color: #1a1a2e;
+  margin-bottom: 1rem;
+  font-size: 1.13rem;
+  font-weight: 600;
+}
+
+.job-item, .cert-item, .project-item {
+  background: #f8f9fa;
+  padding: 1.1rem 1.2rem;
+  border-radius: 10px;
+  margin-bottom: 0.7rem;
+  box-shadow: 0 2px 8px 0 rgba(44, 62, 80, 0.04);
+  border: 1px solid #f3e6ff;
+}
+
+.notes-input {
+  width: 100%;
+  min-height: 100px;
+  padding: 1.1rem;
+  border: 1.5px solid #f3e6ff;
+  border-radius: 10px;
+  margin-bottom: 1.2rem;
+  resize: vertical;
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 1rem;
+  background: #f8f9fa;
+  color: #1a1a2e;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: flex-end;
+}
+
+.approve-btn, .reject-btn {
+  padding: 0.9rem 2rem;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.approve-btn {
+  background: linear-gradient(90deg, #2ecc71 0%, #27ae60 100%);
+  color: white;
+  box-shadow: 0 2px 8px 0 rgba(46, 204, 113, 0.10);
+}
+
+.reject-btn {
+  background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  box-shadow: 0 2px 8px 0 rgba(231, 76, 60, 0.10);
+}
+
+.approve-btn:hover, .reject-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 16px rgba(44, 62, 80, 0.18);
+}
+
+/* No Data State */
+.no-data {
+  text-align: center;
+  padding: 2.2rem;
+  color: #b0b0c3;
+  background: #f8f9fa;
+  border-radius: 10px;
+  font-style: italic;
+  font-size: 1.08rem;
+  margin-top: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-dashboard {
+    padding: 1rem;
+  }
+
+  .tabs {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .request-card, .client-card, .project-card {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.2rem 1rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.7rem;
+    align-items: stretch;
+  }
+
+  .request-details {
+    padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+  }
+}

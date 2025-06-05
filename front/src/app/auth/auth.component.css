@@ -1,0 +1,301 @@
+/* Full height and font setup */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0; /* Added to prevent any default padding issues */
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-weight: bold;
+}
+
+/* Background and body styling */
+body {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh; /* Ensures body takes full viewport height */
+  display: flex; /* Added to ensure body supports centering */
+  flex-direction: column; /* Aligns children in a column */
+}
+
+/* Center container on screen */
+.main-container {
+  background-color: rgb(241, 112, 20);
+  display: flex;
+  justify-content: center; /* Horizontal centering */
+  align-items: center; /* Vertical centering */
+  height: 100vh; /* Full viewport height */
+  width: 100%; /* Full viewport width */
+  position: fixed; /* Ensures it stays centered regardless of content */
+  top: 0;
+  left: 0;
+  margin: 0; /* Removes any default margins */
+  padding: 0; /* Removes any default padding */
+  box-sizing: border-box; /* Ensures padding doesn't affect size */
+}
+
+/* New outer container (grey wrapper) */
+.container {
+  width: 460px; /* Increased from 400px (~15%) */
+  background-color: rgba(236, 212, 184, 0.95);
+  padding: 45px 35px; /* Scaled up slightly */
+  border-radius: 18px; /* Adjusted for larger size */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Form card */
+.container {
+  width: 350px;
+  background-color: rgba(236, 212, 184, 0.9);
+  padding: 30px 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  position: relative;
+}
+
+/* Form sections */
+.form-container {
+  width: 100%;
+}
+
+/* Input styling */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="tel"] {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: white;
+  box-sizing: border-box;
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-weight: bold;
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-weight: bold;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+button:hover {
+  background-color: #333;
+}
+
+/* Logo image */
+.logo {
+  width: 150px;
+  height: auto;
+  margin: 0 auto 20px auto;
+  display: block;
+}
+
+/* Headings */
+h1 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: black;
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-weight: bold;
+}
+
+.log {
+  font-weight: bold;
+}
+
+.in {
+  color: orange;
+  font-weight: bold;
+}
+
+/* Links and bottom text */
+a {
+  font-size: 12px;
+  color: black;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 10px;
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-weight: bold;
+}
+
+p {
+  font-size: 12px;
+  margin-top: 15px;
+  color: #444;
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-weight: bold;
+}
+
+.signup,
+.login {
+  color: orange;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.map-container {
+  width: 100%;
+  margin: 10px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#map {
+  height: 200px;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.map-instructions {
+  text-align: center;
+  padding: 8px;
+  background-color: #f8f8f8;
+  color: #666;
+  font-size: 0.9rem;
+  border-top: 1px solid #eee;
+}
+
+/* Ensure the map tiles are loaded correctly */
+:host ::ng-deep .leaflet-tile {
+  filter: brightness(0.95) contrast(1.1);
+}
+
+:host ::ng-deep .leaflet-container {
+  background-color: #f8f8f8;
+}
+
+/* Style for the readonly address input */
+input[readonly] {
+  background-color: #f8f8f8;
+  cursor: default;
+}
+
+input[readonly]:focus {
+  outline: none;
+  border-color: #ccc;
+}
+
+.address-input-group {
+  position: relative;
+  width: 100%;
+  margin: 10px 0 0 0;
+}
+.address-input-group input[readonly] {
+  cursor: pointer;
+  padding-right: 40px;
+}
+.location-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ff8500;
+  font-size: 1.3rem;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.map-modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.map-modal {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 0 0 18px 0;
+  width: 370px;
+  max-width: 95vw;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.map-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px 8px 18px;
+  border-bottom: 1px solid #f0f0f0;
+  font-weight: bold;
+  color: #ff8500;
+  font-size: 1.1rem;
+}
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  color: #ff8500;
+  cursor: pointer;
+  line-height: 1;
+}
+#map-modal {
+  width: 100%;
+  height: 220px;
+  border-radius: 0 0 12px 12px;
+  margin-bottom: 10px;
+}
+.map-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 18px 8px 18px;
+}
+.map-modal-actions button {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  background: #ff8500;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 0;
+  transition: background 0.2s;
+}
+.map-modal-actions .confirm-btn {
+  background: #222;
+  color: #fff;
+}
+.map-modal-actions button:hover {
+  opacity: 0.92;
+}
+.selected-address {
+  padding: 8px 18px 0 18px;
+  font-size: 0.95rem;
+  color: #333;
+  min-height: 32px;
+  word-break: break-word;
+}
+@media (max-width: 500px) {
+  .map-modal {
+    width: 98vw;
+    min-width: 0;
+    padding: 0 0 10px 0;
+  }
+  #map-modal {
+    height: 160px;
+  }
+}

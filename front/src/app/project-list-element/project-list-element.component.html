@@ -1,0 +1,39 @@
+<div class="project-card">
+  <div class="project-header">
+    <h3 class="project-title">{{ project.title }}</h3>
+    <span class="project-type" [class.team]="project.project_type === 'team'">
+      {{ project.project_type }}
+    </span>
+  </div>
+
+  <p class="project-description">{{ project.description }}</p>
+
+  <div class="project-details">
+    <div class="detail-item">
+      <span class="label">Budget:</span>
+      <span class="value">{{ formattedBudget }}</span>
+    </div>
+
+    <div class="detail-item">
+      <span class="label">Deadline:</span>
+      <span class="value">{{ formattedDeadline }}</span>
+    </div>
+
+    <div class="detail-item">
+      <span class="label">Location:</span>
+      <span class="value">{{ project.address }}</span>
+    </div>
+
+    <div class="detail-item">
+      <span class="label">Applications:</span>
+      <span class="value">{{ applicationCount }}</span>
+    </div>
+  </div>
+
+  <div class="project-footer">
+    <span class="days-left" [class.urgent]="daysLeft <= 7">
+      {{ daysLeft }} days left
+    </span>
+    <button class="view-details-btn" [routerLink]="['/projects', project.id]">View Details</button>
+  </div>
+</div>

@@ -1,0 +1,272 @@
+<div class="projects-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loader"></div>
+    <p>Loading your current projects...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-container">
+    <i class="bi bi-exclamation-circle"></i>
+    <p>{{ error }}</p>
+    <button (click)="loadCurrentProjects()" class="retry-button">
+      <i class="bi bi-arrow-clockwise"></i> Retry
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !error && projects.length === 0" class="empty-state">
+    <i class="bi bi-folder-x"></i>
+    <h2>No Current Projects</h2>
+    <p>You don't have any active projects at the moment.</p>
+  </div>
+
+  <!-- Projects List -->
+  <div *ngIf="!isLoading && !error && projects.length > 0" class="projects-list">
+    <div *ngFor="let project of projects" class="project-card">
+      <div class="project-header">
+        <div class="project-title-section">
+          <h2>{{ project.title }}</h2>
+          <span class="project-status" [style.background-color]="getStatusColor(project.status)">
+            {{ project.status | titlecase }}
+          </span>
+        </div>
+        <div class="project-actions">
+          <span *ngIf="project.deposit_paid === 0" class="deposit-warning">
+            <i class="bi bi-exclamation-triangle"></i>
+            Client hasn't paid the deposit yet
+          </span>
+          <button class="download-contract-btn" (click)="downloadContract(project.id)">
+            <i class="bi bi-file-earmark-text"></i>
+            Download Contract
+          </button>
+        </div>
+      </div>
+
+      <div class="project-info">
+        <p class="project-description">{{ project.description }}</p>
+        <div class="client-info">
+          <h3>Client Information</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <i class="bi bi-person"></i>
+              <span>{{ project.client_name }}</span>
+            </div>
+            <div class="info-item">
+              <i class="bi bi-envelope"></i>
+              <span>{{ project.client_email }}</span>
+            </div>
+            <div class="info-item">
+              <i class="bi bi-telephone"></i>
+              <span>{{ project.client_phone }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tasks-section">
+        <div class="tasks-header">
+          <h3>Project Tasks</h3>
+        </div>
+
+        <!-- No Tasks State -->
+        <div *ngIf="project.tasks.length === 0" class="no-tasks-state">
+          <i class="bi bi-clipboard-x"></i>
+          <p>There are no tasks for this project yet</p>
+          <button class="create-task-btn" [routerLink]="['/worker/create-tasks', project.id]">
+            <i class="bi bi-plus-circle"></i>
+            Create Tasks Here
+          </button>
+        </div>
+
+        <!-- Tasks List -->
+        <div *ngIf="project.tasks.length > 0" class="tasks-list">
+          <div *ngFor="let task of project.tasks; let last = last" class="task-card" [class.expanded]="expandedTasks[task.id]">
+            <div class="task-header" (click)="toggleTask(task.id)">
+              <div class="task-title">
+                <i class="bi" [class.bi-chevron-right]="!expandedTasks[task.id]" [class.bi-chevron-down]="expandedTasks[task.id]"></i>
+                <h4>{{ task.title }}</h4>
+              </div>
+              <div class="task-status">
+                <span class="status-badge" [style.background-color]="getStatusColor(task.status)">
+                  {{ task.status | titlecase }}
+                </span>
+                <div class="progress-bar">
+                  <div class="progress" [style.width.%]="getTaskProgress(task)"></div>
+                </div>
+                <!-- Complete Button for tasks with no subtasks -->
+                <button *ngIf="hasNoSubtasks(task) && task.status === 'in progress'" 
+                        class="complete-task-btn" 
+                        (click)="completeMainTask(task); $event.stopPropagation();">
+                  <i class="bi bi-check-circle"></i>
+                  Complete Task
+                </button>
+              </div>
+            </div>
+
+            <div class="task-content" [@expandCollapse]="expandedTasks[task.id] ? 'expanded' : 'collapsed'">
+              <p class="task-description">{{ task.description }}</p>
+              
+              <div class="subtasks-section">
+                <div class="subtasks-header">
+                  <h5>Subtasks</h5>
+                </div>
+
+                <!-- No Subtasks State -->
+                <div  class="no-subtasks-state">
+                  <div *ngIf="task.subtasks.length === 0">
+                  <p>No subtasks for this task yet</p>
+                </div>
+
+                <div *ngIf="task.subtasks.length === 0"></div>
+                <p>add new subtask here</p>
+                  <button 
+                    *ngIf="task.status !== 'completed'"
+                    class="create-subtask-btn" 
+                    (click)="showSubtaskFormForTask(task.id)"
+                  >
+                    <i class="bi bi-plus-circle"></i>
+                    Add  Subtask
+                  </button>
+                </div>
+
+                <!-- Subtask Creation Form -->
+                <div *ngIf="showSubtaskForm && currentTaskId === task.id" class="subtask-form-container">
+                  <form [formGroup]="subtaskForm" (ngSubmit)="onSubmitSubtask()" class="subtask-form">
+                    <div class="form-header">
+                      <h4>Create New Subtask</h4>
+                      <button type="button" class="close-btn" (click)="cancelSubtaskForm()">
+                        <i class="bi bi-x"></i>
+                      </button>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="subtask-title">Title</label>
+                      <input 
+                        type="text" 
+                        id="subtask-title" 
+                        formControlName="title" 
+                        placeholder="Enter subtask title"
+                        [class.error]="subtaskForm.get('title')?.invalid && subtaskForm.get('title')?.touched"
+                      >
+                      <div class="error-message" *ngIf="subtaskForm.get('title')?.invalid && subtaskForm.get('title')?.touched">
+                        Title is required and must be at least 3 characters long
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="subtask-description">Description</label>
+                      <textarea 
+                        id="subtask-description" 
+                        formControlName="description" 
+                        placeholder="Enter subtask description"
+                        rows="3"
+                        [class.error]="subtaskForm.get('description')?.invalid && subtaskForm.get('description')?.touched"
+                      ></textarea>
+                      <div class="error-message" *ngIf="subtaskForm.get('description')?.invalid && subtaskForm.get('description')?.touched">
+                        Description is required and must be at least 10 characters long
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="subtask-deadline">Deadline</label>
+                      <input 
+                        type="datetime-local" 
+                        id="subtask-deadline" 
+                        formControlName="deadline"
+                        [class.error]="subtaskForm.get('deadline')?.invalid && subtaskForm.get('deadline')?.touched"
+                      >
+                      <div class="error-message" *ngIf="subtaskForm.get('deadline')?.invalid && subtaskForm.get('deadline')?.touched">
+                        Deadline is required
+                      </div>
+                    </div>
+
+                    <div class="form-actions">
+                      <button 
+                        type="button" 
+                        class="cancel-btn" 
+                        (click)="cancelSubtaskForm()"
+                        [disabled]="isSubmittingSubtask"
+                      >
+                        Cancel
+                      </button>
+                      <button 
+                        type="submit" 
+                        class="submit-btn" 
+                        [disabled]="subtaskForm.invalid || isSubmittingSubtask"
+                      >
+                        <i class="bi" [class.bi-check-circle]="!isSubmittingSubtask" [class.bi-arrow-repeat]="isSubmittingSubtask"></i>
+                        {{ isSubmittingSubtask ? 'Creating...' : 'Create Subtask' }}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Subtasks List -->
+                <div *ngIf="task.subtasks.length > 0" class="subtasks-list">
+                  <div *ngFor="let subtask of task.subtasks" class="subtask-item">
+                    <div class="subtask-header">
+                      <span class="subtask-title">{{ subtask.title }}</span>
+                      <span class="subtask-status" [style.background-color]="getStatusColor(subtask.status)">
+                        {{ subtask.status | titlecase }}
+                      </span>
+                    </div>
+                    <p class="subtask-description">{{ subtask.description }}</p>
+                    <div class="subtask-meta">
+                      <span class="date">
+                        <i class="bi bi-calendar"></i>
+                        {{ formatDate(subtask.created_at) }}
+                      </span>
+                      <!-- Subtask Actions -->
+                      <div class="subtask-actions">
+                        <button *ngIf="subtask.status === 'not started'" 
+                                class="start-button" 
+                                (click)="startSubtask(subtask); $event.stopPropagation();">
+                          <i class="bi bi-play-circle"></i>
+                          Start Subtask
+                        </button>
+                        <button *ngIf="subtask.status === 'in progress'" 
+                                class="finish-button" 
+                                (click)="finishSubtask(subtask); $event.stopPropagation();">
+                          <i class="bi bi-check-circle"></i>
+                          Finish Subtask
+                        </button>
+                        <div *ngIf="subtask.status === 'completed'" class="completion-icon">
+                          <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Add Task Button -->
+          <div class="add-task-container">
+            <button class="add-task-btn" [routerLink]="['/addtask', project.id]">
+              <i class="bi bi-plus-circle"></i>
+              Add Another Task
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task Progress -->
+      <div class="task-progress">
+        <div class="progress-item">
+          <span class="progress-label">Completed</span>
+          <span class="progress-value">{{ getTaskProgress(project).completed }}</span>
+        </div>
+        <div class="progress-item">
+          <span class="progress-label">In Progress</span>
+          <span class="progress-value">{{ getTaskProgress(project).inProgress }}</span>
+        </div>
+        <div class="progress-item">
+          <span class="progress-label">Not Started</span>
+          <span class="progress-value">{{ getTaskProgress(project).notStarted }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

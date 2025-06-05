@@ -1,0 +1,151 @@
+<div class="main-container">
+  <div class="outer-container">
+    <div class="container">
+      <!-- Login Form -->
+      <div *ngIf="isLogin" class="form-container sign-in-container">
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+          <img src="/assets/oo.png" alt="Logo" class="logo" />
+          <h1><span class="log">LOG</span> <span class="in">IN</span></h1>
+          
+          <input 
+            type="email" 
+            placeholder="E-MAIL" 
+            formControlName="email"
+            [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+          />
+          <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error-text">
+            Please enter a valid email
+          </div>
+          
+          <input 
+            type="password" 
+            placeholder="PASSWORD" 
+            formControlName="password"
+            [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          />
+          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-text">
+            Password is required
+          </div>
+          
+          <a href="#">FORGOT PASSWORD ?</a>
+          
+          <button type="submit" [disabled]="loginForm.invalid || isLoading">
+            {{ isLoading ? 'LOGGING IN...' : 'LOG IN' }}
+          </button>
+          
+          <p>NEW USER ? <span class="signup" (click)="toggleLoginMode()">SIGN UP</span></p>
+          
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+        </form>
+      </div>
+
+      <!-- Signup Form -->
+      <div *ngIf="!isLogin" class="form-container sign-up-container">
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+          <img src="/assets/oo.png" alt="Logo" class="logo" />
+          <h1>Create Account</h1>
+          
+          <input 
+            type="text" 
+            placeholder="Full Name" 
+            formControlName="fullname"
+            [class.invalid]="registerForm.get('fullname')?.invalid && registerForm.get('fullname')?.touched"
+          />
+          <div *ngIf="registerForm.get('fullname')?.invalid && registerForm.get('fullname')?.touched" class="error-text">
+            Full name is required
+          </div>
+          
+          <input 
+            type="email" 
+            placeholder="Email" 
+            formControlName="email"
+            [class.invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+          />
+          <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="error-text">
+            Please enter a valid email
+          </div>
+          
+          <input 
+            type="tel" 
+            placeholder="Phone Number" 
+            formControlName="phone_number"
+            [class.invalid]="registerForm.get('phone_number')?.invalid && registerForm.get('phone_number')?.touched"
+          />
+          <div *ngIf="registerForm.get('phone_number')?.invalid && registerForm.get('phone_number')?.touched" class="error-text">
+            Phone number is required
+          </div>
+          
+          <input 
+            type="password" 
+            placeholder="Password" 
+            formControlName="password"
+            [class.invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+          />
+          <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="error-text">
+            Password must be at least 6 characters
+          </div>
+          
+          <input 
+            type="password" 
+            placeholder="Confirm Password" 
+            formControlName="confirmPassword"
+            [class.invalid]="registerForm.hasError('mismatch')"
+          />
+          <div *ngIf="registerForm.hasError('mismatch')" class="error-text">
+            Passwords do not match
+          </div>
+          
+          <div class="address-input-group">
+            <input 
+              type="text" 
+              placeholder="Select your location on map" 
+              formControlName="address"
+              readonly
+              (click)="openMapModal()"
+              [class.invalid]="registerForm.get('address')?.invalid && registerForm.get('address')?.touched"
+              [value]="registerForm.get('address')?.value"
+            />
+            <span class="location-icon" (click)="openMapModal()">
+              <i class="fas fa-map-marker-alt"></i>
+            </span>
+          </div>
+          <div *ngIf="registerForm.get('address')?.invalid && registerForm.get('address')?.touched" class="error-text">
+            Please select your location on the map
+          </div>
+
+          <!-- Map Modal -->
+          <div class="map-modal-backdrop" *ngIf="showMapModal">
+            <div class="map-modal">
+              <div class="map-modal-header">
+                <span>Select your location</span>
+                <button type="button" class="close-btn" (click)="closeMapModal()">&times;</button>
+              </div>
+              <div id="map-modal"></div>
+              <div class="map-modal-actions">
+                <button type="button" (click)="selectCurrentLocation()">Select Current Location</button>
+                <button type="button" class="confirm-btn" (click)="confirmLocation()">Confirm Location</button>
+              </div>
+              <div class="selected-address">{{ selectedLocation }}</div>
+            </div>
+          </div>
+          
+          <button type="submit" [disabled]="registerForm.invalid || isLoading">
+            {{ isLoading ? 'REGISTERING...' : 'REGISTER' }}
+          </button>
+          
+          <p>Already have an account? <span class="login" (click)="toggleLoginMode()">LOGIN</span></p>
+          
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+          
+          <div *ngIf="successMessage" class="success-message">
+            {{ successMessage }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

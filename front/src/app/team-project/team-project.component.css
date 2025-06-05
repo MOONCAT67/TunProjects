@@ -1,0 +1,313 @@
+body, html, .team-projects-wrapper {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  background: linear-gradient(135deg, #f8f6f2 0%, #ffe5c2 100%);
+  color: #222;
+}
+
+.team-projects-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 3rem 1.5rem;
+}
+
+.page-title {
+  font-size: 2.3rem;
+  font-weight: bold;
+  margin: 0 0 2.5rem 0;
+  padding-top: 1.5rem;
+  padding-left: 0.2rem;
+  letter-spacing: 1px;
+  color: #222;
+  text-shadow: 0 2px 8px rgba(255,133,0,0.08);
+  animation: fadeInDown 0.7s;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: none; }
+}
+
+.project-section {
+  background: #fff;
+  margin-bottom: 3.5rem;
+  padding: 2.2rem 2rem 2.5rem 2rem;
+  border-radius: 22px;
+  box-shadow: 0 8px 32px rgba(255,133,0,0.10), 0 1.5px 8px rgba(0,0,0,0.04);
+  animation: fadeIn 0.8s;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.project-section:hover {
+  box-shadow: 0 16px 48px rgba(255,133,0,0.18), 0 2px 12px rgba(0,0,0,0.07);
+  transform: translateY(-2px) scale(1.01);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: none; }
+}
+
+.project-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: transparent;
+  padding: 0 0 0.5rem 0;
+  margin-bottom: 1.2rem;
+}
+
+.project-title-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.project-title {
+  font-size: 2.3rem;
+  font-weight: bold;
+  margin: 0 0 0.7rem 0;
+  color: #ff8500;
+  letter-spacing: 1px;
+}
+
+.my-tasks-btn {
+  background: linear-gradient(90deg, #ff8500 0%, #ff6b00 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7em 2em;
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-bottom: 0.5em;
+  cursor: pointer;
+  margin-top: 0.5em;
+  box-shadow: 0 2px 8px rgba(255,133,0,0.08);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  letter-spacing: 1px;
+}
+
+.my-tasks-btn:hover {
+  background: linear-gradient(90deg, #ff6b00 0%, #ff8500 100%);
+  box-shadow: 0 4px 16px rgba(255,133,0,0.13);
+  transform: scale(1.04);
+}
+
+.project-status-badge {
+  font-size: 1.1em;
+  font-weight: 600;
+  padding: 0.4em 1.5em;
+  border-radius: 8px;
+  margin-left: 1em;
+  margin-top: 0.5em;
+  background: #bcd2f7;
+  color: #fff;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(140,182,247,0.10);
+  transition: background 0.2s;
+}
+.status-in-progress {
+  background: #8cb6f7;
+  color: #fff;
+}
+.status-finished {
+  background: #bcbcbc;
+  color: #fff;
+}
+
+.main-task-block {
+  background: linear-gradient(90deg, #ff9c3f 0%, #ffb36b 100%);
+  border-radius: 16px;
+  margin: 1.7em 0 1.2em 0;
+  padding: 1.5em 1.2em 1.7em 1.2em;
+  box-shadow: 0 8px 32px rgba(255,133,0,0.10);
+  animation: fadeIn 0.8s;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.main-task-block:hover {
+  box-shadow: 0 16px 48px rgba(255,133,0,0.18), 0 2px 12px rgba(0,0,0,0.07);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.main-task-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2em;
+}
+
+.main-task-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #111;
+  letter-spacing: 1px;
+}
+
+.main-task-status-badge {
+  font-size: 1.1em;
+  font-weight: 700;
+  background: #e6e6e6;
+  color: #222;
+  border-radius: 8px;
+  padding: 0.5em 1.5em;
+  margin-left: 1em;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(230,230,230,0.10);
+  transition: background 0.2s;
+}
+.status-under-work {
+  background: #e6e6e6;
+  color: #222;
+}
+.status-still {
+  background: #bcbcbc;
+  color: #222;
+}
+.status-in-progress {
+  background: #8cb6f7;
+  color: #fff;
+}
+
+.subtasks-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5em;
+  margin-top: 0.5em;
+}
+
+.subtask-card {
+  background: #f7f7f7;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 1.2em 1.3em 1.3em 1.3em;
+  min-width: 220px;
+  max-width: 260px;
+  flex: 1 1 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  animation: fadeIn 0.8s;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.subtask-card:hover {
+  box-shadow: 0 8px 32px rgba(29,233,182,0.13), 0 2px 12px rgba(0,0,0,0.07);
+  transform: scale(1.03);
+}
+
+.subtask-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.7em;
+}
+
+.subtask-title {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #222;
+}
+
+.worker-info {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  background: #fff8f0;
+  border-radius: 12px;
+  padding: 0.2em 0.7em;
+  box-shadow: 0 1px 4px rgba(255,133,0,0.07);
+}
+
+.worker-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.3em;
+  border: 1.5px solid #ff8500;
+}
+
+.worker-fullname {
+  font-size: 1em;
+  font-weight: 600;
+  color: #222;
+}
+
+.subtask-desc {
+  font-size: 1em;
+  color: #222;
+  margin-bottom: 1em;
+  margin-top: 0.2em;
+}
+
+.subtask-status-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: auto;
+}
+
+.subtask-status-badge {
+  font-size: 1em;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 0.4em 1.5em;
+  margin-top: 0.5em;
+  letter-spacing: 1px;
+  background: #e6e6e6;
+  color: #222;
+  box-shadow: 0 1px 4px rgba(230,230,230,0.10);
+  transition: background 0.2s;
+}
+.badge-not-started {
+  background: #ffe066;
+  color: #222;
+}
+.badge-in-progress {
+  background: #1de9b6;
+  color: #fff;
+}
+.badge-finished {
+  background: #bcbcbc;
+  color: #fff;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #ffe5c2;
+  border-top: 5px solid #ff8500;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: #dc3545;
+  background: #fff0f0;
+  border-radius: 6px;
+  padding: 0.5em 1em;
+  margin-top: 0.5em;
+  font-size: 1.1em;
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+@media (max-width: 900px) {
+  .subtasks-row {
+    flex-direction: column;
+    gap: 0.7em;
+  }
+  .main-task-block {
+    padding: 1em 0.3em 1em 0.3em;
+  }
+}

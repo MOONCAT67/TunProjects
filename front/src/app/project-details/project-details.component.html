@@ -1,0 +1,218 @@
+<div class="project-details-container">
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Loading project details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error">
+    <div class="error-icon">
+      <i class="fas fa-exclamation-circle"></i>
+    </div>
+    <p class="error-message">{{ error }}</p>
+    <button class="retry-btn" (click)="loadProjectDetails(project?.id?.toString() || '')">
+      <i class="fas fa-redo"></i> Retry
+    </button>
+  </div>
+
+  <!-- Project Details -->
+  <div class="project-content" *ngIf="!loading && project">
+    <!-- Hero Section -->
+    <div class="project-hero">
+      <div class="hero-content">
+        <div class="project-meta">
+          <span class="project-type" [class.team]="project.project_type === 'team'" *ngIf="project.project_type !== 'solo'">
+            <i class="fas" [ngClass]="project.project_type === 'team' ? 'fa-users' : 'fa-user'"></i>
+            {{ project.project_type }}
+          </span>
+          <span class="project-status" [class]="project.status">
+            <i class="fas fa-circle"></i>
+            {{ projectStatus }}
+          </span>
+        </div>
+        <h1 class="project-title">{{ project.title }}</h1>
+        <div class="project-budget">
+          <span class="budget-label">Budget</span>
+          <span class="budget-value">{{ formattedBudget }}</span>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <button class="apply-btn" (click)="toggleApplicationForm()">
+          <i class="fas" [ngClass]="showApplicationForm ? 'fa-times' : 'fa-paper-plane'"></i>
+          {{ showApplicationForm ? 'Cancel Application' : 'Apply for this Project' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="project-main">
+      <!-- Left Column -->
+      <div class="project-info">
+        <!-- Description Section -->
+        <section class="info-section description-section">
+          <h2><i class="fas fa-info-circle"></i> Project Details</h2>
+          <p class="description">{{ project.description }}</p>
+        </section>
+
+        <!-- Location Section -->
+        <section class="info-section location-section">
+          <h2><i class="fas fa-map-marker-alt"></i> Location</h2>
+          <div id="project-detail-map" class="project-detail-map"></div>
+        </section>
+
+        <!-- Required Jobs Section -->
+        <section class="info-section jobs-section" *ngIf="project.required_jobs?.length">
+          <h2><i class="fas fa-tools"></i> Required Jobs</h2>
+          <div class="jobs-list">
+            <div class="job-card" *ngFor="let job of project.required_jobs">
+              <div class="job-icon">
+                <i class="fas fa-briefcase"></i>
+              </div>
+              <div class="job-info">
+                <span class="job-name">{{ job.job_name }}</span>
+                <span class="workers-needed">{{ job.workers_needed }} workers needed</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column -->
+      <div class="project-sidebar">
+        <!-- Timeline Section -->
+        <section class="sidebar-section timeline-section">
+          <h3><i class="fas fa-clock"></i> Timeline</h3>
+          <div class="timeline-item">
+            <span class="label">Created</span>
+            <span class="value">{{ formattedCreatedAt }}</span>
+          </div>
+          <div class="timeline-item">
+            <span class="label">Deadline</span>
+            <span class="value">{{ formattedDeadline }}</span>
+          </div>
+          <div class="timeline-item">
+            <span class="label">Time Left</span>
+            <span class="value" [class.urgent]="daysLeft <= 7">
+              {{ daysLeft }} days
+            </span>
+          </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="sidebar-section stats-section">
+          <h3><i class="fas fa-chart-bar"></i> Project Stats</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-value">{{ project.total_applications }}</span>
+              <span class="stat-label">Applications</span>
+            </div>
+            <!-- <div class="stat-item">
+              <span class="stat-value">{{ project.total_tasks }}</span>
+              <span class="stat-label">Tasks</span>
+            </div> -->
+          </div>
+        </section>
+
+        <!-- Client Info Section -->
+        <section class="sidebar-section client-section">
+          <h3><i class="fas fa-user-tie"></i> Client Information</h3>
+          <div class="client-card">
+            <div class="client-info-item">
+              <span class="label">Name</span>
+              <span class="value">{{ project.client_name }}</span>
+            </div>
+            <div class="client-info-item">
+              <span class="label">Email</span>
+              <span class="value">{{ project.client_email }}</span>
+            </div>
+            <div class="client-info-item">
+              <span class="label">Phone</span>
+              <span class="value">{{ project.client_phone }}</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Application Form -->
+    <div class="application-section" [class.show]="showApplicationForm">
+      <div class="application-form-container">
+        <h2><i class="fas fa-paper-plane"></i> Submit Your Application</h2>
+        <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="application-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="laborPrice">
+                <i class="fas fa-dollar-sign"></i> Labor Price
+              </label>
+              <input type="number" id="laborPrice" formControlName="laborPrice" placeholder="Enter labor price">
+              <div class="error-message" *ngIf="applicationForm.get('laborPrice')?.touched && applicationForm.get('laborPrice')?.errors?.['required']">
+                Labor price is required
+              </div>
+              <div class="error-message" *ngIf="applicationForm.get('laborPrice')?.touched && applicationForm.get('laborPrice')?.errors?.['min']">
+                Labor price must be positive
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="materialsPrice">
+                <i class="fas fa-box"></i> Materials Price
+              </label>
+              <input type="number" id="materialsPrice" formControlName="materialsPrice" placeholder="Enter materials price">
+              <div class="error-message" *ngIf="applicationForm.get('materialsPrice')?.touched && applicationForm.get('materialsPrice')?.errors?.['required']">
+                Materials price is required
+              </div>
+              <div class="error-message" *ngIf="applicationForm.get('materialsPrice')?.touched && applicationForm.get('materialsPrice')?.errors?.['min']">
+                Materials price must be positive
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="estimatedDuration">
+                <i class="fas fa-calendar-alt"></i> Duration
+              </label>
+              <input type="number" id="estimatedDuration" formControlName="estimatedDuration" min="1" max="999" placeholder="Enter duration in days">
+              <div class="error-message" *ngIf="applicationForm.get('estimatedDuration')?.touched && applicationForm.get('estimatedDuration')?.errors?.['required']">
+                Duration is required
+              </div>
+              <div class="error-message" *ngIf="applicationForm.get('estimatedDuration')?.touched && applicationForm.get('estimatedDuration')?.errors?.['min']">
+                Duration must be at least 1 day
+              </div>
+              <div class="error-message" *ngIf="applicationForm.get('estimatedDuration')?.touched && applicationForm.get('estimatedDuration')?.errors?.['max']">
+                Duration cannot exceed 999 days
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="workType">
+                <i class="fas fa-users"></i> Work Type
+              </label>
+              <select id="workType" formControlName="workType">
+                <option value="solo">Solo Work</option>
+                <option value="team" *ngIf="isTeamLeader">Team Work</option>
+              </select>
+              <div class="error-message" *ngIf="applicationForm.get('workType')?.touched && applicationForm.get('workType')?.errors?.['required']">
+                Work type is required
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="submit-btn" [disabled]="loading">
+              <i class="fas fa-paper-plane"></i>
+              <span *ngIf="!loading">Submit Application</span>
+              <span *ngIf="loading">Submitting...</span>
+            </button>
+          </div>
+
+          <div class="success-message" *ngIf="success">
+            <i class="fas fa-check-circle"></i>
+            Your application has been submitted successfully!
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

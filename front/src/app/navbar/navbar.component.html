@@ -1,0 +1,180 @@
+<header class="navbar">
+  <div class="logo">
+    <img src="assets/a.png" alt="logo" class="logo-icon" />
+    <span (click)="goToBody()" class="tt">
+      <span class="orange">TUN</span>PROJECT
+    </span>
+  </div>      
+  <nav class="nav-links">
+    <!-- Client Navigation -->
+    <ng-container *ngIf="!currentUser || currentUser.role === 'client'">
+      <a routerLink="/search-worker">FIND TALENT</a>
+      <a>FIND WORK</a>
+      <a>WHY US</a>
+    </ng-container>
+    
+    <!-- Worker Navigation -->
+    <ng-container *ngIf="currentUser?.role === 'worker'">
+      <a routerLink="/search-worker">FIND TALENT</a>
+      <div class="worker-space-dropdown" (clickOutside)="closeDropdowns()">
+        <a (click)="toggleWorkerSpace($event)" class="worker-space-link">
+          WORKER SPACE
+          <i class="bi bi-chevron-down" [class.rotate]="isWorkerSpaceOpen"></i>
+        </a>
+        <div class="worker-space-menu" [class.show]="isWorkerSpaceOpen">
+          <a (click)="goToManageTeam()">
+            <i class="bi bi-people"></i>
+            Manage Team
+          </a>
+          <a (click)="goToFindProjects()">
+            <i class="bi bi-search"></i>
+            Find Projects
+          </a>
+          <a (click)="goToCurrentProjects()">
+            <i class="bi bi-list-task"></i>
+            Current Projects
+          </a>
+          <div class="worker-space-policy">
+            <p>By using our platform, you agree to our terms of service and privacy policy.</p>
+          </div>
+        </div>
+      </div>
+      <a>WHY US</a>
+    </ng-container>
+  </nav>
+  
+  <div class="right-section">
+    <div class="search-container">
+      <input type="text" placeholder="Search..." />
+      <span class="icon"><i class="bi bi-search"></i></span>
+    </div>
+    
+    <!-- Notification Icon -->
+    <div class="notification-container" *ngIf="isAuthenticated">
+      <div class="notification-icon" (click)="toggleNotifications()">
+        <i class="bi bi-bell"></i>
+        <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+      </div>
+
+      <div class="notification-dropdown" *ngIf="showNotifications">
+        <div class="notification-header">
+          <h3>Notifications</h3>
+          <span class="unread-count" *ngIf="unreadCount > 0">{{ unreadCount }} unread</span>
+        </div>
+
+        <div class="notification-list">
+          <!-- Loading State -->
+          <div *ngIf="isLoading" class="loading-state">
+            <div class="loader"></div>
+            <p>Loading notifications...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="!isLoading && notifications.length === 0 && teamRequests.length === 0" class="empty-state">
+            <i class="bi bi-bell-slash"></i>
+            <p>No notifications yet</p>
+          </div>
+
+          <!-- Notifications -->
+          <div *ngFor="let notification of notifications" 
+               class="notification-item"
+               [class.unread]="!notification.is_read">
+            <div class="notification-content">
+              <p class="message">{{ notification.message }}</p>
+              <div class="notification-footer">
+                <span class="time">{{ formatDate(notification.created_at) }}</span>
+                <span class="read-status" *ngIf="notification.is_read">
+                  <i class="bi bi-check2-all"></i>
+                </span>
+              </div>
+            </div>
+            <div class="notification-actions">
+              <button *ngIf="!notification.is_read" 
+                      class="mark-read-btn"
+                      (click)="markAsRead(notification)">
+                <i class="bi bi-check"></i> Mark as read
+              </button>
+              <button *ngIf="notification.type === 'project' && notification.title === 'Application Accepted' && notification.extra && !signedContracts[notification.extra]"
+                      class="sign-contract-btn"
+                      (click)="goToSignContract(notification)">
+                <i class="bi bi-file-earmark-text"></i> Go Sign and Start Working
+              </button>
+              <button *ngIf="notification.type === 'project' && notification.title === 'Application Accepted' && notification.extra && signedContracts[notification.extra]"
+                      class="sign-contract-btn"
+                      (click)="goToProjectSection()">
+                <i class="bi bi-folder"></i> Go to Project Section
+              </button>
+              <button class="delete-btn"
+                      (click)="deleteNotification(notification)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Team Requests -->
+          <div *ngFor="let request of teamRequests" 
+               class="notification-item team-request-item">
+            <div class="team-request-content">
+              <ng-container [ngSwitch]="request.type">
+                <!-- Worker wants to join a team -->
+                <div *ngSwitchCase="'to_leader_to_join_his_team'">
+                  <p class="request-header">
+                    <span class="sender-name">{{ request.sender.fullname | uppercase }}</span> wants to join your team
+                    <span class="team-name" *ngIf="request.message && request.message.includes('team')">{{ request.message.split('team')[1] }}</span>
+                  </p>
+                  <p class="request-details">{{ request.message }}</p>
+                </div>
+                <!-- Leader invites worker to join his team -->
+                <div *ngSwitchCase="'to_worker_to_join_his_team'">
+                  <p class="request-header">
+                    <span class="sender-name">{{ request.sender.fullname | uppercase }}</span> invited you to join their team
+                    <span class="team-name" *ngIf="request.sender.team">{{ request.sender.team.name }}</span>
+                  </p>
+                  <p class="request-details">{{ request.message }}</p>
+                </div>
+                <!-- General or fallback -->
+                <div *ngSwitchDefault>
+                  <p class="request-header">TEAM REQUEST</p>
+                  <p class="request-details">{{ request.message }}</p>
+                </div>
+              </ng-container>
+            </div>
+            <div class="team-request-actions">
+              <button class="accept-button" (click)="acceptTeamRequest(request)">V</button>
+              <button class="reject-button" (click)="rejectTeamRequest(request)">X</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages Icon -->
+    <div class="messages-container" *ngIf="isAuthenticated">
+      <div class="messages-icon" (click)="goToMessagerie()">
+        <i class="bi bi-envelope"></i>
+        <span class="messages-badge" *ngIf="unreadMessagesCount > 0">{{ unreadMessagesCount }}</span>
+      </div>
+    </div>
+
+    <!-- Profile Dropdown -->
+    <div class="profile-container" (clickOutside)="closeDropdowns()">
+      <div class="profile" (click)="toggleDropdown($event)">
+        <i class="bi bi-person-circle"></i>
+        <span class="user-name" *ngIf="isAuthenticated">{{ currentUser?.fullname }}</span>
+      </div>
+      
+      <!-- Dropdown Menu -->
+      <div class="dropdown-menu" [class.show]="isDropdownOpen">
+        <ng-container *ngIf="!isAuthenticated">
+          <a (click)="goToAuth()">Sign In</a>
+          <a (click)="goToAuth()">Login</a>
+        </ng-container>
+        <ng-container *ngIf="isAuthenticated">
+          <a (click)="goToMyProjects()">My Projects</a>
+          <a (click)="logout()">Logout</a>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</header>

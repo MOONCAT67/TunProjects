@@ -1,0 +1,55 @@
+<div class="team-projects-wrapper">
+  <h1 class="page-title">TEAM PROJECTS</h1>
+  <div *ngIf="loading" class="loading-spinner"><div class="spinner"></div></div>
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+  <ng-container *ngIf="!loading && !error">
+    <div *ngFor="let project of projects" class="project-section">
+      <div class="project-header-row">
+        <div class="project-title-block">
+          <h2 class="project-title">{{ project.title }}</h2>
+          <button class="my-tasks-btn">MY TASKS IN THIS PROJECT</button>
+        </div>
+        <span class="project-status-badge status-in-progress" *ngIf="project.status === 'in progress'">IN PROGRESS</span>
+        <span class="project-status-badge status-finished" *ngIf="project.status === 'finished'">FINISHED</span>
+      </div>
+      <div *ngFor="let mainTask of project.main_tasks" class="main-task-block">
+        <div class="main-task-header-row">
+          <span class="main-task-title">MAIN TASK {{ mainTask.title }}</span>
+          <span class="main-task-status-badge"
+                [ngClass]="{
+                  'status-in-progress': mainTask.sequence_order === project.current_phase,
+                  'status-finished': mainTask.sequence_order < project.current_phase,
+                  'status-still': mainTask.sequence_order > project.current_phase
+                }">
+            {{ mainTask.sequence_order === project.current_phase ? 'IN PROGRESS' : (mainTask.sequence_order < project.current_phase ? 'FINISHED' : 'NOT STARTED') }}
+          </span>
+        </div>
+        <div class="subtasks-row">
+          <div *ngFor="let subTask of mainTask.sub_tasks" class="subtask-card">
+            <div class="subtask-header-row">
+              <span class="subtask-title">SUBTASK</span>
+            </div>
+            <div class="assigned-to-label" style="margin-top: 0.3em; font-size: 0.98em; color: #444; font-weight: 500;">Assigned to:</div>
+            <div class="worker-info" *ngIf="getWorkerProfile(subTask.assigned_to)">
+              <img *ngIf="getWorkerProfile(subTask.assigned_to)?.profile_picture"
+                   [src]="getWorkerProfile(subTask.assigned_to)?.profile_picture"
+                   alt="Worker Picture" class="worker-avatar">
+              <span class="worker-fullname">{{ getWorkerProfile(subTask.assigned_to)?.fullname }}</span>
+            </div>
+            <div class="subtask-desc">{{ subTask.description }}</div>
+            <div class="subtask-status-row">
+              <span class="subtask-status-badge"
+                    [ngClass]="{
+                      'badge-not-started': subTask.status === 'not started',
+                      'badge-in-progress': subTask.status === 'in progress',
+                      'badge-finished': subTask.status === 'finished'
+                    }">
+                {{ subTask.status ? subTask.status.toUpperCase() : '' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

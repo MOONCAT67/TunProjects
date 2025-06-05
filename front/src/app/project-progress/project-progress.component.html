@@ -1,0 +1,171 @@
+<div class="progress-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="progress-loading dark-bg">
+    <div class="infinity-loader">
+      <svg viewBox="0 0 131 60" width="180" height="90">
+        <defs>
+          <linearGradient id="infinity-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ff8500"/>
+            <stop offset="100%" stop-color="#ff6b00"/>
+          </linearGradient>
+        </defs>
+        <path class="infinity-bg" d="M15,30 Q35,0 65,30 Q95,60 115,30" fill="none" stroke="#1a2233" stroke-width="10"/>
+        <path class="infinity-loader-path" d="M15,30 Q35,0 65,30 Q95,60 115,30" fill="none" stroke="url(#infinity-gradient)" stroke-width="10" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p class="loading-title">Loading project progress...</p>
+    <p class="loading-desc">Please wait while we fetch the latest updates for your project.</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="progress-error">
+    <p>{{ error }}</p>
+    <button routerLink="/client-projects" class="back-btn">Back to Projects</button>
+  </div>
+
+  <!-- Not Enough Tasks State (Planning) -->
+  <div *ngIf="!isLoading && !error && mainTasks.length < 2" class="progress-empty planning-card">
+    <div class="planning-illustration">
+      <div class="plan-gear">
+        <svg width="60" height="60" viewBox="0 0 60 60">
+          <circle cx="30" cy="30" r="24" fill="#fff" stroke="#ff8500" stroke-width="4"/>
+          <g class="gear-anim">
+            <rect x="28" y="10" width="4" height="10" rx="2" fill="#ff8500"/>
+            <rect x="28" y="40" width="4" height="10" rx="2" fill="#ff8500"/>
+            <rect x="10" y="28" width="10" height="4" rx="2" fill="#ff8500"/>
+            <rect x="40" y="28" width="10" height="4" rx="2" fill="#ff8500"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <h2 class="planning-title">Project under planning</h2>
+    <p class="planning-desc">You will get notified when the planning is done.</p>
+    <div class="planning-animation">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+
+  <!-- Progress Visualization -->
+  <div *ngIf="!isLoading && !error && mainTasks.length >= 2" class="progress-visualization">
+    <!-- Current Phase Task -->
+    <div *ngIf="currentPhaseTask" class="current-phase-task">
+      <h3>Current Phase: {{ currentPhaseTask.title }}</h3>
+      <p>{{ currentPhaseTask.description }}</p>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar-wrapper">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" [style.width.%]="totalProgress"></div>
+      </div>
+      <div class="progress-points">
+        <div *ngFor="let task of mainTasks; let i = index"
+             class="progress-point"
+             [ngClass]="{'active': selectedTask?.id === task.id}"
+             [style.left.%]="(i / (mainTasks.length - 1)) * 100"
+             (mouseenter)="hoveredTask = task"
+             (mouseleave)="hoveredTask = null"
+             (click)="selectTask(task)">
+          <div class="point-circle" [ngClass]="{
+            'completed': task.status === 'completed',
+            'in-progress': task.status === 'in progress',
+            'not-started': task.status === 'not started'
+          }"></div>
+          <div *ngIf="hoveredTask?.id === task.id" class="point-tooltip">
+            {{ task.title }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="progress-bar-labels">
+      <span *ngFor="let task of mainTasks; let i = index" [style.left.%]="(i / (mainTasks.length - 1)) * 100" class="bar-label">{{ task.title }}</span>
+    </div>
+
+    <!-- Main Task & Subtasks -->
+    <div *ngIf="selectedTask" class="main-task-details">
+      <h3>{{ selectedTask.title }}</h3>
+      <p>{{ selectedTask.description }}</p>
+      <div class="subtasks-list">
+        <div *ngFor="let subtask of selectedTask.subtasks" class="subtask-item" (click)="selectSubtask(subtask)">
+          <div class="subtask-header">
+            <span>{{ subtask.title }}</span>
+            <div class="subtask-info">
+              <span class="worker-name" *ngIf="getWorkerProfile(subtask.assigned_to) as workerProfile">
+                {{ workerProfile.fullname }}
+              </span>
+              <span class="status-icon">
+                <i *ngIf="subtask.status === 'not started'" class="bi bi-circle" style="color: #ccc;"></i>
+                <i *ngIf="subtask.status === 'in progress'" class="bi bi-arrow-repeat" style="color: #ff8500;"></i>
+                <i *ngIf="subtask.status === 'completed'" class="bi bi-check-circle-fill" style="color: #4CAF50;"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subtask Details -->
+    <div *ngIf="selectedSubtask" class="subtask-details">
+      <h4>{{ selectedSubtask.title }}</h4>
+      <p>{{ selectedSubtask.description }}</p>
+      <div><strong>Status:</strong> {{ selectedSubtask.status }}</div>
+      <div><strong>Progress:</strong> {{ selectedSubtask.progress_percentage }}%</div>
+      <div><strong>Deadline:</strong> {{ selectedSubtask.deadline | date }}</div>
+
+      <!-- Assigned Worker Profile in Subtask Details -->
+      <div class="assigned-worker-details" *ngIf="selectedSubtask.assigned_to">
+         <h5>Assigned To:</h5>
+         <ng-container *ngIf="getWorkerProfile(selectedSubtask.assigned_to) as workerProfile">
+            <div class="worker-info-display">
+                <img [src]="workerProfile.profile_picture || 'assets/profile.jpg'" alt="Worker Avatar" class="worker-avatar-large">
+                <span class="worker-name">{{ workerProfile.fullname }}</span>
+
+                <!-- Tooltip on Hover -->
+                <div class="worker-tooltip">
+                   <div class="tooltip-header">
+                      <img [src]="workerProfile.profile_picture || 'assets/profile.jpg'" alt="Worker Avatar" class="tooltip-avatar">
+                      <h4>{{ workerProfile.fullname }}</h4>
+                   </div>
+                   <div class="tooltip-body">
+                      <p><strong>Role:</strong> {{ workerProfile.role }}</p>
+                      <p><strong>Email:</strong> {{ workerProfile.email }}</p>
+                      <!-- Add phone number if available in UserProfile -->
+                      <p *ngIf="workerProfile.phone_number"><strong>Phone:</strong> {{ workerProfile.phone_number }}</p>
+
+                      <ng-container *ngIf="getWorkerJobs(workerProfile.id) as jobs">
+                        <div *ngIf="jobs.length > 0">
+                           <h5>Jobs/Skills:</h5>
+                           <ul>
+                              <li *ngFor="let job of jobs">
+                                 {{ job.category.name }} ({{ job.years_experience }} years)
+                              </li>
+                           </ul>
+                        </div>
+                        <div *ngIf="jobs.length === 0">
+                           <p>No job information available.</p>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!getWorkerJobs(workerProfile.id)">
+                          <p>No job information available.</p>
+                      </ng-container>
+                   </div>
+                </div>
+            </div>
+         </ng-container>
+         <ng-container *ngIf="!getWorkerProfile(selectedSubtask.assigned_to)">
+            <span>Assigned to: {{ selectedSubtask.assigned_to_name || 'Worker ID ' + selectedSubtask.assigned_to }} (Profile Loading...)</span>
+         </ng-container>
+      </div>
+
+      <div *ngIf="selectedSubtask.attachments?.length">
+        <strong>Attachments:</strong>
+        <ul>
+          <li *ngFor="let att of selectedSubtask.attachments">{{ att.file_name }}</li>
+        </ul>
+      </div>
+      <button class="close-btn" (click)="selectedSubtask = null">Close</button>
+    </div>
+  </div>
+</div>

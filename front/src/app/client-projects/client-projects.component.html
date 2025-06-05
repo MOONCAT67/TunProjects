@@ -1,0 +1,147 @@
+<div class="projects-container">
+  <h1>My Projects</h1>
+
+  <div *ngIf="loading" class="loading">
+    Loading projects...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && projects.length === 0" class="no-projects">
+    No projects found.
+  </div>
+
+  <div class="projects-grid" *ngIf="!loading && !error && projects.length > 0">
+    <div class="project-card" *ngFor="let project of projects">
+      <div class="project-header">
+        <h2>{{ project.title }}</h2>
+        <span class="status-badge" [ngClass]="getStatusClass(project.status)">
+          {{ getStatusText(project.status) }}
+        </span>
+
+        <!-- Contract Button -->
+        <div class="contract-buttons">
+          <button *ngIf="!project.hasContract" 
+                  class="contract-button create-button"
+                  (click)="navigateToContract(project.id, 'create')">
+            <i class="bi bi-file-earmark-plus"></i> Create Contract
+          </button>
+          <button *ngIf="project.hasContract && project.status !== 'in progress'"
+                  class="contract-button modify-button"
+                  (click)="navigateToContract(project.id, 'modify')">
+            <i class="bi bi-pencil"></i> Modify Contract
+          </button>
+          <button *ngIf="project.hasContract && project.status === 'in progress'"
+                  class="contract-button download-button"
+                  (click)="navigateToContract(project.id, 'download')">
+            <i class="bi bi-download"></i> Download Contract
+          </button>
+        </div>
+      </div>
+
+      <div class="project-details">
+        <p class="description">{{ project.description }}</p>
+        <div class="meta-info">
+          <span class="budget">Budget: ${{ project.budget }}</span>
+          <span class="deadline">Deadline: {{ project.deadline | date }}</span>
+        </div>
+        <div class="location">
+          <i class="fas fa-map-marker-alt"></i>
+          {{ project.address }}
+        </div>
+      </div>
+
+      <div class="project-actions">
+        <button class="view-details-btn" (click)="toggleApplications(project)">
+          <i class="fas fa-users"></i> Applications
+          <i class="fas" [ngClass]="{'fa-chevron-down': !project.showApplications, 'fa-chevron-up': project.showApplications}"></i>
+        </button>
+        <button *ngIf="project.status === 'in progress'"
+                [routerLink]="['/project-progress', project.id]"
+                class="view-progress-btn">
+          <i class="fas fa-chart-line"></i> Visualize Progress
+        </button>
+      </div>
+
+      <!-- Applications Dropdown -->
+      <div class="applications-dropdown" *ngIf="project.showApplications">
+        <div *ngIf="!project.applications || project.applications.length === 0" class="no-applications">
+          No applications yet
+        </div>
+        <div *ngIf="project.applications && project.applications.length > 0" class="applications-list">
+          <div *ngFor="let application of project.applications" class="application-card">
+            <div class="application-header">
+              <div class="worker-info" (click)="navigateToWorkerProfile(application.worker_id)" style="cursor: pointer;">
+                <img [src]="application.profile_picture || 'assets/default-avatar.png'" alt="Profile" class="profile-picture">
+                <div class="worker-details">
+                  <h4>{{ application.fullname }}</h4>
+                  <span class="job-category">{{ application.job_category_name }}</span>
+                </div>
+              </div>
+              <span class="application-status" [ngClass]="getApplicationStatusClass(application.status)">
+                {{ application.display_status || application.status }}
+              </span>
+            </div>
+            
+            <div class="application-details">
+              <div class="detail-row">
+                <div class="detail-item">
+                  <span class="label">Labor Price:</span>
+                  <span class="value labor-price">{{ formatCurrency(application.labor_price) }}</span>
+                </div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-item">
+                  <span class="label">Materials Price:</span>
+                  <span class="value materials-price">{{ formatCurrency(application.materials_price) }}</span>
+                </div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-item">
+                  <span class="label">Total Price:</span>
+                  <span class="value total-price">{{ formatCurrency(getTotalPrice(application)) }}</span>
+                </div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-item">
+                  <span class="label">Duration:</span>
+                  <span class="value duration">{{ application.estimated_duration }} days</span>
+                </div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-item">
+                  <span class="label">Work Type:</span>
+                  <span class="value">{{ application.work_type === 'solo' ? 'Solo Work' : 'Team Work' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="application-actions" *ngIf="project.status === 'open' ">
+              <button class="accept-btn" (click)="acceptApplication(project.id, application.id)">
+                Accept Application
+              </button>
+              <button class="message-btn" (click)="openMessageModal(application)">
+                <i class="fas fa-envelope"></i> Message
+              </button>
+            </div>
+            <div *ngIf="openMessageAppId === application.id" class="inline-message-box">
+              <input type="text"
+                     [(ngModel)]="messageInputs[application.id]"
+                     [disabled]="isSendingMessage[application.id]"
+                     placeholder="Contact worker and negotiate with him" />
+              <button class="send-arrow-btn"
+                      [disabled]="!messageInputs[application.id] || isSendingMessage[application.id]"
+                      (click)="sendMessageToWorker(application)">
+                <i class="fas fa-arrow-right"></i>
+              </button>
+              <span *ngIf="messageStatus[application.id] === 'success'" class="msg-success">Message sent!</span>
+              <span *ngIf="messageStatus[application.id] === 'error'" class="msg-error">Failed to send.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

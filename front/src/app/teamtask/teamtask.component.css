@@ -1,0 +1,205 @@
+.team-tasks-container {
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  background: #fff8f0; /* Beige */
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  max-width: 1200px;
+  margin: 20px auto;
+  color: #222; /* Black */
+}
+
+.loading-state, .error-state, .empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #ffe5c2; /* Light beige */
+}
+
+.spinner {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #ff8500; /* Orange */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 15px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-state p {
+    color: #d32f2f; /* Red */
+    font-weight: 500;
+}
+
+.empty-state p {
+    color: #666; /* Grey */
+}
+
+h2, h3, h4 {
+  color: #ff6600; /* Orange */
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.project-group {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  border: 1px solid #ffe5c2;
+}
+
+.project-title {
+    margin-top: 0;
+}
+
+.main-task-group {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #fff8f0; /* Beige */
+  border-radius: 10px;
+  border: 1px solid #ffe5c2;
+}
+
+.main-task-title {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.subtasks-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.subtask-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  padding: 15px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative; /* Needed for the thinking bubble */
+  overflow: hidden; /* Hide overflow for expanded details */
+}
+
+.subtask-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.subtask-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.subtask-title {
+  font-weight: 600;
+  font-size: 1.1em;
+  color: #222; /* Black */
+}
+
+.status-badge {
+  font-size: 0.8em;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 3px 8px;
+  color: #fff;
+}
+
+.badge-not-started {
+  background-color: #ccc; /* Grey */
+}
+
+.badge-in-progress {
+  background-color: #ff8500; /* Orange */
+}
+
+.badge-completed {
+  background-color: #4CAF50; /* Green */
+}
+
+/* Thinking Bubble */
+.thinking-bubble {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 248, 240, 0.95); /* Semi-transparent beige */
+    color: #ff6600; /* Orange */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1em;
+    font-weight: 600;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 5; /* Above normal content, below expanded details */
+    pointer-events: none; /* Allow clicks to pass through */
+}
+
+.subtask-card:hover .thinking-bubble {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Expanded Details */
+.subtask-details-expanded {
+    padding: 0 15px; /* Inherited from animation, adjust as needed */
+    overflow: hidden;
+}
+
+.subtask-description {
+    margin-bottom: 10px;
+    color: #555; /* Darker grey */
+    line-height: 1.5;
+}
+
+.subtask-meta {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.subtask-meta strong {
+    color: #ff8500; /* Orange */
+    margin-right: 5px;
+}
+
+.accept-button {
+  background-color: #4CAF50; /* Green */
+  color: #fff;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.accept-button:hover {
+  background-color: #388E3C; /* Darker Green */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .team-tasks-container {
+    padding: 20px;
+  }
+
+  .subtasks-list {
+    grid-template-columns: 1fr; /* Stack cards on small screens */
+  }
+}

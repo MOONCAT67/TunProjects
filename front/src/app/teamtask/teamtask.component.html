@@ -1,0 +1,73 @@
+<div class="team-tasks-container">
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading your assigned subtasks...</p>
+  </div>
+
+  <div *ngIf="error" class="error-state">
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="!loading && !error && projects.length > 0" class="tasks-content">
+    <h2>Your Assigned Subtasks</h2>
+
+    <div *ngFor="let project of projects" class="project-group">
+      <h3 class="project-title">{{ project.project_title }}</h3>
+
+      <div *ngFor="let mainTask of project.main_tasks" class="main-task-group">
+        <h4 class="main-task-title">{{ mainTask.main_task_title }}</h4>
+
+        <div class="subtasks-list">
+          <div *ngFor="let subtask of mainTask.subtasks" class="subtask-card"
+               [@fadeIn]="'*'"
+               (click)="selectSubtask(subtask)">
+
+            <div class="subtask-header">
+              <span class="subtask-title">{{ subtask.title }}</span>
+              <span class="status-badge" [ngClass]="{
+                'badge-not-started': subtask.status === 'not started',
+                'badge-in-progress': subtask.status === 'in progress',
+                'badge-completed': subtask.status === 'completed'
+              }">{{ subtask.status.toUpperCase() }}</span>
+            </div>
+
+            <!-- Thinking Bubble / Hover Effect -->
+            <div class="thinking-bubble" *ngIf="!selectedSubtask || selectedSubtask !== subtask">
+                Click to see details and accept
+            </div>
+
+            <!-- Expanded Details -->
+            <div class="subtask-details-expanded"
+                 [@detailExpand]="selectedSubtask === subtask ? 'expanded' : 'collapsed'">
+
+              <p class="subtask-description">{{ subtask.description }}</p>
+              <div class="subtask-meta">
+                  <div><strong>Deadline:</strong> {{ subtask.deadline | date }}</div>
+                  <div><strong>Progress:</strong> {{ subtask.progress_percentage }}%</div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="subtask-actions">
+                  <button *ngIf="subtask.status === 'not started'" class="accept-button" (click)="acceptSubtask(subtask); $event.stopPropagation();">
+                     Accept Subtask
+                  </button>
+                  <button *ngIf="subtask.status === 'in progress'" class="finish-button" (click)="finishSubtask(subtask); $event.stopPropagation();">
+                     Finish Subtask
+                  </button>
+              </div>
+
+              <!-- Completed Icon -->
+              <div *ngIf="subtask.status === 'completed'" class="completion-icon">
+                  <i class="bi bi-check-circle-fill"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !error && projects.length === 0" class="empty-state">
+    <p>No subtasks assigned to you in this team yet.</p>
+  </div>
+</div>

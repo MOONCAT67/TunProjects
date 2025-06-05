@@ -1,0 +1,235 @@
+.worker-search-container {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  max-width: 1100px;
+  margin: 2rem auto;
+}
+
+.search-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.search-bar {
+  width: 320px;
+  padding: 0.7rem 1.2rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.search-bar:focus {
+  border-color: #7c3aed;
+}
+
+.worker-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  font-size: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.worker-table th, .worker-table td {
+  padding: 1rem 0.7rem;
+  text-align: left;
+}
+.worker-table th {
+  background: #f8f9fb;
+  color: #888;
+  font-weight: 600;
+  border-bottom: 2px solid #f0f0f0;
+}
+.worker-table tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+.worker-table tr:hover {
+  background: #f6f8fa;
+}
+.worker-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f0f0f0;
+}
+.status-active {
+  background: #e6f9ed;
+  color: #2ecc71;
+  padding: 0.3em 1.1em;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95em;
+  display: inline-block;
+}
+.status-inactive {
+  background: #ffeaea;
+  color: #e74c3c;
+  padding: 0.3em 1.1em;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95em;
+  display: inline-block;
+}
+.operation-icons {
+  display: flex;
+  gap: 0.7em;
+}
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #7c3aed;
+  font-size: 1.1em;
+  padding: 0.3em;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.icon-btn:hover {
+  background: #f3f0ff;
+}
+.login-btn {
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  border-radius: 18px;
+  padding: 0.4em 1.3em;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.login-btn:hover {
+  background: #5f27cd;
+}
+.loading, .error, .no-results {
+  text-align: center;
+  margin: 2em 0;
+  color: #888;
+  font-size: 1.1em;
+}
+@media (max-width: 900px) {
+  .worker-search-container {
+    padding: 1rem;
+    max-width: 100vw;
+  }
+  .worker-table th, .worker-table td {
+    padding: 0.7rem 0.3rem;
+    font-size: 0.95em;
+  }
+  .search-bar {
+    width: 100%;
+  }
+}
+
+.message-btn {
+  background: #f3f0ff;
+  color: #7c3aed;
+  border: none;
+  border-radius: 18px;
+  padding: 0.4em 1.3em;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.message-btn i {
+  font-size: 1.1em;
+}
+.message-btn:hover {
+  background: #7c3aed;
+  color: #fff;
+}
+.inline-message-box {
+  background: #f8f9fb;
+  padding: 1em 2em;
+  border-radius: 0 0 10px 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  border-top: 1px solid #eee;
+}
+.inline-message-box input[type="text"] {
+  flex: 1;
+  padding: 0.5em 1em;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 1em;
+  outline: none;
+  transition: border 0.2s;
+}
+.inline-message-box input[type="text"]:focus {
+  border-color: #7c3aed;
+}
+.send-arrow-btn {
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.send-arrow-btn:disabled {
+  background: #d1c4e9;
+  cursor: not-allowed;
+}
+.send-arrow-btn i {
+  font-size: 1.1em;
+}
+.msg-success {
+  color: #2ecc71;
+  font-weight: 600;
+  margin-left: 1em;
+}
+.msg-error {
+  color: #e74c3c;
+  font-weight: 600;
+  margin-left: 1em;
+}
+
+.nearby-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.nearby-btn:hover {
+  background-color: #218838;
+}
+
+.nearby-btn.active {
+  background-color: #dc3545;
+}
+
+.nearby-btn.active:hover {
+  background-color: #c82333;
+}
+
+.nearby-btn i {
+  font-size: 1.1em;
+}

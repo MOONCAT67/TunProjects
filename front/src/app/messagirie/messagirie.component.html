@@ -1,0 +1,52 @@
+<div class="messenger-container">
+  <!-- Sidebar: Conversations -->
+  <div class="sidebar">
+    <h2>Chats</h2>
+    <div *ngIf="isLoadingConversations" class="loading">Loading...</div>
+    <div *ngIf="!isLoadingConversations && conversations.length === 0" class="empty">No conversations yet.</div>
+    <div *ngFor="let convo of conversations" 
+         class="conversation-item" 
+         [class.selected]="selectedConversation?.other_user_id === convo.other_user_id"
+         (click)="selectConversation(convo)">
+      <div class="avatar">
+         <img [src]="getAvatarUrl(convo)" alt="Avatar" class="avatar-img" />
+      </div>
+      <div class="convo-info">
+        <div class="convo-name">{{ convo.other_user_name || 'User ' + convo.other_user_id }}</div>
+        <div class="convo-last">{{ convo.last_message || 'No messages yet.' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main: Messages -->
+  <div class="main">
+    <div class="messages-header" *ngIf="selectedConversation">
+      <div class="avatar">
+         <img [src]="getAvatarUrl(selectedConversation)" alt="Avatar" class="avatar-img" />
+      </div>
+      <div class="header-info">
+        <div class="header-name">{{ selectedConversation.other_user_name || 'User ' + selectedConversation.other_user_id }}</div>
+      </div>
+    </div>
+    <div class="messages-list" id="messages-list">
+      <div *ngIf="isLoadingMessages" class="loading">Loading messages...</div>
+      <div *ngIf="!isLoadingMessages && messages.length === 0 && selectedConversation" class="empty">No messages yet.</div>
+       <div *ngIf="!selectedConversation" class="empty">Select a conversation to start messaging</div>
+      
+      <div *ngFor="let msg of messages" 
+           class="message-bubble" 
+           [class.sent]="msg.sender_id === currentUserId" 
+           [class.received]="msg.sender_id === selectedConversation?.other_user_id">
+        <div class="bubble-content">{{ msg.message }}</div>
+        <div class="bubble-meta">{{ msg.timestamp | date:'shortTime' }}</div>
+      </div>
+    </div>
+    <div class="message-input-row" *ngIf="selectedConversation">
+      <input type="text" [(ngModel)]="messageInput" (keyup.enter)="sendMessage()" placeholder="Type a message..." />
+      <button (click)="sendMessage()"><i class="bi bi-send"></i></button>
+    </div>
+     <div *ngIf="!selectedConversation" class="no-convo-selected">
+      
+    </div>
+  </div>
+</div>

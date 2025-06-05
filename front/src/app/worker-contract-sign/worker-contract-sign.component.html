@@ -1,0 +1,59 @@
+<div class="contract-sign-container">
+  <div class="contract-header">
+    <button class="back-button" (click)="router.navigate(['/worker/current-projects'])">
+      <i class="fas fa-arrow-left"></i> Back to Projects
+    </button>
+    <h2>Review and Sign Contract</h2>
+  </div>
+
+  <div *ngIf="loading" class="loading-message">
+    <div class="spinner"></div>
+    <p>Loading contract...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <i class="fas fa-exclamation-circle"></i>
+    {{ error }}
+  </div>
+
+  <div *ngIf="contractDetails && !loading" class="contract-content-wrapper">
+    <div class="contract-content-section">
+      <h3>Contract Terms and Conditions</h3>
+      <div class="contract-content">
+        <p>{{ contractDetails.content }}</p>
+      </div>
+    </div>
+
+    <div *ngIf="contractDetails.clientSignature" class="signature-section">
+      <h3>Client's Signature</h3>
+      <div class="signature-display">
+        <img [src]="contractDetails.clientSignature" alt="Client Signature">
+      </div>
+    </div>
+
+    <div class="signature-section">
+      <h3>Your Signature</h3>
+      <div class="signature-pad-container">
+        <canvas #workerSignatureCanvas 
+          (mouseup)="handleSignaturePadEnd()"
+          (touchend)="handleSignaturePadEnd()">
+        </canvas>
+      </div>
+      <div class="signature-actions">
+        <button class="clear-button" (click)="clearSignature()">
+          <i class="fas fa-eraser"></i> Clear Signature
+        </button>
+      </div>
+    </div>
+
+    <div class="submit-section">
+      <button 
+        class="submit-button"
+        (click)="submitWorkerSignature()"
+        [disabled]="!workerSignatureData"
+      >
+        <i class="fas fa-file-signature"></i> Sign and Submit
+      </button>
+    </div>
+  </div>
+</div>

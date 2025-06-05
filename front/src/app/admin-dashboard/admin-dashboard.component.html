@@ -1,0 +1,148 @@
+<div class="admin-dashboard">
+  <h1>Admin Dashboard</h1>
+
+  <!-- Navigation Tabs -->
+  <div class="tabs">
+    <button 
+      [class.active]="activeTab === 'requests'"
+      (click)="changeTab('requests')">
+      Verification Requests
+    </button>
+    <button 
+      [class.active]="activeTab === 'clients'"
+      (click)="changeTab('clients')">
+      Clients
+    </button>
+    <button 
+      [class.active]="activeTab === 'projects'"
+      (click)="changeTab('projects')">
+      Projects
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading">
+    Loading...
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Verification Requests Tab -->
+  <div *ngIf="activeTab === 'requests'" class="tab-content">
+    <div class="requests-list" *ngIf="!selectedRequest">
+      <div *ngIf="verificationRequests.length === 0" class="no-data">
+        No pending verification requests
+      </div>
+      <div *ngFor="let request of verificationRequests" class="request-card">
+        <div class="request-info">
+          <h3>{{ request.fullname }}</h3>
+          <p>{{ request.email }}</p>
+          <p class="date">Requested on: {{ request.created_at | date }}</p>
+        </div>
+        <button (click)="viewRequestDetails(request.id)" class="view-btn">
+          View Details
+        </button>
+      </div>
+    </div>
+
+    <!-- Request Details Modal -->
+    <div *ngIf="selectedRequest" class="request-details">
+      <button (click)="closeRequestDetails()" class="close-btn">×</button>
+      
+      <h2>Verification Request Details</h2>
+      
+      <div class="details-section">
+        <h3>User Information</h3>
+        <p><strong>User ID:</strong> {{ selectedRequest.request.user_id }}</p>
+        <p><strong>Status:</strong> {{ selectedRequest.request.status }}</p>
+        <p><strong>Submitted At:</strong> {{ selectedRequest.request.submitted_at | date:'medium' }}</p>
+      </div>
+
+      <div class="details-section">
+        <h3>Jobs</h3>
+        <div *ngFor="let job of selectedRequest.jobs" class="job-item">
+          <p><strong>Category:</strong> {{ job.category_name }}</p>
+          <p><strong>Experience:</strong> {{ job.years_experience }} years</p>
+          <p><strong>Hourly Rate:</strong> ${{ job.hourly_rate }}</p>
+        </div>
+      </div>
+
+      <div class="details-section">
+        <h3>Certificates</h3>
+        <div *ngFor="let cert of selectedRequest.certificates" class="cert-item">
+          <p><strong>Name:</strong> {{ cert.certificate_name }}</p>
+          <p><strong>Issued by:</strong> {{ cert.issuing_organization }}</p>
+          <p><strong>Year Obtained:</strong> {{ cert.year_obtained }}</p>
+        </div>
+      </div>
+
+      <div class="details-section">
+        <h3>Past Projects</h3>
+        <div *ngFor="let project of selectedRequest.projects" class="project-item">
+          <p><strong>Title:</strong> {{ project.project_title }}</p>
+          <p><strong>Description:</strong> {{ project.project_description }}</p>
+          <p><strong>Year Completed:</strong> {{ project.year_completed }}</p>
+        </div>
+      </div>
+
+      <div class="action-section">
+        <textarea 
+          [(ngModel)]="processingNotes" 
+          placeholder="Add notes (required for rejection)"
+          class="notes-input">
+        </textarea>
+        
+        <div class="action-buttons">
+          <button 
+            (click)="processRequest(selectedRequest.request.id, 'approved')"
+            class="approve-btn">
+            Approve
+          </button>
+          <button 
+            (click)="processRequest(selectedRequest.request.id, 'rejected')"
+            class="reject-btn">
+            Reject
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clients Tab -->
+  <div *ngIf="activeTab === 'clients'" class="tab-content">
+    <div class="clients-list">
+      <div *ngIf="clients.length === 0" class="no-data">
+        No clients found
+      </div>
+      <div *ngFor="let client of clients" class="client-card">
+        <div class="client-info">
+          <h3>{{ client.fullname }}</h3>
+          <p>{{ client.email }}</p>
+          <p class="date">Joined: {{ client.created_at | date }}</p>
+          <p class="projects">Projects Posted: {{ client.projects_posted }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects Tab -->
+  <div *ngIf="activeTab === 'projects'" class="tab-content">
+    <div class="projects-list">
+      <div *ngIf="projects.length === 0" class="no-data">
+        No projects found
+      </div>
+      <div *ngFor="let project of projects" class="project-card">
+        <div class="project-info">
+          <h3>{{ project.title }}</h3>
+          <p><strong>Client:</strong> {{ project.client_name }}</p>
+          <p><strong>Categories:</strong> {{ project.categories }}</p>
+          <p><strong>Applications:</strong> {{ project.applications }}</p>
+          <p class="date">Posted: {{ project.created_at | date }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

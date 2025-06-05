@@ -1,0 +1,504 @@
+.team-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  min-height: calc(100vh - 70px - 4rem); /* Adjust min-height to help center content */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+}
+
+/* Apply these styles only when the no-team content is visible */
+.team-container:has(.no-team) {
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #FF6B00; /* Orange */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: #dc3545; /* Red */
+  text-align: center;
+  padding: 2rem;
+  background-color: #fff; /* White */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.team-members-list {
+  display: flex;
+  overflow-x: auto;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+  scrollbar-width: thin;
+  scrollbar-color: #ff8500 #f1f1f1;
+}
+
+.team-members-list::-webkit-scrollbar {
+  height: 8px;
+}
+
+.team-members-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.team-members-list::-webkit-scrollbar-thumb {
+  background: #ff8500;
+  border-radius: 4px;
+}
+
+.team-members-list::-webkit-scrollbar-thumb:hover {
+  background: #ffb347;
+}
+
+.member-card {
+  flex: 0 0 auto;
+  width: 250px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.member-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.member-card.leader {
+  border: 2px solid #FF6B00;
+}
+
+.member-avatar {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1rem;
+}
+
+.member-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.member-info h3 {
+  color: #000;
+  font-size: 1.2rem;
+  margin-bottom: 0.4rem;
+}
+
+.member-role {
+  color: #FF6B00;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+.member-email {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+}
+
+.member-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 1.2rem;
+  color: #888;
+}
+
+.member-actions i {
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.member-actions i:hover {
+  color: #FF6B00;
+}
+
+.add-member-card {
+  flex: 0 0 auto;
+  width: 250px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  border: 2px dashed #ccc;
+  color: #666;
+}
+
+.add-member-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  border-color: #FF6B00;
+  color: #FF6B00;
+}
+
+.add-member-card i {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.add-member-card p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* No Team Found Style */
+.no-team {
+  text-align: center;
+  padding: 4rem 2rem; /* Increased padding */
+  background-color: #fff; /* White */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Softer shadow */
+  max-width: 600px; /* Increased max width */
+  margin: 4rem auto; /* Add margin to center it below the navbar */
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column; /* Stack children vertically */
+  align-items: center; /* Center items horizontally */
+  gap: 1.5rem; /* Space between elements */
+}
+
+.no-team h2 {
+  color: #000; /* Black */
+  margin-bottom: 0.5rem; /* Reduced margin */
+  font-size: 2rem; /* Larger font size */
+  font-weight: 700; /* Bolder font weight */
+}
+
+.no-team-illustration {
+    max-width: 100%; /* Ensure image is responsive */
+    height: auto;
+    margin-bottom: 1.5rem; /* Space below illustration */
+}
+
+.no-team p {
+  color: #666; /* Grey */
+  font-size: 1rem; /* Adjusted font size */
+  margin-bottom: 2rem; /* Space before the button */
+  max-width: 400px; /* Limit width for better readability */
+  line-height: 1.5; /* Improved line spacing */
+}
+
+.join-team-button {
+    background-color: #FF6B00; /* Orange */
+    color: white;
+    padding: 1rem 2.5rem; /* Increased padding */
+    font-size: 1.1rem; /* Larger font size */
+    font-weight: 600; /* Semibold font weight */
+    border: none; /* Remove border */
+    border-radius: 8px; /* Slightly less rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.join-team-button:hover {
+    background-color: #ff8500; /* Darker orange */
+    box-shadow: 0 4px 10px rgba(255, 107, 0, 0.3); /* More pronounced shadow on hover */
+}
+
+.team-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* Space between elements */
+  padding: 1.5rem 2rem; /* Padding around the bar */
+  background-color: #f8f6f2; /* Light beige background */
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem; /* Space below the bar */
+  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+  justify-content: center; /* Center items when wrapped */
+}
+
+.search-worker-container {
+  position: relative;
+  background-color: #fff; /* White background */
+  border-radius: 20px; /* Rounded corners */
+  border: 1px solid #e0e0e0; /* Light border */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  height: 45px; /* Height for the search bar */
+  width: 250px; /* Fixed width */
+}
+
+.search-worker-container input {
+  padding: 0.5rem 0.5rem 0.5rem 0; /* Adjusted padding */
+  border: none;
+  background-color: transparent;
+  color: #000; /* Black text */
+  flex-grow: 1;
+  font-size: 1rem;
+  outline: none;
+}
+
+.search-worker-container .search-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888; /* Grey icon */
+  font-size: 1.2rem;
+}
+
+.action-button {
+  padding: 0.8rem 1.5rem; /* Button padding */
+  border: none;
+  border-radius: 20px; /* Rounded buttons */
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Space between icon and text */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-worker-button {
+  background-color: #FF6B00; /* Orange */
+  color: white;
+}
+
+.add-worker-button:hover {
+  background-color: #ff8500; /* Darker orange */
+  box-shadow: 0 2px 6px rgba(255, 107, 0, 0.3);
+}
+
+.tasks-button, .projects-button {
+  background-color: #fff; /* White */
+  color: #000; /* Black text */
+  border: 1px solid #ccc; /* Light border */
+}
+
+.tasks-button:hover, .projects-button:hover {
+  background-color: #f0f0f0; /* Light grey hover */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.leave-team-button {
+  background-color: #dc3545; /* Red */
+  color: white;
+}
+
+.leave-team-button:hover {
+  background-color: #c82333; /* Darker red */
+  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+}
+
+.action-button i {
+    font-size: 1.2rem; /* Icon size */
+}
+
+/* Team Members Table Styles */
+.team-members-table-container {
+  background-color: #fff; /* White background */
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden; /* Hide overflowing borders/shadows */
+}
+
+.team-members-table-container h2 {
+    color: #000; /* Black */
+    font-size: 1.8rem;
+    padding: 1.5rem 2rem 0.5rem; /* Padding top, sides, bottom */
+    margin: 0;
+    border-bottom: 1px solid #eee; /* Light grey border */
+}
+
+.team-members-table {
+  display: grid;
+  /* Define columns: Member, Role, Talents/Jobs, Email, Joined At, Actions */
+  grid-template-columns: 1.8fr 1fr 2fr 2fr 1.5fr 0.5fr; 
+  width: 100%;
+  border-collapse: collapse; /* For table-like appearance */
+}
+
+.table-header, .table-row {
+  display: contents; /* Make grid children act like table rows */
+}
+
+.header-cell, .cell {
+  padding: 1rem 1.5rem; /* Cell padding */
+  text-align: left; /* Align text left */
+  border-bottom: 1px solid #eee; /* Light grey bottom border */
+  display: flex; /* Use flex for content alignment */
+  align-items: center; /* Vertically center content */
+  word-break: break-word; /* Break long words */
+  font-size: 0.95rem; /* Slightly smaller text for cells */
+}
+
+.header-cell {
+  background-color: #f8f6f2; /* Light beige header background */
+  color: #000; /* Black text */
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase; /* Uppercase header text */
+  border-top: 1px solid #eee; /* Add top border for separation */
+}
+
+/* Remove bottom border from the last row */
+.table-row:last-child .cell {
+    border-bottom: none;
+}
+
+.table-row:nth-child(even) .cell { /* Zebra striping for rows */
+    background-color: #fcfcfc; /* Very light grey/white */
+}
+
+/* Style for the current user's row */
+.table-row.is-current-user .cell {
+    background-color: #e8f5e9; /* Light green background */
+    font-weight: 500; /* Highlight text slightly */
+    border-color: #c8e6c9; /* Slightly darker green border */
+}
+
+.table-row.is-current-user .member-cell span {
+    color: #388e3c; /* Darker green text for name */
+    font-weight: 600;
+}
+
+.table-row.is-current-user .role-cell,
+.table-row.is-current-user .jobs-cell span,
+.table-row.is-current-user .email-cell,
+.table-row.is-current-user .joined-cell {
+    color: #4caf50; /* Green text for other details */
+}
+
+.member-cell {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Space between avatar and name */
+    font-weight: 500;
+    color: #000; /* Black */
+}
+
+.member-avatar-small {
+  width: 35px; /* Slightly smaller avatar */
+  height: 35px; /* Slightly smaller avatar */
+  flex-shrink: 0; /* Prevent shrinking */
+  border-radius: 50%; /* Circular */
+  overflow: hidden; /* Hide overflow */
+}
+
+.member-avatar-small img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.role-cell {
+  color: #FF6B00; /* Orange */
+  font-weight: 600;
+}
+
+/* Styles for the Jobs Cell */
+.jobs-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem; /* Space between job entries */
+}
+
+.job-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.job-title {
+  font-weight: 500;
+}
+
+.job-experience {
+  color: #666; /* Grey */
+  font-size: 0.85rem;
+}
+
+/* Job Title Color Classes */
+.job-color-orange {
+  color: #FF6B00; /* Orange */
+}
+
+.job-color-blue {
+  color: #72C8DC; /* Light Blue */
+}
+
+.job-color-black {
+    color: #000; /* Black */
+}
+
+.job-color-grey {
+    color: #888; /* Grey */
+}
+
+.no-jobs {
+    color: #888; /* Grey */
+    font-size: 0.9rem;
+}
+
+.email-cell {
+  color: #666; /* Grey */
+}
+
+.joined-cell {
+  color: #888; /* Darker grey */
+  font-size: 0.9rem;
+}
+
+.actions-cell {
+    justify-content: center; /* Center icons/actions */
+    color: #888; /* Grey icon color */
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.actions-cell i:hover {
+    color: #FF6B00; /* Orange on hover */
+}
+
+.no-members-cell {
+    grid-column: 1 / -1; /* Span across all columns */
+    text-align: center;
+    padding: 2rem;
+    color: #666; /* Grey */
+    font-size: 1.1rem;
+}

@@ -1,0 +1,32 @@
+<div class="contract-container">
+  <div class="contract-header">
+    <button class="back-button" (click)="router.navigate(['/client-projects'])">
+      <i class="fas fa-arrow-left"></i> Back to Projects
+    </button>
+    <h2>{{ isModifying ? 'Modify Contract' : 'Review and Sign Contract' }}</h2>
+  </div>
+
+  <div class="contract-content-section">
+    <h3>Contract Terms and Conditions</h3>
+    <textarea [(ngModel)]="content" placeholder="Enter contract content here..." rows="15" class="contract-textarea"></textarea>
+  </div>
+
+  <div class="signature-section" *ngIf="!isModifying">
+    <h3>Client Signature</h3>
+    <div class="signature-pad-container">
+      <canvas #signatureCanvas></canvas>
+    </div>
+    <div class="signature-actions">
+      <button class="clear-button" (click)="clearSignature()">Clear Signature</button>
+    </div>
+  </div>
+
+  <div class="submit-section">
+    <button *ngIf="isModifying" class="submit-button modify" (click)="updateContract()">
+      <i class="fas fa-save"></i> Save Changes
+    </button>
+    <button *ngIf="!isModifying" class="submit-button create" (click)="submitContract()">
+      <i class="fas fa-file-signature"></i> Sign and Submit
+    </button>
+  </div>
+</div>

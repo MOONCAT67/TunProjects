@@ -1,0 +1,42 @@
+<div class="applications-container">
+  <h1>Project Applications</h1>
+
+  <div *ngIf="loading" class="loading">
+    Loading applications...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && applications.length === 0" class="no-applications">
+    No applications found for this project.
+  </div>
+
+  <div class="applications-grid" *ngIf="!loading && !error && applications.length > 0">
+    <div class="application-card" *ngFor="let application of applications">
+      <div class="application-header">
+        <div class="worker-info">
+          <img [src]="application.profile_picture" alt="Profile" class="profile-picture" *ngIf="application.profile_picture">
+          <div class="worker-details">
+            <h2>{{ application.fullname }}</h2>
+            <span class="job-category">{{ application.job_category_name }}</span>
+          </div>
+        </div>
+        <span class="status-badge" [ngClass]="getStatusClass(application.status)">
+          {{ getStatusText(application.status) }}
+        </span>
+      </div>
+
+      <div class="application-details">
+        <p class="description">{{ application.profile_description }}</p>
+      </div>
+
+      <div class="application-actions" *ngIf="application.status === 'pending'">
+        <button class="accept-btn" (click)="acceptApplication(application.id.toString())">
+          Accept Application
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
