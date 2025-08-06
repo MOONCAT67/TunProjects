@@ -6,9 +6,6 @@ import { AuthService } from '../services/authService';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import SignaturePad from 'signature_pad';
-import { isPlatformBrowser } from '@angular/common';
-import { Inject } from '@angular/core';
-import { PLATFORM_ID } from '@angular/core';
 
 // Define interfaces for contract data
 interface ContractDetails {
@@ -32,19 +29,13 @@ export class WorkerContractSignComponent implements OnInit, AfterViewInit, OnDes
   contractDetails: ContractDetails | null = null;
   loading = true;
   error: string | null = null;
-  workerSignatureData: string | null = null;
-
-  private isBrowser: boolean;
 
   constructor(
     private route: ActivatedRoute,
     private contractService: ContractService,
     private authService: AuthService,
-    public router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {
-    this.isBrowser = isPlatformBrowser(platformId);
-  }
+    public router: Router
+  ) {}
 
   ngOnInit(): void {
     this.route.paramMap.pipe(
@@ -78,56 +69,49 @@ export class WorkerContractSignComponent implements OnInit, AfterViewInit, OnDes
   }
 
   ngAfterViewInit(): void {
-    if (this.isBrowser && this.signaturePadElement) {
-      this.signaturePad = new SignaturePad(this.signaturePadElement.nativeElement);
-      this.resizeCanvas();
-
-      // Add event listener for signature pad
-      this.signaturePad.addEventListener('endStroke', () => {
-        this.updateSignatureData();
-      });
-    }
+    setTimeout(() => {
+      this.initializeSignaturePad();
+    }, 100);
   }
 
-  ngOnDestroy(): void {
-    if (this.isBrowser) {
-      window.removeEventListener('resize', this.resizeCanvas.bind(this));
-    }
-  }
+  private initializeSignaturePad(): void {
+    const canvas = this.signaturePadElement.nativeElement;
+    this.signaturePad = new SignaturePad(canvas, {
+      backgroundColor: 'rgb(255, 255, 255)',
+      penColor: 'rgb(0, 0, 0)'
+    });
 
-  resizeCanvas(): void {
-    if (this.isBrowser && this.signaturePadElement && this.signaturePad) {
-      const canvas = this.signaturePadElement.nativeElement;
+    // Set canvas size
+    this.resizeCanvas();
+    }
+
+  private resizeCanvas(): void {
+    const canvas = this.signaturePadElement.nativeElement;
       const ratio = Math.max(window.devicePixelRatio || 1, 1);
       canvas.width = canvas.offsetWidth * ratio;
       canvas.height = canvas.offsetHeight * ratio;
-      canvas.getContext('2d').scale(ratio, ratio);
-      this.signaturePad.clear();
-      this.workerSignatureData = null;
+    canvas.getContext('2d').scale(ratio, ratio);
+    this.signaturePad?.clear();
+  }
+
+  ngOnDestroy(): void {
+    if (this.signaturePad) {
+      this.signaturePad.off();
     }
   }
 
   clearSignature(): void {
-    if (this.signaturePad) {
-      this.signaturePad.clear();
-      this.workerSignatureData = null;
-    }
-  }
-
-  updateSignatureData(): void {
-    if (this.signaturePad && !this.signaturePad.isEmpty()) {
-      this.workerSignatureData = this.signaturePad.toDataURL();
-      console.log('Signature data updated:', this.workerSignatureData ? 'Signature present' : 'No signature');
-    } else {
-      this.workerSignatureData = null;
-    }
-  }
-
-  handleSignaturePadEnd(): void {
-    this.updateSignatureData();
+    this.signaturePad?.clear();
   }
 
   submitWorkerSignature(): void {
+    if (!this.signaturePad || this.signaturePad.isEmpty()) {
+      alert('Please provide your signature before submitting.');
+      return;
+    }
+
+    const signatureDataUrl = this.signaturePad.toDataURL();
+
     if (!this.contractId) {
       this.error = 'Cannot submit signature: Contract ID is missing.';
       return;
@@ -139,14 +123,9 @@ export class WorkerContractSignComponent implements OnInit, AfterViewInit, OnDes
       return;
     }
 
-    if (!this.workerSignatureData) {
-      this.error = 'Please provide your signature.';
-      return;
-    }
-
     const payload = {
       workerId: currentUser.id,
-      workerSignatureData: this.workerSignatureData
+      workerSignatureData: signatureDataUrl
     };
 
     this.contractService.addWorkerSignature(this.contractId, payload).subscribe({
@@ -155,7 +134,6 @@ export class WorkerContractSignComponent implements OnInit, AfterViewInit, OnDes
         if (this.contractDetails?.projectId) {
           this.router.navigate(['/worker/create-tasks', this.contractDetails.projectId]);
         } else {
-          console.error('Project ID not found in contract details');
           this.router.navigate(['/worker/current-projects']);
         }
       },

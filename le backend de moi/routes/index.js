@@ -12,6 +12,7 @@ const payRoutes = require("./paymentRoutes");
 const notifications = require("./notificationRoutes");
 const messageRoutes = require("./messageRoutes");
 const contractRoutes = require("./contractRoutes");
+const reviewRoutes = require("./reviewRoutes");
 
 // Route middleware
 router.use("/auth", authRoutes);
@@ -24,6 +25,7 @@ router.use("/notifications", notifications);
 router.use("/pay", payRoutes);
 router.use("/message", messageRoutes);
 router.use("/contract", contractRoutes);
+router.use("/review", reviewRoutes);
 router.use("/ping", (req, res) => {
     res.send("✅ Server is healthy.");
   });

@@ -970,3 +970,435 @@
     transform: translateY(0);
   }
 }
+
+.contract-signing-required {
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.contract-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.contract-message i {
+  font-size: 3rem;
+  color: #856404;
+}
+
+.contract-message h3 {
+  color: #856404;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.contract-message p {
+  color: #856404;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.sign-contract-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.sign-contract-btn:hover {
+  background-color: #0056b3;
+}
+
+.sign-contract-btn i {
+  font-size: 1.2rem;
+  color: white;
+}
+
+.project-content.hidden {
+  display: none;
+}
+
+/* Completed Projects Section */
+.completed-projects-section {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #ff8500;
+}
+
+.section-header h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0;
+  position: relative;
+}
+
+.section-stats {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.project-count {
+  background: linear-gradient(135deg, #ff8500, #ffb700);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.project-type {
+  background: #f8f9fa;
+  color: #666;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  border: 1px solid #ddd;
+}
+
+.completed-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.completed-project-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  border: 1px solid #eee;
+  position: relative;
+  overflow: hidden;
+  min-width: 400px;
+}
+
+.completed-project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  border-color: #ff8500;
+}
+
+.completed-project-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #ff8500, #ffb700);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.completed-project-card:hover::before {
+  opacity: 1;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.project-title h3 {
+  color: #fdfdfd;
+  font-weight: 600;
+  margin: 0;
+  padding: 0;
+}
+
+.project-budget {
+  display: inline-block;
+  background: #f8f9fa;
+  color: #666;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.project-status.completed {
+  background: #4CAF50;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.project-description {
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.project-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.metric i {
+  font-size: 1.2rem;
+  color: #ff8500;
+}
+
+.metric span {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.client-info {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.client-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.client-header i {
+  color: #ff8500;
+}
+
+.client-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.detail {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.detail i {
+  color: #ff8500;
+  font-size: 1rem;
+}
+
+.project-footer {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.view-details-btn,
+.download-contract-btn {
+  flex: 1;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.view-details-btn {
+  background: linear-gradient(135deg, #ff8500, #ffb700);
+  color: white;
+}
+
+.download-contract-btn {
+  background: #f8f9fa;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+.view-details-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 133, 0, 0.2);
+}
+
+.download-contract-btn:hover {
+  background: #eee;
+  color: #333;
+}
+
+.no-completed-projects {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  color: #ff8500;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  color: #333;
+  margin: 0;
+}
+
+.empty-state p {
+  color: #666;
+  margin: 0;
+}
+
+.loading-completed {
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-completed {
+  text-align: center;
+  padding: 2rem;
+  color: #dc3545;
+}
+
+.error-completed i {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .completed-projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .completed-project-card {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .section-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .section-stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .project-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .project-footer {
+    flex-direction: column;
+  }
+}
+
+.contact-client-btn {
+  flex: 1;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+}
+
+.contact-client-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+.contact-client-btn i {
+  font-size: 1.1rem;
+}
+
+/* Final Payment Warning styles */
+.final-payment-warning {
+  background-color: #fff3cd; /* Light yellow background */
+  border: 1px solid #ffeeba; /* Yellow border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 1rem 1.5rem; /* Padding inside the warning box */
+  margin-bottom: 1rem; /* Space below the warning */
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #856404; /* Dark yellow text color */
+  font-weight: 500;
+  font-size: 0.95rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.final-payment-warning i {
+  font-size: 1.2rem;
+  color: #856404;
+}
+
+/* Ensure project card has relative positioning if needed for absolute children, though not directly used here */
+.completed-project-card {
+  position: relative;
+}

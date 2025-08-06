@@ -48,11 +48,11 @@
     <!-- Main Content -->
     <div class="project-main">
       <!-- Left Column -->
-      <div class="project-info">
+    <div class="project-info">
         <!-- Description Section -->
         <section class="info-section description-section">
           <h2><i class="fas fa-info-circle"></i> Project Details</h2>
-          <p class="description">{{ project.description }}</p>
+        <p class="description">{{ project.description }}</p>
         </section>
 
         <!-- Location Section -->
@@ -76,8 +76,8 @@
             </div>
           </div>
         </section>
-      </div>
-
+          </div>
+          
       <!-- Right Column -->
       <div class="project-sidebar">
         <!-- Timeline Section -->
@@ -106,7 +106,7 @@
             <div class="stat-item">
               <span class="stat-value">{{ project.total_applications }}</span>
               <span class="stat-label">Applications</span>
-            </div>
+          </div>
             <!-- <div class="stat-item">
               <span class="stat-value">{{ project.total_tasks }}</span>
               <span class="stat-label">Tasks</span>
@@ -132,86 +132,86 @@
             </div>
           </div>
         </section>
+        </div>
       </div>
-    </div>
 
-    <!-- Application Form -->
-    <div class="application-section" [class.show]="showApplicationForm">
-      <div class="application-form-container">
+      <!-- Application Form -->
+      <div class="application-section" [class.show]="showApplicationForm">
+        <div class="application-form-container">
         <h2><i class="fas fa-paper-plane"></i> Submit Your Application</h2>
-        <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="application-form">
-          <div class="form-row">
-            <div class="form-group">
+          <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="application-form">
+            <div class="form-row">
+              <div class="form-group">
               <label for="laborPrice">
                 <i class="fas fa-dollar-sign"></i> Labor Price
               </label>
-              <input type="number" id="laborPrice" formControlName="laborPrice" placeholder="Enter labor price">
-              <div class="error-message" *ngIf="applicationForm.get('laborPrice')?.touched && applicationForm.get('laborPrice')?.errors?.['required']">
-                Labor price is required
+                <input type="number" id="laborPrice" formControlName="laborPrice" placeholder="Enter labor price">
+                <div class="error-message" *ngIf="applicationForm.get('laborPrice')?.touched && applicationForm.get('laborPrice')?.errors?.['required']">
+                  Labor price is required
+                </div>
+                <div class="error-message" *ngIf="applicationForm.get('laborPrice')?.touched && applicationForm.get('laborPrice')?.errors?.['min']">
+                  Labor price must be positive
+                </div>
               </div>
-              <div class="error-message" *ngIf="applicationForm.get('laborPrice')?.touched && applicationForm.get('laborPrice')?.errors?.['min']">
-                Labor price must be positive
-              </div>
-            </div>
 
-            <div class="form-group">
+              <div class="form-group">
               <label for="materialsPrice">
                 <i class="fas fa-box"></i> Materials Price
               </label>
-              <input type="number" id="materialsPrice" formControlName="materialsPrice" placeholder="Enter materials price">
-              <div class="error-message" *ngIf="applicationForm.get('materialsPrice')?.touched && applicationForm.get('materialsPrice')?.errors?.['required']">
-                Materials price is required
-              </div>
-              <div class="error-message" *ngIf="applicationForm.get('materialsPrice')?.touched && applicationForm.get('materialsPrice')?.errors?.['min']">
-                Materials price must be positive
+                <input type="number" id="materialsPrice" formControlName="materialsPrice" placeholder="Enter materials price">
+                <div class="error-message" *ngIf="applicationForm.get('materialsPrice')?.touched && applicationForm.get('materialsPrice')?.errors?.['required']">
+                  Materials price is required
+                </div>
+                <div class="error-message" *ngIf="applicationForm.get('materialsPrice')?.touched && applicationForm.get('materialsPrice')?.errors?.['min']">
+                  Materials price must be positive
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="form-row">
-            <div class="form-group">
+            <div class="form-row">
+              <div class="form-group">
               <label for="estimatedDuration">
                 <i class="fas fa-calendar-alt"></i> Duration
               </label>
-              <input type="number" id="estimatedDuration" formControlName="estimatedDuration" min="1" max="999" placeholder="Enter duration in days">
-              <div class="error-message" *ngIf="applicationForm.get('estimatedDuration')?.touched && applicationForm.get('estimatedDuration')?.errors?.['required']">
-                Duration is required
+                <input type="number" id="estimatedDuration" formControlName="estimatedDuration" min="1" max="999" placeholder="Enter duration in days">
+                <div class="error-message" *ngIf="applicationForm.get('estimatedDuration')?.touched && applicationForm.get('estimatedDuration')?.errors?.['required']">
+                  Duration is required
+                </div>
+                <div class="error-message" *ngIf="applicationForm.get('estimatedDuration')?.touched && applicationForm.get('estimatedDuration')?.errors?.['min']">
+                  Duration must be at least 1 day
+                </div>
+                <div class="error-message" *ngIf="applicationForm.get('estimatedDuration')?.touched && applicationForm.get('estimatedDuration')?.errors?.['max']">
+                  Duration cannot exceed 999 days
+                </div>
               </div>
-              <div class="error-message" *ngIf="applicationForm.get('estimatedDuration')?.touched && applicationForm.get('estimatedDuration')?.errors?.['min']">
-                Duration must be at least 1 day
-              </div>
-              <div class="error-message" *ngIf="applicationForm.get('estimatedDuration')?.touched && applicationForm.get('estimatedDuration')?.errors?.['max']">
-                Duration cannot exceed 999 days
-              </div>
-            </div>
 
-            <div class="form-group">
+              <div class="form-group">
               <label for="workType">
                 <i class="fas fa-users"></i> Work Type
               </label>
-              <select id="workType" formControlName="workType">
-                <option value="solo">Solo Work</option>
+                <select id="workType" formControlName="workType">
+                  <option value="solo">Solo Work</option>
                 <option value="team" *ngIf="isTeamLeader">Team Work</option>
-              </select>
-              <div class="error-message" *ngIf="applicationForm.get('workType')?.touched && applicationForm.get('workType')?.errors?.['required']">
-                Work type is required
+                </select>
+                <div class="error-message" *ngIf="applicationForm.get('workType')?.touched && applicationForm.get('workType')?.errors?.['required']">
+                  Work type is required
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="form-actions">
-            <button type="submit" class="submit-btn" [disabled]="loading">
+            <div class="form-actions">
+              <button type="submit" class="submit-btn" [disabled]="loading">
               <i class="fas fa-paper-plane"></i>
-              <span *ngIf="!loading">Submit Application</span>
-              <span *ngIf="loading">Submitting...</span>
-            </button>
-          </div>
+                <span *ngIf="!loading">Submit Application</span>
+                <span *ngIf="loading">Submitting...</span>
+              </button>
+            </div>
 
-          <div class="success-message" *ngIf="success">
-            <i class="fas fa-check-circle"></i>
-            Your application has been submitted successfully!
-          </div>
-        </form>
+            <div class="success-message" *ngIf="success">
+              <i class="fas fa-check-circle"></i>
+              Your application has been submitted successfully!
+            </div>
+          </form>
       </div>
     </div>
   </div>

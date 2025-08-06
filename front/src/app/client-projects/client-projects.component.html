@@ -14,59 +14,121 @@
   </div>
 
   <div class="projects-grid" *ngIf="!loading && !error && projects.length > 0">
-    <div class="project-card" *ngFor="let project of projects">
-      <div class="project-header">
-        <h2>{{ project.title }}</h2>
-        <span class="status-badge" [ngClass]="getStatusClass(project.status)">
-          {{ getStatusText(project.status) }}
-        </span>
+    <div class="project-card" *ngFor="let project of projects" [attr.data-status]="project.status">
+      <div class="project-main-content-wrapper" [ngClass]="{'blurred-content': project.status === 'completed'}">
+        <div class="project-header">
+          <h2>{{ project.title }}</h2>
+          <span class="status-badge" [ngClass]="getStatusClass(project.status)">
+            {{ getStatusText(project.status) }}
+          </span>
 
-        <!-- Contract Button -->
-        <div class="contract-buttons">
-          <button *ngIf="!project.hasContract" 
-                  class="contract-button create-button"
-                  (click)="navigateToContract(project.id, 'create')">
-            <i class="bi bi-file-earmark-plus"></i> Create Contract
-          </button>
-          <button *ngIf="project.hasContract && project.status !== 'in progress'"
-                  class="contract-button modify-button"
-                  (click)="navigateToContract(project.id, 'modify')">
-            <i class="bi bi-pencil"></i> Modify Contract
-          </button>
-          <button *ngIf="project.hasContract && project.status === 'in progress'"
-                  class="contract-button download-button"
-                  (click)="navigateToContract(project.id, 'download')">
-            <i class="bi bi-download"></i> Download Contract
-          </button>
+          <!-- Contract Button for non-completed projects -->
+          <div class="contract-buttons">
+            <ng-container *ngIf="project.status !== 'completed'">
+              <button *ngIf="!project.hasContract" 
+                      class="contract-button create-button"
+                      (click)="navigateToContract(project.id, 'create')">
+                <i class="bi bi-file-earmark-plus"></i> Create Contract
+              </button>
+              <button *ngIf="project.hasContract && project.status !== 'in progress'"
+                      class="contract-button modify-button"
+                      (click)="navigateToContract(project.id, 'modify')">
+                <i class="bi bi-pencil"></i> Modify Contract
+              </button>
+              <button *ngIf="project.hasContract && project.status === 'in progress'"
+                      class="contract-button download-button"
+                      (click)="navigateToContract(project.id, 'download')">
+                <i class="bi bi-download"></i> Download Contract
+              </button>
+            </ng-container>
+          </div>
         </div>
-      </div>
 
-      <div class="project-details">
-        <p class="description">{{ project.description }}</p>
-        <div class="meta-info">
-          <span class="budget">Budget: ${{ project.budget }}</span>
-          <span class="deadline">Deadline: {{ project.deadline | date }}</span>
+        <div class="project-details">
+          <p class="description">{{ project.description }}</p>
+          <div class="meta-info">
+            <span class="budget">Budget: ${{ project.budget }}</span>
+            <span class="deadline">Deadline: {{ project.deadline | date }}</span>
+          </div>
+          <div class="location">
+            <i class="fas fa-map-marker-alt"></i>
+              <div class="map-container">
+                <div id="map-{{project.id}}" class="project-map"></div>
+              </div>
+          </div>
         </div>
-        <div class="location">
-          <i class="fas fa-map-marker-alt"></i>
-          {{ project.address }}
-        </div>
-      </div>
 
-      <div class="project-actions">
-        <button class="view-details-btn" (click)="toggleApplications(project)">
-          <i class="fas fa-users"></i> Applications
-          <i class="fas" [ngClass]="{'fa-chevron-down': !project.showApplications, 'fa-chevron-up': project.showApplications}"></i>
+        <div class="project-actions">
+          <ng-container *ngIf="project.status !== 'completed'">
+            <button *ngIf="project.status !== 'in progress' && project.status !== 'completed'"
+                    class="view-details-btn" 
+                    (click)="toggleApplications(project)">
+              <i class="fas fa-users"></i> Applications
+              <i class="fas" [ngClass]="{'fa-chevron-down': !project.showApplications, 'fa-chevron-up': project.showApplications}"></i>
+            </button>
+            <button *ngIf="project.status === 'in progress'"
+                    [routerLink]="['/project-progress', project.id]"
+                    class="view-progress-btn">
+              <i class="fas fa-chart-line"></i> Visualize Progress
+            </button>
+            <!-- Download Invoice Button -->
+            <button *ngIf="project.status === 'in progress' && (project.deposit_paid ?? 0) > 0"
+                    class="action-button download-invoice-button"
+                    (click)="downloadInvoice(project.id)">
+              <i class="bi bi-file-earmark-pdf"></i> Download Invoice
+            </button>
+            <!-- Pay First Button -->
+            <button *ngIf="project.status === 'in progress' && (project.deposit_paid ?? 0) === 0"
+                    class="action-button pay-first-button"
+                    [routerLink]="['/payement', project.id, getCurrentUserId()]">
+              <i class="bi bi-wallet"></i> Pay First
+            </button>
+          </ng-container>
+        </div>
+      </div> <!-- End project-main-content-wrapper -->
+
+      <!-- Buttons for Completed Projects (Always visible for completed, unblurred) -->
+      <div class="completed-project-buttons" *ngIf="project.status === 'completed' && !project.showReviewInput">
+        <button *ngIf="(project.deposit_paid ?? 0) !== 2" class="action-button pay-button" [routerLink]="['/payement', project.id, getCurrentUserId()]">
+          <i class="bi bi-currency-dollar"></i> Pay the Rest
         </button>
-        <button *ngIf="project.status === 'in progress'"
-                [routerLink]="['/project-progress', project.id]"
-                class="view-progress-btn">
-          <i class="fas fa-chart-line"></i> Visualize Progress
+        <button *ngIf="(project.deposit_paid ?? 0) === 2"
+                class="action-button download-invoice-button"
+                (click)="downloadInvoice(project.id)">
+          <i class="bi bi-file-earmark-pdf"></i> Download Invoice
+        </button>
+        <button class="action-button review-button" (click)="toggleReviewSection(project)">
+          <i class="bi bi-star"></i> Leave a Review
         </button>
       </div>
 
-      <!-- Applications Dropdown -->
-      <div class="applications-dropdown" *ngIf="project.showApplications">
+      <!-- Review Section for Completed Projects (Always visible for completed, unblurred) -->
+      <div *ngIf="project.status === 'completed' && project.showReviewInput" class="review-section-overlay">
+        <h3>Leave Your Review</h3>
+        <div class="star-rating">
+          <i *ngFor="let star of [1,2,3,4,5]" 
+             class="bi" 
+             [class.bi-star-fill]="project.reviewRating && star <= project.reviewRating"
+             [class.bi-star]="!project.reviewRating || star > project.reviewRating"
+             (click)="setRating(project, star)"
+             (mouseover)="setRating(project, star)"
+             (mouseout)="setRating(project, project.reviewRating || 0)" 
+             [attr.data-rating]="star">
+          </i>
+        </div>
+        <textarea [(ngModel)]="project.reviewComment" placeholder="Add your comment..."></textarea>
+        <button class="submit-review-button" 
+                (click)="submitReview(project)" 
+                [disabled]="(project.reviewRating === 0 || !project.reviewComment || project.reviewComment.trim() === '') || project.submittingReview">
+          <span *ngIf="!project.submittingReview">Submit Review</span>
+          <div class="spinner-small" *ngIf="project.submittingReview"></div>
+        </button>
+        <div *ngIf="project.reviewSuccess" class="message-success-alert">Review submitted successfully!</div>
+        <div *ngIf="project.reviewError" class="message-error-alert">{{ project.reviewError }}</div>
+      </div>
+
+      <!-- Applications Dropdown (only visible for non-completed projects, and blurred) -->
+      <div class="applications-dropdown" *ngIf="project.showApplications && project.status !== 'completed'">
         <div *ngIf="!project.applications || project.applications.length === 0" class="no-applications">
           No applications yet
         </div>
@@ -74,7 +136,7 @@
           <div *ngFor="let application of project.applications" class="application-card">
             <div class="application-header">
               <div class="worker-info" (click)="navigateToWorkerProfile(application.worker_id)" style="cursor: pointer;">
-                <img [src]="application.profile_picture || 'assets/default-avatar.png'" alt="Profile" class="profile-picture">
+                <img [src]="application.profile_picture || 'assets/profile.jpg'" alt="Profile" class="profile-picture">
                 <div class="worker-details">
                   <h4>{{ application.fullname }}</h4>
                   <span class="job-category">{{ application.job_category_name }}</span>
@@ -86,35 +148,25 @@
             </div>
             
             <div class="application-details">
-              <div class="detail-row">
                 <div class="detail-item">
                   <span class="label">Labor Price:</span>
                   <span class="value labor-price">{{ formatCurrency(application.labor_price) }}</span>
-                </div>
               </div>
-              <div class="detail-row">
                 <div class="detail-item">
                   <span class="label">Materials Price:</span>
                   <span class="value materials-price">{{ formatCurrency(application.materials_price) }}</span>
-                </div>
               </div>
-              <div class="detail-row">
                 <div class="detail-item">
                   <span class="label">Total Price:</span>
                   <span class="value total-price">{{ formatCurrency(getTotalPrice(application)) }}</span>
-                </div>
               </div>
-              <div class="detail-row">
                 <div class="detail-item">
                   <span class="label">Duration:</span>
                   <span class="value duration">{{ application.estimated_duration }} days</span>
-                </div>
               </div>
-              <div class="detail-row">
                 <div class="detail-item">
                   <span class="label">Work Type:</span>
                   <span class="value">{{ application.work_type === 'solo' ? 'Solo Work' : 'Team Work' }}</span>
-                </div>
               </div>
             </div>
 

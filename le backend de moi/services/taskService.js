@@ -146,16 +146,16 @@ exports.updateSubTaskStatus = async (params) => {
     // 1. Get subtask and its phase info, including team info
     const [subtask] = await connection.query(
       `SELECT st.*, mt.sequence_order, mt.project_id, mt.id as main_task_id,
-              p.title as project_title, p.project_type,
+              p.title as project_title, p.project_type, p.main_tasks_number,
+              p.client_id, u.fullname as worker_name,
               pt.team_id, t.leader_id,
-              u.fullname as worker_name,
               l.fullname as leader_name, l.email as leader_email
            FROM sub_tasks st
            JOIN main_tasks mt ON st.main_task_id = mt.id
        JOIN projects p ON mt.project_id = p.id
+           JOIN users u ON st.assigned_to = u.id
        LEFT JOIN project_teams pt ON p.id = pt.project_id
        LEFT JOIN teams t ON pt.team_id = t.id
-       LEFT JOIN users u ON st.assigned_to = u.id
        LEFT JOIN users l ON t.leader_id = l.id
            WHERE st.id = ?`,
           [subTaskId]
@@ -252,6 +252,28 @@ exports.updateSubTaskStatus = async (params) => {
           [subtask[0].main_task_id]
         );
 
+        // Send notification to client about main task completion
+        await notificationService.createNotification({
+          userId: subtask[0].client_id,
+          title: 'Main Task Completed',
+          message: `${subtask[0].worker_name} has completed all subtasks in the main task of project "${subtask[0].project_title}"`,
+          type: 'task',
+          referenceId: subtask[0].main_task_id
+        });
+
+        // Check if this is the last main task in the project
+        const isLastMainTask = subtask[0].sequence_order === subtask[0].main_tasks_number;
+
+        if (isLastMainTask) {
+          // If this is the last main task, update project status to completed
+          await connection.query(
+            `UPDATE projects 
+             SET status = 'completed',
+                 current_phase = ?
+             WHERE id = ?`,
+            [currentPhase, subtask[0].project_id]
+          );
+        } else {
         // Get the next main task in sequence
         const [nextMainTask] = await connection.query(
           `SELECT id 
@@ -279,6 +301,7 @@ exports.updateSubTaskStatus = async (params) => {
                WHERE id = ?`,
               [currentPhase + 1, subtask[0].project_id]
             );
+        }
           }
         }
 
@@ -870,23 +893,29 @@ exports.createMainTaskWithSubtasks = async (projectId, userId, taskData) => {
   try {
     const { title, description, subtasks = [] } = taskData;
 
-    // Get the current highest sequence order for this project
-    const [sequenceResult] = await connection.query(
-      `SELECT MAX(sequence_order) as max_sequence 
-       FROM main_tasks 
-       WHERE project_id = ?`,
+    await connection.beginTransaction();
+
+    // Get the current highest sequence order and main_tasks_number for this project
+    const [projectInfo] = await connection.query(
+      `SELECT 
+        COALESCE(MAX(sequence_order), 0) as max_sequence,
+        p.main_tasks_number
+       FROM main_tasks mt
+       JOIN projects p ON mt.project_id = p.id
+       WHERE mt.project_id = ?
+       GROUP BY p.main_tasks_number`,
       [projectId]
     );
 
-    const nextSequenceOrder = (sequenceResult[0].max_sequence || 0) + 1;
+    const nextSequenceOrder = (projectInfo[0].max_sequence || 0) + 1;
+    const currentMainTasksNumber = projectInfo[0].main_tasks_number || 0;
 
-    await connection.beginTransaction();
-
-    // Create the main task
+    // Create the main task with 'not started' status
     const [mainTaskResult] = await connection.query(
       `INSERT INTO main_tasks (
-        project_id, title, description, sequence_order, status, assigned_to, assigned_type, created_at
-      ) VALUES (?, ?, ?, ?, 'not_started', ?, 'individual', NOW())`,
+        project_id, title, description, sequence_order, status, 
+        assigned_to, assigned_type, created_at, progress_percentage
+      ) VALUES (?, ?, ?, ?, 'not started', ?, 'individual', NOW(), 0)`,
       [projectId, title, description, nextSequenceOrder, userId]
     );
 
@@ -904,8 +933,9 @@ exports.createMainTaskWithSubtasks = async (projectId, userId, taskData) => {
 
         await connection.query(
           `INSERT INTO sub_tasks (
-            main_task_id, title, description, assigned_to, assigned_type, status, created_at
-          ) VALUES (?, ?, ?, ?, 'individual', 'not_started', NOW())`,
+            main_task_id, title, description, assigned_to, 
+            assigned_type, status, created_at, progress_percentage
+          ) VALUES (?, ?, ?, ?, 'individual', 'not started', NOW(), 0)`,
           [
             mainTaskId,
             subtask.title,
@@ -915,6 +945,14 @@ exports.createMainTaskWithSubtasks = async (projectId, userId, taskData) => {
         );
       }
     }
+
+    // Update project's main_tasks_number by incrementing the current value
+    await connection.query(
+      `UPDATE projects 
+       SET main_tasks_number = ? 
+       WHERE id = ?`,
+      [currentMainTasksNumber + 1, projectId]
+    );
 
     await connection.commit();
 
@@ -926,9 +964,12 @@ exports.createMainTaskWithSubtasks = async (projectId, userId, taskData) => {
         sequenceOrder: nextSequenceOrder,
         title,
         description,
+        status: 'not started',
         assignedTo: userId,
+        mainTasksNumber: currentMainTasksNumber + 1,
         subtasks: subtasks.map(subtask => ({
           ...subtask,
+          status: 'not started',
           assignedTo: userId
         }))
       }
@@ -953,9 +994,11 @@ exports.completeMainTask = async (mainTaskId, workerId) => {
 
     // Get current main task and project info
     const [mainTask] = await connection.query(
-      `SELECT mt.*, p.id as project_id, p.current_phase, p.status as project_status
+      `SELECT mt.*, p.id as project_id, p.current_phase, p.status as project_status,
+              p.title as project_title, p.client_id, u.fullname as worker_name
        FROM main_tasks mt
        JOIN projects p ON mt.project_id = p.id
+       JOIN users u ON mt.assigned_to = u.id
        WHERE mt.id = ? AND mt.assigned_to = ?`,
       [mainTaskId, workerId]
     );
@@ -1024,6 +1067,15 @@ exports.completeMainTask = async (mainTaskId, workerId) => {
         [projectId]
       );
     }
+
+    // Send notification to client about task completion
+    await notificationService.createNotification({
+      userId: currentTask.client_id,
+      title: 'Main Task Completed',
+      message: `${currentTask.worker_name} has completed the task "${currentTask.title}" in project "${currentTask.project_title}"`,
+      type: 'task',
+      referenceId: mainTaskId
+    });
 
     await connection.commit();
 
@@ -1109,6 +1161,155 @@ exports.addSubtaskToMainTask = async (mainTaskId, workerId, subtaskData) => {
         assigned_to: workerId,
         assigned_type: 'individual'
       }
+    };
+
+  } catch (err) {
+    await connection.rollback();
+    throw {
+      message: err.message || "Failed to add subtask",
+      statusCode: err.statusCode || 500 
+    };
+  } finally {
+    connection.release();
+  }
+};
+
+exports.createMainTaskWithSequence = async (params) => {
+  const { projectId, title, description, deadline, assigned_to, subtasks = [] } = params;
+  const connection = await db.getConnection();
+
+  try {
+    await connection.beginTransaction();
+
+    // Get the current maximum sequence order for the project
+    const [maxSequence] = await connection.query(
+      `SELECT MAX(sequence_order) as max_sequence 
+       FROM main_tasks 
+       WHERE project_id = ?`,
+      [projectId]
+    );
+
+    const nextSequence = (maxSequence[0].max_sequence || 0) + 1;
+
+    // Create the main task with the next sequence order and fixed assigned_type as 'team'
+    const [result] = await connection.query(
+      `INSERT INTO main_tasks 
+       (project_id, title, description, deadline, sequence_order, assigned_to, assigned_type) 
+       VALUES (?, ?, ?, ?, ?, ?, 'team')`,
+      [projectId, title, description, deadline, nextSequence, assigned_to]
+    );
+
+    const mainTaskId = result.insertId;
+
+    // Create subtasks if they exist
+    if (subtasks && subtasks.length > 0) {
+      for (const subtask of subtasks) {
+        if (!subtask.title) {
+          throw {
+            message: "Each subtask must have a title",
+            statusCode: 400
+          };
+        }
+
+        await connection.query(
+          `INSERT INTO sub_tasks (
+            main_task_id, title, description, assigned_to, assigned_type, status, created_at
+          ) VALUES (?, ?, ?, ?, 'individual', 'not_started', NOW())`,
+          [
+            mainTaskId,
+            subtask.title,
+            subtask.description || null,
+            subtask.assigned_to
+          ]
+        );
+      }
+    }
+
+    // Get the created task with its subtasks
+    const [task] = await connection.query(
+      `SELECT * FROM main_tasks WHERE id = ?`,
+      [mainTaskId]
+    );
+
+    const [subTasks] = await connection.query(
+      `SELECT * FROM sub_tasks WHERE main_task_id = ?`,
+      [mainTaskId]
+    );
+
+    await connection.commit();
+
+    return {
+      statusCode: 201,
+      success: true,
+      message: "Main task created successfully with subtasks",
+      data: {
+        ...task[0],
+        subtasks: subTasks
+      }
+    };
+
+  } catch (err) {
+    await connection.rollback();
+    throw {
+      statusCode: 500,
+      message: err.message || "Failed to create main task"
+    };
+  } finally {
+    connection.release();
+  }
+};
+
+exports.addSubtaskWithAssignee = async (mainTaskId, subtaskData) => {
+  const connection = await db.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    // Verify the main task exists
+    const [mainTask] = await connection.query(
+      `SELECT id FROM main_tasks WHERE id = ?`,
+      [mainTaskId]
+    );
+
+    if (!mainTask || mainTask.length === 0) {
+      throw {
+        statusCode: 404,
+        message: "Main task not found"
+      };
+    }
+
+    // Insert the new subtask with status 'not started' and assigned_type as 'team'
+    const [result] = await connection.query(
+      `INSERT INTO sub_tasks (
+        main_task_id,
+        title,
+        description,
+        status,
+        created_at,
+        progress_percentage,
+        assigned_to,
+        assigned_type
+      ) VALUES (?, ?, ?, 'not started', NOW(), 0, ?, 'team')`,
+      [
+        mainTaskId,
+        subtaskData.title,
+        subtaskData.description,
+        subtaskData.assigned_to
+      ]
+    );
+
+    // Get the created subtask
+    const [subtask] = await connection.query(
+      `SELECT * FROM sub_tasks WHERE id = ?`,
+      [result.insertId]
+    );
+
+    await connection.commit();
+
+    return {
+      statusCode: 201,
+      success: true,
+      message: "Subtask added successfully",
+      data: subtask[0]
     };
 
   } catch (err) {

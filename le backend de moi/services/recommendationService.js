@@ -328,7 +328,7 @@ const calculateJobScore = (projectJobs, jobPreferences, topCategories = []) => {
       : projectJobs;
 
     if (jobs.length === 0) return 0;
-
+  
     // Calculate base match score
     const baseScore = jobs.reduce((score, jobId) => {
       if (jobPreferences.workerJobs.includes(jobId)) {
@@ -471,7 +471,7 @@ exports.getRecommendedProjects = async (workerId, limit = 10) => {
       let projectJobs = [];
       try {
         projectJobs = project.required_jobs ? 
-          JSON.parse(`[${project.required_jobs}]`) : [];
+        JSON.parse(`[${project.required_jobs}]`) : [];
       } catch (error) {
         console.error('Error parsing required_jobs:', error);
         console.log('Raw required_jobs:', project.required_jobs);

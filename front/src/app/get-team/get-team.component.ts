@@ -131,7 +131,9 @@ export class GetTeamComponent implements OnInit {
       }
     });
 
-    this.teamService.getUserTeams(teamId).pipe(
+    // Get team members directly from the team data
+    if (this.selectedTeam?.leader?.id) {
+      this.teamService.getUserTeams(this.selectedTeam.leader.id).pipe(
       switchMap((response) => {
         if (response.data?.members && response.data.members.length > 0) {
           const memberJobRequests = response.data.members.map((member: TeamMember) =>
@@ -155,6 +157,7 @@ export class GetTeamComponent implements OnInit {
         console.error('Error loading team members:', error);
       }
     });
+    }
   }
 
   sendTeamRequest(teamId: number) {

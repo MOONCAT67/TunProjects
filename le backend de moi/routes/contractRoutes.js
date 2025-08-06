@@ -20,8 +20,14 @@ router.get('/project/:projectId/download', contractController.downloadContractBy
 // Check if project has a contract
 router.get('/project/:projectId/check', contractController.checkProjectContract);
 
+// Check worker signature status by project ID
+router.get('/project/:projectId/worker-signature', contractController.checkWorkerSignatureByProject);
+
+// Get contract ID by project ID
+router.get('/project/:projectId/id', contractController.getContractIdByProject);
+
 // Update contract content
-router.put('/:contractId/content', contractController.updateContractContent);
+router.put('/:projectId/content', contractController.updateContractContent);
 
 // Check worker signature status
 router.get('/:contractId/worker-signature', contractController.checkWorkerSignature);

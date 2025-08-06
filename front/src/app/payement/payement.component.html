@@ -2,38 +2,110 @@
   <div class="payment-card">
     <div class="payment-left">
       <div class="payment-header">
-        <h2 class="payment-title">First Payment</h2>
-        <span class="payment-amount">$1,200.00</span>
+        <h2 class="payment-title">Payment Details</h2>
+        <div class="payment-amount">${{ amount.toFixed(2) }}</div>
       </div>
-      <div class="payment-image">
-        <img src="assets/pay.png" alt="Payment Illustration">
+      
+      <div *ngIf="isLoading" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading payment details...</p>
+      </div>
+
+      <div *ngIf="!isLoading" class="payment-summary">
+        <div class="summary-header">
+          <i class="bi bi-receipt"></i>
+          <h3>Payment Summary</h3>
+        </div>
+        <div class="summary-content">
+          <div class="summary-item">
+            <span>Payment Type</span>
+            <span class="highlight">{{ paymentType === 'final' ? 'Final Payment' : 'First Payment' }}</span>
+          </div>
+          <div class="summary-item">
+            <span>Amount to Pay</span>
+            <span class="highlight">${{ amount.toFixed(2) }}</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-item">
+            <span>Total Project Price</span>
+            <span>${{ totalPrice }}</span>
+          </div>
+          <div class="summary-item">
+            <span>Materials Cost</span>
+            <span>${{ materialsPrice }}</span>
+          </div>
+          <div class="summary-item">
+            <span>Labor Cost</span>
+            <span>${{ laborPrice }}</span>
+          </div>
+        </div>
       </div>
     </div>
+
     <div class="payment-right">
-      <div class="payment-progress">
-        <div class="progress-line"></div>
-        <div class="progress-dot"></div>
-      </div>
-      <form class="payment-form">
+      <form (ngSubmit)="processPayment()" #paymentForm="ngForm" class="payment-form">
+        <div class="form-header">
+          <i class="bi bi-credit-card"></i>
+          <h3>Card Information</h3>
+        </div>
+
         <div class="form-group">
           <label for="cardNumber">CARD NUMBER</label>
-          <input type="text" id="cardNumber" placeholder="">
+          <div class="input-wrapper">
+            <i class="bi bi-credit-card-2-front"></i>
+            <input type="text" id="cardNumber" [(ngModel)]="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" required>
+          </div>
         </div>
+
         <div class="form-row">
           <div class="form-group">
-            <label for="expiryDate">MM / YY</label>
-            <input type="text" id="expiryDate" placeholder="">
+            <label for="expiryMonth">EXPIRY DATE</label>
+            <div class="expiry-inputs">
+              <div class="input-wrapper">
+                <input type="text" id="expiryMonth" [(ngModel)]="expiryMonth" name="expiryMonth" (input)="onMonthInput($event)" placeholder="MM" maxlength="2" required>
+              </div>
+              <span class="expiry-separator">/</span>
+              <div class="input-wrapper">
+                <input type="text" id="expiryYear" [(ngModel)]="expiryYear" name="expiryYear" (input)="onYearInput($event)" placeholder="YYYY" maxlength="4" required>
+              </div>
+            </div>
           </div>
           <div class="form-group">
             <label for="cvc">CVC</label>
-            <input type="text" id="cvc" placeholder="">
+            <div class="input-wrapper">
+              <i class="bi bi-shield-lock"></i>
+              <input type="text" id="cvc" [(ngModel)]="cvc" name="cvc" (input)="onCvcInput($event)" placeholder="123" maxlength="4" required>
+            </div>
           </div>
         </div>
+
         <div class="form-group">
           <label for="cardholderName">CARDHOLDER NAME</label>
-          <input type="text" id="cardholderName" placeholder="">
+          <div class="input-wrapper">
+            <i class="bi bi-person"></i>
+            <input type="text" id="cardholderName" [(ngModel)]="cardholderName" name="cardholderName" placeholder="John Doe" required>
+          </div>
         </div>
-        <button type="submit" class="pay-button">Pay</button>
+
+        <button type="submit" class="pay-button" [disabled]="isLoading">
+          <span *ngIf="!isLoading">
+            <i class="bi bi-lock"></i>
+            Pay ${{ amount.toFixed(2) }}
+          </span>
+          <span *ngIf="isLoading" class="loading">
+            <div class="spinner"></div>
+            Processing...
+          </span>
+        </button>
+
+        <div *ngIf="paymentStatus === 'success'" class="payment-message success-message">
+          <i class="bi bi-check-circle"></i>
+          {{ paymentMessage }}
+        </div>
+        <div *ngIf="paymentStatus === 'error'" class="payment-message error-message">
+          <i class="bi bi-exclamation-circle"></i>
+          {{ paymentMessage }}
+        </div>
       </form>
     </div>
   </div>

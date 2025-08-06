@@ -143,3 +143,54 @@ exports.getAllUsers = async (req, res) => {
     });
   }
 };
+
+exports.get_weekly_stats = async (req, res) => {
+  try {
+    const result = await adminService.getWeeklyUserStats();
+    res.json(result);
+  } catch (error) {
+    console.error('Error in get_weekly_stats controller:', error);
+    res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || 'Failed to get weekly stats'
+    });
+  }
+};
+
+exports.get_distribution_stats = async (req, res) => {
+  try {
+    const result = await adminService.getUserDistribution();
+    res.json(result);
+  } catch (error) {
+    console.error('Error in get_distribution_stats controller:', error);
+    res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || 'Failed to get distribution stats'
+    });
+  }
+};
+
+exports.get_today_stats = async (req, res) => {
+  try {
+    const result = await adminService.getTodayStats();
+    res.json(result);
+  } catch (error) {
+    console.error('Error in get_today_stats controller:', error);
+    res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || 'Failed to get today\'s stats'
+    });
+  }
+};
+
+exports.getAllJobCategories = async (req, res) => {
+  try {
+    const result = await adminService.getAllJobCategories();
+    res.status(result.statusCode).json(result);
+  } catch (err) {
+    res.status(err.statusCode || 500).json({
+      success: false,
+      message: err.message || "Failed to get job categories"
+    });
+  }
+};

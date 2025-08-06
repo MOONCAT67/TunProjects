@@ -1,20 +1,138 @@
 <div class="team-projects-wrapper">
   <h1 class="page-title">TEAM PROJECTS</h1>
+
+  <!-- Message Sent Success Alert -->
+  <div *ngIf="showMessageSuccessAlert" class="message-success-alert">
+    <i class="bi bi-check-circle-fill"></i>
+    <p>Message sent successfully!</p>
+  </div>
+
   <div *ngIf="loading" class="loading-spinner"><div class="spinner"></div></div>
   <div *ngIf="error" class="error-message">{{ error }}</div>
   <ng-container *ngIf="!loading && !error">
     <div *ngFor="let project of projects" class="project-section">
+      <!-- Contract Signing Required Message -->
+      <div *ngIf="unsignedProjects[project.id]" class="contract-signing-required">
+        <div class="contract-message">
+          <i class="bi bi-file-earmark-lock"></i>
+          <h3>Contract Signature Required</h3>
+          <p *ngIf="isTeamLeader">You must sign the contract before you can start working on this project.</p>
+          <p *ngIf="!isTeamLeader">Your team leader must sign the contract before you can start working on this project.</p>
+          <button *ngIf="isTeamLeader" class="sign-contract-btn" (click)="goToSignContract(project.id)">
+            <i class="bi bi-pen"></i>
+            Go Sign Contract
+          </button>
+          <div *ngIf="!isTeamLeader" class="contact-leader-section">
+            <button *ngIf="!showContactLeaderInput[project.id]" class="contact-leader-btn" (click)="contactTeamLeader(project.id)">
+              <i class="bi bi-chat-dots"></i>
+              Contact Team Leader
+            </button>
+            <div *ngIf="showContactLeaderInput[project.id]" class="message-input-container">
+              <input
+                type="text"
+                [(ngModel)]="messageContent[project.id]"
+                placeholder="Type your message to the leader..."
+                class="message-input"
+              />
+              <button class="send-message-btn" (click)="sendMessageToLeader(project.id)" [disabled]="!messageContent[project.id]">
+                <i class="bi bi-send-fill"></i>
+              </button>
+              <button class="cancel-message-btn" (click)="cancelContactLeader(project.id)">
+                <i class="bi bi-x-circle-fill"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project Content (hidden when unsigned) -->
+      <div class="project-content" [class.hidden]="unsignedProjects[project.id]">
       <div class="project-header-row">
         <div class="project-title-block">
           <h2 class="project-title">{{ project.title }}</h2>
-          <button class="my-tasks-btn">MY TASKS IN THIS PROJECT</button>
+          <a [routerLink]="['/team-tasks', teamId, authService.getCurrentUser()?.id]" class="my-tasks-btn">
+            MY TASKS IN THIS PROJECT
+          </a>
         </div>
         <span class="project-status-badge status-in-progress" *ngIf="project.status === 'in progress'">IN PROGRESS</span>
         <span class="project-status-badge status-finished" *ngIf="project.status === 'finished'">FINISHED</span>
       </div>
-      <div *ngFor="let mainTask of project.main_tasks" class="main-task-block">
+
+      <!-- Empty state for projects without tasks -->
+      <div *ngIf="!project.main_tasks?.length && isTeamLeader" class="empty-state">
+        <p class="empty-state-text">Add project tasks and assign them</p>
+        <button class="add-task-btn" (click)="toggleAddTaskForm()">
+          <i class="fas fa-plus"></i> Add Main Task
+        </button>
+      </div>
+
+      <!-- Add Task Form -->
+      <div *ngIf="showAddTaskForm" class="add-task-form">
+        <h3>Add New Main Task</h3>
+        <div class="form-group">
+          <label for="taskTitle">Task Title</label>
+          <input type="text" id="taskTitle" [(ngModel)]="newTask.title" placeholder="Enter task title">
+        </div>
+        <div class="form-group">
+          <label for="taskDescription">Description</label>
+          <textarea id="taskDescription" [(ngModel)]="newTask.description" placeholder="Enter task description"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="taskDeadline">Deadline</label>
+          <input type="date" id="taskDeadline" [(ngModel)]="newTask.deadline">
+        </div>
+
+        <!-- Subtasks Section -->
+        <div class="subtasks-section">
+          <div class="subtasks-header">
+            <h4>Subtasks (Optional)</h4>
+            <button class="add-subtask-btn" (click)="addSubtask()" [disabled]="newTask.subtasks.length >= 10">
+              <i class="fas fa-plus"></i> Add Subtask
+            </button>
+          </div>
+
+          <div *ngFor="let subtask of newTask.subtasks; let i = index" class="subtask-form">
+            <div class="subtask-header">
+              <h5>Subtask {{i + 1}}</h5>
+              <button class="remove-subtask-btn" (click)="removeSubtask(i)">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="form-group">
+              <label [for]="'subtaskTitle' + i">Title</label>
+              <input type="text" [id]="'subtaskTitle' + i" [(ngModel)]="subtask.title" placeholder="Enter subtask title">
+            </div>
+            <div class="form-group">
+              <label [for]="'subtaskDescription' + i">Description</label>
+              <textarea [id]="'subtaskDescription' + i" [(ngModel)]="subtask.description" placeholder="Enter subtask description"></textarea>
+            </div>
+            <div class="form-group">
+              <label [for]="'subtaskAssignedTo' + i">Assign To</label>
+              <select [id]="'subtaskAssignedTo' + i" [(ngModel)]="subtask.assigned_to" class="team-member-select">
+                <option value="">Select team member</option>
+                <option *ngFor="let member of teamMembers" [value]="member.id">
+                  {{member.fullname}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="submit-btn" (click)="addMainTask(project.id)">Add Task</button>
+          <button class="cancel-btn" (click)="toggleAddTaskForm()">Cancel</button>
+        </div>
+      </div>
+
+      <div class="main-task-block" *ngFor="let mainTask of project.main_tasks">
         <div class="main-task-header-row">
           <span class="main-task-title">MAIN TASK {{ mainTask.title }}</span>
+          <div class="main-task-actions">
+            <button *ngIf="canAddSubtasks(mainTask, project)" 
+                    class="add-subtask-btn" 
+                    (click)="toggleAddSubtaskForm(mainTask.id)">
+              <i class="fas fa-plus"></i> Add Subtask
+            </button>
           <span class="main-task-status-badge"
                 [ngClass]="{
                   'status-in-progress': mainTask.sequence_order === project.current_phase,
@@ -24,7 +142,42 @@
             {{ mainTask.sequence_order === project.current_phase ? 'IN PROGRESS' : (mainTask.sequence_order < project.current_phase ? 'FINISHED' : 'NOT STARTED') }}
           </span>
         </div>
-        <div class="subtasks-row">
+        </div>
+
+        <div class="main-task-description">{{mainTask.description}}</div>
+        <div class="main-task-deadline">Deadline: {{mainTask.deadline | date}}</div>
+
+        <!-- Add Subtask Form -->
+        <div class="add-subtask-form" *ngIf="showAddSubtaskForm && selectedMainTaskId === mainTask.id">
+          <div class="subtask-form">
+            <div class="subtask-header">
+              <h5>Add New Subtask</h5>
+            </div>
+            <div class="form-group">
+              <label for="subtaskTitle">Title</label>
+              <input type="text" id="subtaskTitle" [(ngModel)]="newSubtask.title" required>
+            </div>
+            <div class="form-group">
+              <label for="subtaskDescription">Description</label>
+              <textarea id="subtaskDescription" [(ngModel)]="newSubtask.description" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="subtaskAssignee">Assign To</label>
+              <select id="subtaskAssignee" [(ngModel)]="newSubtask.assigned_to" required class="team-member-select">
+                <option value="">Select Team Member</option>
+                <option *ngFor="let member of teamMembers" [value]="member.id">
+                  {{member.fullname}}
+                </option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button class="submit-btn" (click)="addSubtaskToMainTask()">Add Subtask</button>
+              <button class="cancel-btn" (click)="toggleAddSubtaskForm(mainTask.id)">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="subtasks-row" *ngIf="mainTask.sub_tasks && mainTask.sub_tasks.length > 0">
           <div *ngFor="let subTask of mainTask.sub_tasks" class="subtask-card">
             <div class="subtask-header-row">
               <span class="subtask-title">SUBTASK</span>
@@ -48,6 +201,14 @@
               </span>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Add New Main Task Button -->
+      <div *ngIf="isTeamLeader && project.main_tasks?.length > 0" class="add-main-task-section">
+        <button class="add-main-task-btn" (click)="toggleAddTaskForm()">
+          <i class="fas fa-plus"></i> Add New Main Task
+        </button>
         </div>
       </div>
     </div>

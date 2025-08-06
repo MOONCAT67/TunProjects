@@ -22,6 +22,17 @@ interface CheckContractResponse {
   };
 }
 
+interface WorkerSignatureResponse {
+  statusCode: number;
+  isSigned: number;
+  contractId: number;
+}
+
+interface GetContractIdResponse {
+  statusCode: number;
+  contractId: number;
+}
+
 interface UpdateContractPayload {
   content: string;
   userId: number;
@@ -141,6 +152,35 @@ export class ContractService {
     return this.http.get<any>(`${this.apiUrl}/contract/${contractId}/worker-signature`, { headers }).pipe(
       catchError(error => {
         console.error(`Error checking worker signature for contract ${contractId}:`, error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Checks if a worker has signed the contract for a specific project
+   * @param projectId The ID of the project to check
+   * @returns Observable with the signature status
+   */
+  checkWorkerSignatureByProject(projectId: number): Observable<WorkerSignatureResponse> {
+    const headers = this.getHeaders();
+    return this.http.get<WorkerSignatureResponse>(`${this.apiUrl}/contract/project/${projectId}/worker-signature`, { headers }).pipe(
+      catchError(error => {
+        console.error(`Error checking worker signature for project ${projectId}:`, error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Gets the contract ID for a given project ID.
+   * @param projectId The ID of the project.
+   */
+  getContractIdByProjectId(projectId: number): Observable<GetContractIdResponse> {
+    const headers = this.getHeaders();
+    return this.http.get<GetContractIdResponse>(`${this.apiUrl}/contract/project/${projectId}/id`, { headers }).pipe(
+      catchError(error => {
+        console.error(`Error fetching contract ID for project ${projectId}:`, error);
         return throwError(() => error);
       })
     );

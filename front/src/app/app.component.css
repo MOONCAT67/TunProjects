@@ -1,0 +1,33 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  /* Reset global box sizing and spacing */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Force html/body to fill full height */
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  
+  /* Navbar and footer always visible without extra margin */
+  app-navbar, app-footer {
+    display: block;
+    width: 100%;
+  }
+  
+  /* router-outlet should grow to fill space between header and footer */
+  router-outlet {
+    flex: 1;
+    display: block;
+  }
+  

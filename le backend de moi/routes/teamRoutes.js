@@ -36,4 +36,7 @@ router.get("/leader/:workerId", teamController.checkTeamLeader);
 // Team Projects Route
 router.get('/:teamId/projects', teamController.getTeamProjects);
 
+// Get team leader for a user
+router.get('/getleaderId/:userId', teamController.getTeamLeader);
+
 module.exports = router;

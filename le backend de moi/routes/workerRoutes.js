@@ -6,6 +6,9 @@ const { authenticateToken } = require('../middleware/auth');
 // Worker Verification Routes
 router.post('/verification-requests', workerController.submitVerificationRequest);
 
+// Get number of workers for a job category
+router.get('/job-category/:jobCategoryId/count', workerController.getWorkersCountByJobCategory);
+
 // Job Categories Routes
 router.get('/jobs', workerController.getAllJobs);
 
@@ -43,5 +46,10 @@ router.post('/track-view', workerController.trackProjectView);
 
 // Track project detail view for ML
 router.post('/track-detail-view', workerController.trackProjectDetailView);
+
+router.get('/wallet/:workerId', workerController.getWorkerWallet);
+
+// Get completed projects for worker
+router.get('/:workerId/completed-projects', workerController.getCompletedProjects);
 
 module.exports = router;

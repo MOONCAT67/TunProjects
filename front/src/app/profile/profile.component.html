@@ -3,7 +3,7 @@
     <div class="profile-cover"></div>
     <div class="profile-info">
       <div class="profile-picture-container">
-        <img [src]="profile.profile_picture || 'assets/default-avatar.png'" alt="Profile Picture" class="profile-picture">
+        <img [src]="profile.profile_picture || 'assets/profile.jpg'" alt="Profile Picture" class="profile-picture">
         <div class="verification-badge" *ngIf="profile.is_verified">
           <i class="fas fa-check-circle"></i>
           <span>Verified</span>
@@ -15,7 +15,6 @@
         <div class="profile-meta">
           <div class="meta-item" *ngIf="profile.location">
             <i class="fas fa-map-marker-alt"></i>
-            <span>{{ profile.location }}</span>
           </div>
           <div class="meta-item">
             <i class="fas fa-envelope"></i>
@@ -48,7 +47,8 @@
       <div class="categories-grid">
         <div class="category-card" *ngFor="let category of profile.jobCategories">
           <div class="category-icon">
-            <i class="fas" [class]="category.category_icon"></i>
+            
+            <img [src]="category.category_icon" alt="{{ category.category_name }} icon" class="category-image">
           </div>
           <div class="category-info">
             <h3>{{ category.category_name }}</h3>
@@ -56,6 +56,14 @@
             <span class="experience">Experience: {{ category.years_experience }} years</span>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- Worker Location Map Section -->
+    <section class="profile-section" *ngIf="profile.location">
+      <h2>Location</h2>
+      <div class="map-container-section">
+        <div id="profile-map" class="profile-map-section"></div>
       </div>
     </section>
 
@@ -106,7 +114,7 @@
         </div>
         <p>{{ profile.teamInfo.description }}</p>
         <div class="team-leader">
-          <img [src]="profile.teamInfo.leader_picture || 'assets/default-avatar.png'" alt="Team Leader" class="leader-picture">
+          <img [src]="profile.teamInfo.leader_picture || 'assets/profile.png'" alt="Team Leader" class="leader-picture">
           <div class="leader-info">
             <h4>{{ profile.teamInfo.leader_name }}</h4>
             <span>Team Leader</span>
@@ -117,7 +125,13 @@
 
     <!-- Reviews Section -->
     <section class="profile-section">
-      <h2>Reviews</h2>
+      <div class="reviews-header">
+        <h2>Reviews</h2>
+        <button class="sort-button" (click)="toggleSortOrder()">
+          <i class="fas" [class.fa-sort-amount-down]="sortOrder === 'desc'" [class.fa-sort-amount-up]="sortOrder === 'asc'"></i>
+          {{ sortOrder === 'desc' ? 'Best First' : 'Worst First' }}
+        </button>
+      </div>
       
       <!-- Rating Summary -->
       <div class="rating-summary mb-4">
@@ -144,13 +158,13 @@
       </div>
 
       <!-- Reviews List -->
-      <div class="reviews-grid" *ngIf="profile.reviews.length > 0">
-        <div class="review-card" *ngFor="let review of profile.reviews">
+      <div class="reviews-grid" *ngIf="reviews.length > 0">
+        <div class="review-card" *ngFor="let review of getSortedReviews()">
           <div class="reviewer-info">
-            <img [src]="review.client_picture || 'assets/default-avatar.png'" alt="Reviewer" class="reviewer-picture">
+            <img [src]="review.client_picture || 'assets/profile.jpg'" alt="Reviewer" class="reviewer-picture">
             <div class="reviewer-details">
               <h4>{{ review.client_name }}</h4>
-              <span class="job-category">{{ review.job_category_name }}</span>
+              <span class="project-title">{{ review.project_title }}</span>
             </div>
           </div>
           <div class="review-content">
@@ -167,12 +181,82 @@
       </div>
 
       <!-- No Reviews Message -->
-      <div class="no-reviews text-center py-5" *ngIf="profile.reviews.length === 0">
+      <div class="no-reviews text-center py-5" *ngIf="reviews.length === 0">
         <i class="fas fa-star fa-3x text-muted mb-3"></i>
         <h4>No Reviews Yet</h4>
         <p class="text-muted">This user hasn't received any reviews yet.</p>
       </div>
     </section>
+
+    <!-- Completed Projects Section -->
+    <section class="profile-section" *ngIf="!loadingProjects && !projectsError">
+      <div class="section-header">
+        <h2>Completed Projects</h2>
+        <span class="project-count">{{ completedProjects.length }} Projects</span>
+      </div>
+
+      <div class="completed-projects-grid" *ngIf="completedProjects.length > 0">
+        <div class="project-card" *ngFor="let project of completedProjects">
+          <div class="project-header">
+            <h3>{{ project.title }}</h3>
+            <span class="project-budget">{{ project.budget | currency:'TND' }}</span>
+          </div>
+          
+          <p class="project-description">{{ project.description }}</p>
+          
+          <div class="project-details">
+            <div class="detail-item">
+              <i class="fas fa-tasks"></i>
+              <span>{{ project.main_tasks_number }} Tasks</span>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-layer-group"></i>
+              <span>Phase {{ project.current_phase }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-user"></i>
+              <span>{{ project.project_type }}</span>
+            </div>
+          </div>
+
+          <div class="client-info">
+            <div class="client-header">
+              <i class="fas fa-user-tie"></i>
+              <span>Client Information</span>
+            </div>
+            <div class="client-details">
+              <p><strong>{{ project.client.name }}</strong></p>
+              <p><i class="fas fa-envelope"></i> {{ project.client.email }}</p>
+              <p><i class="fas fa-phone"></i> {{ project.client.phone }}</p>
+            </div>
+          </div>
+
+          <div class="project-footer">
+            <span class="completion-date">
+              <i class="fas fa-calendar-check"></i>
+              Completed {{ project.completion_date | date }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-projects" *ngIf="completedProjects.length === 0">
+        <i class="fas fa-clipboard-check"></i>
+        <h3>No Completed Projects Yet</h3>
+        <p>This worker hasn't completed any projects yet.</p>
+      </div>
+    </section>
+
+    <div class="loading-projects" *ngIf="loadingProjects">
+      <div class="spinner"></div>
+      <p>Loading completed projects...</p>
+    </div>
+
+    <div class="projects-error" *ngIf="projectsError">
+      <i class="fas fa-exclamation-circle"></i>
+      <p>{{ projectsError }}</p>
+      <button class="retry-btn" (click)="loadCompletedProjects()">Retry</button>
+    </div>
   </div>
 </div>
 

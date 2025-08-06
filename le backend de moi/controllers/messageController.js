@@ -91,4 +91,25 @@ exports.getUnreadMessagesCount = async (req, res) => {
       message: err.message || "Failed to fetch unread messages count"
     });
   }
+};
+
+exports.createNewConversation = async (req, res) => {
+  try {
+    const { userId1, userId2 } = req.body;
+
+    if (!userId1 || !userId2) {
+      return res.status(400).json({
+        success: false,
+        message: "Both userId1 and userId2 are required"
+      });
+    }
+
+    const result = await messageService.createNewConversation(userId1, userId2);
+    res.status(result.statusCode).json(result);
+  } catch (err) {
+    res.status(err.statusCode || 500).json({
+      success: false,
+      message: err.message || "Failed to create conversation"
+    });
+  }
 }; 

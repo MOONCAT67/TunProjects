@@ -13,11 +13,14 @@ import { TeamService, TeamRequest, GetTeamRequestsResponse, AcceptRejectTeamRequ
 import { forkJoin, of, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ContractService } from '../services/contract.service';
+import { FormsModule } from '@angular/forms';
+import { WalletService, WalletData } from '../services/wallet.service';
+import { WorkerService } from '../services/worker.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule, ClickOutsideDirective],
+  imports: [RouterLink, RouterLinkActive, CommonModule, ClickOutsideDirective, FormsModule],
   templateUrl: './navbar.component.html', // Separate HTML file
   styleUrls: ['./navbar.component.css']   // Separate CSS file
 })
@@ -35,18 +38,25 @@ export class NavbarComponent implements OnInit, OnDestroy {
   teamRequests: TeamRequest[] = [];
   hasError = false;
   signedContracts: { [key: number]: boolean } = {};
+  processingRequests: { [requestId: number]: boolean } = {};
+  showDropdown = false;
+  searchQuery: string = '';
+  walletData: WalletData | null = null;
+  showWalletDropdown = false;
 
   // Add subscription for unread messages service
   private unreadMessageSubscription: Subscription | null = null;
 
   constructor(
     private router: Router,
-    private authService: AuthService,
+    public authService: AuthService,
     private notificationService: NotificationService,
     private messagerieService: MessagerieService,
     private unreadMessageService: UnreadMessageService,
     private teamService: TeamService,
-    private contractService: ContractService
+    private contractService: ContractService,
+    private walletService: WalletService,
+    private workerService: WorkerService
   ) {}
 
   ngOnInit() {
@@ -67,6 +77,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.unreadMessageSubscription = this.unreadMessageService.messageRead$.subscribe(() => {
           this.loadUnreadMessagesCount();
         });
+        if (user?.role === 'worker' && user?.id) {
+          this.loadWalletData(user.id);
+        }
       } else {
         // Unsubscribe when user is not authenticated
         if (this.unreadMessageSubscription) {
@@ -127,15 +140,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.authService.logout();
     this.isDropdownOpen = false;
     this.isWorkerSpaceOpen = false;
+    this.router.navigate(['/']);
   }
 
   goToMyProjects() {
-    if (!this.isAuthenticated) {
-      this.router.navigate(['/auth']);
-      return;
-    }
     this.router.navigate(['/client/projects']);
-    this.isDropdownOpen = false;
+  }
+
+  goToProfile() {
+    this.router.navigate(['/profile']);
   }
 
   goToManageTeam() {
@@ -297,39 +310,63 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   acceptTeamRequest(request: TeamRequest) {
-    const currentUser = this.authService.getCurrentUser();
-    if (!currentUser?.id) {
-      console.error('User not logged in. Cannot accept request.');
+    if (this.processingRequests[request.request_id]) {
       return;
     }
-    console.log(`Accepting team request ${request.request_id} for user ${currentUser.id}`);
-    const payload: AcceptRejectTeamRequestPayload = { userId: currentUser.id };
+
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser?.id) {
+      console.error('User not logged in or team leader email not available');
+      return;
+    }
+
+    this.processingRequests[request.request_id] = true;
+
+    const payload: AcceptRejectTeamRequestPayload = {
+      userId: currentUser.id
+    };
+
     this.teamService.acceptTeamRequest(request.request_id, payload).subscribe({
       next: (response: AcceptRejectTeamRequestResponse) => {
-        console.log('Request accepted:', response);
-        this.teamRequests = this.teamRequests.filter(req => req.request_id !== request.request_id);
+        console.log('Team request accepted successfully', response);
+        this.teamRequests = this.teamRequests.filter(r => r.request_id !== request.request_id);
+        this.unreadCount = Math.max(0, this.unreadCount - 1);
+        delete this.processingRequests[request.request_id];
       },
       error: (error: any) => {
-        console.error('Error accepting request:', error);
+        console.error('Error accepting team request:', error);
+        delete this.processingRequests[request.request_id];
       }
     });
   }
 
   rejectTeamRequest(request: TeamRequest) {
-    const currentUser = this.authService.getCurrentUser();
-    if (!currentUser?.id) {
-      console.error('User not logged in. Cannot reject request.');
+    if (this.processingRequests[request.request_id]) {
       return;
     }
-    console.log(`Rejecting team request ${request.request_id} for user ${currentUser.id}`);
-    const payload: AcceptRejectTeamRequestPayload = { userId: currentUser.id };
+
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser?.id) {
+      console.error('User not logged in or team leader email not available');
+      return;
+    }
+
+    this.processingRequests[request.request_id] = true;
+
+    const payload: AcceptRejectTeamRequestPayload = {
+      userId: currentUser.id
+    };
+
     this.teamService.rejectTeamRequest(request.request_id, payload).subscribe({
       next: (response: AcceptRejectTeamRequestResponse) => {
-        console.log('Request rejected:', response);
-        this.teamRequests = this.teamRequests.filter(req => req.request_id !== request.request_id);
+        console.log('Team request rejected successfully', response);
+        this.teamRequests = this.teamRequests.filter(r => r.request_id !== request.request_id);
+        this.unreadCount = Math.max(0, this.unreadCount - 1);
+        delete this.processingRequests[request.request_id];
       },
       error: (error: any) => {
-        console.error('Error rejecting request:', error);
+        console.error('Error rejecting team request:', error);
+        delete this.processingRequests[request.request_id];
       }
     });
   }
@@ -343,11 +380,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
       next: (response: any) => {
         if (response && response.data) {
           this.notifications = response.data;
+          console.log('Loaded notifications:', this.notifications);
           // Check signature status for each project notification
           this.notifications.forEach(notification => {
             if (notification.type === 'project' && 
                 notification.title === 'Application Accepted' && 
                 notification.extra) {
+              console.log('Checking contract signature for notification:', notification);
               this.checkContractSignature(notification.extra);
             }
           });
@@ -360,19 +399,86 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   checkContractSignature(contractId: number): void {
+    console.log('Checking contract signature for ID:', contractId);
     this.contractService.checkWorkerSignature(contractId).subscribe({
       next: (response: any) => {
-        if (response && response.data) {
-          this.signedContracts[contractId] = response.data.isSigned;
+        console.log('Contract signature check response:', response);
+        // Check if response has data and isSigned is a base64 string (indicating signature exists)
+        if (response && response.data && response.data.isSigned && response.data.isSigned.startsWith('data:image')) {
+          console.log('Contract is signed, setting signedContracts[', contractId, '] to true');
+          this.signedContracts[contractId] = true;
+        } else {
+          console.log('Contract is not signed, setting signedContracts[', contractId, '] to false');
+          this.signedContracts[contractId] = false;
         }
+        // Force change detection by creating a new object
+        this.signedContracts = { ...this.signedContracts };
       },
       error: (error: any) => {
         console.error('Error checking contract signature:', error);
+        this.signedContracts[contractId] = false;
+        // Force change detection by creating a new object
+        this.signedContracts = { ...this.signedContracts };
       }
     });
   }
 
   goToProjectSection(): void {
     this.router.navigate(['/worker/current-projects']);
+  }
+
+  onSearchInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.searchQuery = input.value;
+    if (this.searchQuery.trim()) {
+      this.router.navigate(['/search-worker'], {
+        queryParams: { search: this.searchQuery }
+      });
+    }
+  }
+
+  clearSearch() {
+    this.searchQuery = '';
+    const searchInput = document.querySelector('.search-container input') as HTMLInputElement;
+    if (searchInput) {
+      searchInput.value = '';
+    }
+  }
+
+  loadWalletData(workerId: number) {
+    this.walletService.getWorkerWallet(workerId).subscribe({
+      next: (response) => {
+        if (response.data) {
+          this.walletData = response.data;
+        }
+      },
+      error: (error) => {
+        console.error('Error loading wallet data:', error);
+      }
+    });
+  }
+
+  toggleWalletDropdown() {
+    this.showWalletDropdown = !this.showWalletDropdown;
+  }
+
+  getPaymentStatus(depositPaid: number): string {
+    switch (depositPaid) {
+      case 0:
+        return 'Not Paid';
+      case 1:
+        return 'First Payment';
+      case 2:
+        return 'Second Payment';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'TND'
+    }).format(amount);
   }
 }

@@ -1,11 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { WorkerService, SoloProject, Task } from '../services/worker.service';
+import { WorkerService, SoloProject, Task, CompletedProject } from '../services/worker.service';
 import { AuthService } from '../services/authService';
 import { ProjectTasksService, SubtaskCreationInput } from '../services/project-tasks.service';
+import { ContractService } from '../services/contract.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+interface GetContractIdResponse {
+  data: {
+    contractId: number;
+  };
+}
+
+interface Project {
+  id: number;
+  client_id: number;
+  // ... other project properties
+}
 
 @Component({
   selector: 'app-worker-current-projects',
@@ -32,6 +45,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 })
 export class WorkerCurrentProjectsComponent implements OnInit {
   projects: SoloProject[] = [];
+  unsignedProjects: { [key: string]: boolean } = {};
   isLoading: boolean = true;
   error: string | null = null;
   expandedTasks: { [key: string]: boolean } = {};
@@ -39,11 +53,15 @@ export class WorkerCurrentProjectsComponent implements OnInit {
   showSubtaskForm = false;
   currentTaskId: string | null = null;
   isSubmittingSubtask = false;
+  completedProjects: CompletedProject[] = [];
+  loadingCompletedProjects: boolean = false;
+  completedProjectsError: string | null = null;
 
   constructor(
     private workerService: WorkerService,
     private authService: AuthService,
     private projectTasksService: ProjectTasksService,
+    private contractService: ContractService,
     private router: Router,
     private fb: FormBuilder
   ) {
@@ -56,6 +74,7 @@ export class WorkerCurrentProjectsComponent implements OnInit {
 
   ngOnInit() {
     this.loadCurrentProjects();
+    this.loadCompletedProjects();
   }
 
   loadCurrentProjects() {
@@ -73,11 +92,13 @@ export class WorkerCurrentProjectsComponent implements OnInit {
       next: (response) => {
         if (response.statusCode === 200) {
           this.projects = response.data;
-          // Initialize expanded state for all tasks
+          // Initialize expanded state for all tasks and check contract signatures
           this.projects.forEach(project => {
             project.tasks.forEach(task => {
               this.expandedTasks[task.id] = false;
             });
+            // Check contract signature for each project
+            this.checkContractSignature(project.id.toString());
           });
         }
         this.isLoading = false;
@@ -86,6 +107,62 @@ export class WorkerCurrentProjectsComponent implements OnInit {
         console.error('Error loading current projects:', error);
         this.error = 'Failed to load current projects. Please try again later.';
         this.isLoading = false;
+      }
+    });
+  }
+
+  loadCompletedProjects() {
+    this.loadingCompletedProjects = true;
+    this.completedProjectsError = null;
+
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser?.id) {
+      this.completedProjectsError = 'User not authenticated';
+      this.loadingCompletedProjects = false;
+      return;
+    }
+
+    this.workerService.getCompletedProjects(currentUser.id).subscribe({
+      next: (response) => {
+        if (response.statusCode === 200) {
+          // Filter only solo projects
+          this.completedProjects = response.data.filter(project => project.project_type === 'solo');
+        }
+        this.loadingCompletedProjects = false;
+      },
+      error: (error) => {
+        console.error('Error loading completed projects:', error);
+        this.completedProjectsError = 'Failed to load completed projects';
+        this.loadingCompletedProjects = false;
+      }
+    });
+  }
+
+  checkContractSignature(projectId: string) {
+    this.contractService.checkWorkerSignatureByProject(Number(projectId)).subscribe({
+      next: (response) => {
+        this.unsignedProjects[projectId] = response.isSigned === 0;
+      },
+      error: (error) => {
+        console.error('Error checking contract signature:', error);
+        this.unsignedProjects[projectId] = true; // Assume unsigned on error
+      }
+    });
+  }
+
+  goToSignContract(projectId: string) {
+    this.contractService.getContractIdByProjectId(Number(projectId)).subscribe({
+      next: (response) => {
+        if (response.statusCode === 200 && response.contractId) {
+          this.router.navigate(['/contract/sign', response.contractId]);
+        } else {
+          console.error('Contract ID not found for project:', projectId);
+          // Optionally, handle error, e.g., show a message to the user
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching contract ID:', err);
+        // Optionally, handle error, e.g., show a message to the user
       }
     });
   }
@@ -148,9 +225,47 @@ export class WorkerCurrentProjectsComponent implements OnInit {
   }
 
   downloadContract(projectId: string) {
-    // Implement contract download logic here
-    // This could be a call to your backend service to get the contract file
-    console.log('Downloading contract for project:', projectId);
+    // Ensure projectId is a number for services that require it
+    const idAsNumber = Number(projectId);
+
+    // First get the project details to get the client ID
+    this.workerService.getProjectDetails(projectId).subscribe({
+      next: (projectDetails) => {
+        // Then get the contract ID for this project
+        this.contractService.getContractIdByProjectId(idAsNumber).subscribe({
+          next: (response) => {
+            if (response && response.contractId) {
+              const contractId = response.contractId;
+              // Then download the contract using the contract ID and client ID
+              this.contractService.downloadContract(contractId, projectDetails.client_id).subscribe({
+                next: (blob) => {
+                  // Create a blob URL and trigger download
+                  const url = window.URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = `contract-${contractId}.pdf`;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  window.URL.revokeObjectURL(url);
+                },
+                error: (error) => {
+                  console.error('Error downloading contract:', error);
+                }
+              });
+            } else {
+              console.error('No contract ID found for project');
+            }
+          },
+          error: (error) => {
+            console.error('Error getting contract ID:', error);
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error getting project details:', error);
+      }
+    });
   }
 
   startSubtask(subtask: any): void {
@@ -272,5 +387,22 @@ export class WorkerCurrentProjectsComponent implements OnInit {
     } else {
       console.log('Form is invalid or no task ID'); // Debug log
     }
+  }
+
+  viewProjectDetails(projectId: string | number) {
+    const id = typeof projectId === 'string' ? parseInt(projectId, 10) : projectId;
+    this.router.navigate(['/project-details', id]);
+  }
+
+  contactClient(clientId: number, clientName: string, clientPicture: string | null) {
+    // Navigate to messaging component with the client ID, name, and picture as query parameters
+    this.router.navigate(['/messagerie'], { 
+      queryParams: { 
+        clientId: clientId,
+        clientName: clientName,
+        clientPicture: clientPicture || null,
+        startConversation: true 
+      }
+    });
   }
 }

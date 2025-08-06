@@ -76,31 +76,31 @@ export class WorkerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     const currentUser = this.authService.getCurrentUser();
     if (currentUser && currentUser.id) {
       this.workerService.getAvailableProjects(currentUser.id).subscribe({
-        next: (response) => {
-          console.log('API Response:', response);
-          if (Array.isArray(response)) {
+      next: (response) => {
+        console.log('API Response:', response);
+        if (Array.isArray(response)) {
             this.originalProjects = response;
-          } else if (response && response.data) {
+        } else if (response && response.data) {
             this.originalProjects = response.data;
-          } else {
+        } else {
             this.originalProjects = [];
-          }
-          this.projects = [...this.originalProjects];
-          console.log('Projects array:', this.projects);
-          this.loading = false;
-          
-          if (isPlatformBrowser(this.platformId)) {
-            setTimeout(() => {
-              this.initializeMaps();
-            }, 2000);
-          }
-        },
-        error: (error) => {
-          console.error('Error loading projects:', error);
-          this.error = 'Failed to load available projects. Please try again later.';
-          this.loading = false;
         }
-      });
+          this.projects = [...this.originalProjects];
+        console.log('Projects array:', this.projects);
+        this.loading = false;
+        
+        if (isPlatformBrowser(this.platformId)) {
+          setTimeout(() => {
+            this.initializeMaps();
+          }, 2000);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading projects:', error);
+        this.error = 'Failed to load available projects. Please try again later.';
+        this.loading = false;
+      }
+    });
     } else {
       this.error = 'User not logged in. Cannot load projects.';
       this.loading = false;

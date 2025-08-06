@@ -20,6 +20,13 @@ export interface Conversation {
   last_message_time: string;
   unread_count: number;
   last_message_sender_id: number;
+  isTemporaryStaticConversation?: boolean;
+}
+
+export interface CreateConversationResponseData {
+  userId1: number;
+  userId2: number;
+  createdAt: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -47,5 +54,12 @@ export class MessagerieService {
 
   getUnreadMessagesCount(userId: number): Observable<{ success: boolean; data: number }> {
     return this.http.get<{ success: boolean; data: number }>(`${this.baseUrl}/unread-count/${userId}`);
+  }
+
+  createNewConversation(userId1: number, userId2: number): Observable<{ success: boolean; data: CreateConversationResponseData }> {
+    return this.http.post<{ success: boolean; data: CreateConversationResponseData }>(`${this.baseUrl}/conversation`, {
+      userId1,
+      userId2
+    });
   }
 } 

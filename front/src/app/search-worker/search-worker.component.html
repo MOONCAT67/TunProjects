@@ -4,9 +4,13 @@
       type="text"
       placeholder="Search by email..."
       [(ngModel)]="searchEmail"
-      (input)="onSearch()"
+      (ngModelChange)="onSearch()"
       class="search-bar"
     />
+    <select [(ngModel)]="selectedJobCategory" (change)="onJobCategoryChange()" class="job-category-select">
+      <option [ngValue]="null">Filter by Job Category</option>
+      <option *ngFor="let category of jobCategories" [ngValue]="category.id">{{ category.name }}</option>
+    </select>
     <button class="nearby-btn" (click)="toggleNearbyWorkers()" [class.active]="showNearbyWorkers">
       <i class="bi bi-geo-alt-fill"></i>
       {{ showNearbyWorkers ? 'Show All Workers' : 'Workers in Your Area' }}
@@ -23,20 +27,39 @@
         <th>Member name</th>
         <th>Mobile</th>
         <th>Email</th>
+        <th>Skills & Experience</th>
         <th>Status</th>
         <th *ngIf="isTeamLeader">Operation</th>
-        <th>Action</th>
+        <th *ngIf="authService.isAuthenticated()">Action</th>
       </tr>
     </thead>
     <tbody>
       <ng-container *ngFor="let worker of filteredWorkers">
-        <tr>
+        <tr  style="cursor: pointer;">
           <td>
-            <img [src]="worker.profile_picture || 'assets/profile.jpg'" alt="Profile" class="worker-photo" />
+            <img [src]="worker.profile_picture || 'assets/profile.jpg'" alt="Profile" class="worker-photo" (click)="navigateToWorkerProfile(worker.id)" />
           </td>
-          <td>{{ worker.fullname }}</td>
-          <td>{{ worker.phone_number }}</td>
-          <td>{{ worker.email }}</td>
+          <td (click)="navigateToWorkerProfile(worker.id)">{{ worker.fullname }}</td>
+          <td (click)="navigateToWorkerProfile(worker.id)">{{ worker.phone_number }}</td>
+          <td (click)="navigateToWorkerProfile(worker.id)">{{ worker.email }}</td>
+          <td >
+            <div class="skills-experience">
+              <div *ngIf="worker.job_categories && worker.job_categories.length > 0" class="skills-list">
+                <div *ngFor="let category of worker.job_categories.slice(0, showAllSkills ? undefined : 2); let i = index" class="skill-item">
+                  <span class="job-category">{{ category }}</span>
+                  <span *ngIf="worker.years_experience && worker.years_experience[i]" class="experience">
+                    ({{ worker.years_experience[i] }} years)
+                  </span>
+                </div>
+                <div *ngIf="!showAllSkills && worker.job_categories.length > 2" class="more-skills" (click)="toggleSkills()">
+                  <span class="more-count">+{{ worker.job_categories.length - 2 }}</span>
+                </div>
+              </div>
+              <div *ngIf="!worker.job_categories || worker.job_categories.length === 0" class="no-skills">
+                No skills listed
+              </div>
+            </div>
+          </td>
           <td>
             <span [ngClass]="worker.is_online ? 'status-active' : 'status-inactive'">
               {{ worker.is_online ? 'Active' : 'Inactive' }}
@@ -45,14 +68,14 @@
           <td *ngIf="isTeamLeader" class="operation-icons">
             <button class="icon-btn" (click)="sendTeamRequest(worker)" title="Add to Team"><i class="bi bi-plus-circle"></i></button>
           </td>
-          <td>
+          <td *ngIf="authService.isAuthenticated()">
             <button class="message-btn" (click)="openMessageModal(worker)">
               <i class="fas fa-envelope"></i> Message
             </button>
           </td>
         </tr>
-        <tr *ngIf="openMessageWorkerId === worker.id">
-          <td colspan="7" class="inline-message-box">
+        <tr *ngIf="openMessageWorkerId === worker.id && authService.isAuthenticated()">
+          <td [attr.colspan]="isTeamLeader ? 8 : 7" class="inline-message-box">
             <input type="text"
                    [(ngModel)]="messageInputs[worker.id]"
                    [disabled]="isSendingMessage[worker.id]"

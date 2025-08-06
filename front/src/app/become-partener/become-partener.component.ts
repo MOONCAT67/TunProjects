@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } fr
 import { WorkerService } from '../services/worker.service';
 import { AuthService } from '../services/authService';
 import { JobCategory, VerificationRequest } from '../models/verification.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-become-partener',
@@ -19,11 +20,13 @@ export class BecomePartenerComponent implements OnInit {
   error: string | null = null;
   success = false;
   currentYear = new Date().getFullYear();
+  showCustomAlert = false;
 
   constructor(
     private fb: FormBuilder,
     private workerService: WorkerService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {
     this.verificationForm = this.fb.group({
       requestDescription: ['', [Validators.required, Validators.minLength(10)]],
@@ -97,9 +100,10 @@ export class BecomePartenerComponent implements OnInit {
   }
 
   loadJobCategories() {
-    this.workerService.getJobTitles().subscribe({
+    this.workerService.getJobs().subscribe({
       next: (response) => {
-        this.jobCategories = response.data;
+        this.jobCategories = response;
+        console.log('Loaded Job Categories:', this.jobCategories);
       },
       error: () => {
         this.error = 'Failed to load job categories. Please try again later.';
@@ -139,6 +143,7 @@ export class BecomePartenerComponent implements OnInit {
           this.jobs.push(this.createJobFormGroup());
           this.certificates.push(this.createCertificateFormGroup());
           this.pastProjects.push(this.createPastProjectFormGroup());
+          this.showCustomAlert = true;
         },
         error: (error) => {
           this.loading = false;
@@ -148,6 +153,11 @@ export class BecomePartenerComponent implements OnInit {
     } else {
       this.markFormGroupTouched(this.verificationForm);
     }
+  }
+
+  onAlertConfirm() {
+    this.showCustomAlert = false;
+    this.router.navigate(['/body']);
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {

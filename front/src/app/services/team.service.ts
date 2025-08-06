@@ -128,6 +128,33 @@ export interface TeamTaskResponse {
   data: Project[];
 }
 
+export interface LeaveTeamPayload {
+  userId: number;
+}
+
+export interface LeaveTeamResponse {
+  statusCode: number;
+  message: string;
+}
+
+export interface GetTeamLeaderInfoResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: {
+    team_id: number;
+    team_name: string;
+    leader: {
+      id: number;
+      name: string;
+      email: string;
+      phone: string;
+      profile_picture: string | null;
+    };
+    user_role: string;
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -190,7 +217,7 @@ export class TeamService {
   }
 
   acceptTeamRequest(requestId: number, payload: AcceptRejectTeamRequestPayload): Observable<AcceptRejectTeamRequestResponse> {
-    return this.http.put<AcceptRejectTeamRequestResponse>(`${this.apiUrl}/teams/requests/${requestId}/accept`, payload).pipe(
+    return this.http.put<AcceptRejectTeamRequestResponse>(`${this.apiUrl}/team/teams/requests/${requestId}/accept`, payload).pipe(
       catchError(error => {
         console.error(`Error accepting team request ${requestId}:`, error);
         return throwError(() => error);
@@ -237,6 +264,37 @@ export class TeamService {
     return this.http.get<any>(`${this.apiUrl}/team/teams/${teamId}/user/${userId}/subtasks`).pipe(
       catchError(error => {
         console.error('Error fetching user team subtasks:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Allows a team member to leave a specific team.
+   * @param teamId The ID of the team to leave.
+   * @param payload The payload containing the userId.
+   */
+  leaveTeam(teamId: number, payload: LeaveTeamPayload): Observable<LeaveTeamResponse> {
+    return this.http.post<LeaveTeamResponse>(`${this.apiUrl}/team/teams/${teamId}/leave`, payload).pipe(
+      catchError(error => {
+        console.error(`Error leaving team ${teamId}:`, error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  addMainTask(projectId: number, taskData: any) {
+    return this.http.post<any>(`${this.apiUrl}/task/${projectId}/tasks-with-sequence`, taskData);
+  }
+
+  addSubtaskToMainTask(mainTaskId: number, subtaskData: any) {
+    return this.http.post<any>(`${this.apiUrl}/task/main-tasks/${mainTaskId}/subtasks-with-assignee`, subtaskData);
+  }
+
+  getTeamLeaderInfo(userId: number): Observable<GetTeamLeaderInfoResponse> {
+    return this.http.get<GetTeamLeaderInfoResponse>(`${this.apiUrl}/team/getleaderId/${userId}`).pipe(
+      catchError(error => {
+        console.error(`Error fetching team leader info for user ${userId}:`, error);
         return throwError(() => error);
       })
     );

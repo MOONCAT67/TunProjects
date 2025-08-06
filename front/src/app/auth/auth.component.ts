@@ -226,4 +226,24 @@ export class AuthComponent implements AfterViewInit {
       }
     });
   }
+
+  handleForgotPassword(event: Event) {
+    event.preventDefault();
+    
+    const email = this.loginForm.get('email')?.value;
+    if (!email) {
+      alert('Please enter your email address first');
+      return;
+    }
+
+    this.authService.forgotPassword(email).subscribe({
+      next: (response) => {
+        alert('Your password has been sent to your email address');
+      },
+      error: (error) => {
+        console.error('Error sending password:', error);
+        alert('Failed to send password. Please try again later.');
+      }
+    });
+  }
 }

@@ -28,6 +28,9 @@ import { TeamtaskComponent } from './teamtask/teamtask.component';
 import { ContractComponent } from './contract/contract.component';
 import { WorkerContractSignComponent } from './worker-contract-sign/worker-contract-sign.component';
 import { AddtaskComponent } from './addtask/addtask.component';
+import { AboutUsComponent } from './about-us/about-us.component';
+import { ClientProfileComponent } from './client-profile/client-profile.component';
+import { PayementComponent } from './payement/payement.component';
 
 export const routes: Routes = [
   { path: 'body', component: BodyComponent },
@@ -42,6 +45,7 @@ export const routes: Routes = [
   { 
     path: 'client/projects', 
     component: ClientProjectsComponent 
+  
   },
   { 
     path: 'client/projects/:projectId/applications', 
@@ -114,6 +118,15 @@ export const routes: Routes = [
   {
     path: 'contract/sign/:contractId',
     component: WorkerContractSignComponent
+  },
+  { path: 'about-us', component: AboutUsComponent },
+  {
+    path: 'profile',
+    component: ClientProfileComponent
+  },
+  {
+    path: 'payement/:projectId/:clientId',
+    component: PayementComponent
   },
   { path: '', redirectTo: '/body', pathMatch: 'full' } // Default route to 'body'
 ];

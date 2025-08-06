@@ -8,25 +8,63 @@
     {{ error }}
   </div>
 
-  <div *ngIf="!loading && !error && teamData?.data" class="team-content">
+  <div *ngIf="!loading && !error && teamData && teamData.data && teamData.data.members && teamData.data.members.length > 0" class="team-content">
     <!-- Team Actions Bar (Moved to top) -->
     <div class="team-actions-bar">
       <div class="search-worker-container">
         <input type="text" placeholder="Search workers..." />
         <span class="search-icon"><i class="bi bi-search"></i></span>
       </div>
-      <button class="action-button add-worker-button"><i class="bi bi-person-plus"></i> Add Worker</button>
+
+      <!-- Conditional button for Team Leader -->
+      <button *ngIf="isCurrentUserLeader" class="action-button add-worker-button" routerLink="/search-worker">
+        <i class="bi bi-person-plus"></i> Add Worker
+      </button>
+
+      <!-- Conditional button for Non-Leaders -->
+      <button *ngIf="!isCurrentUserLeader" class="action-button contact-leader-button" (click)="toggleMessageInput()">
+        <i class="bi bi-envelope"></i> Contact Leader
+      </button>
+
+      <!-- Message input and send button (conditionally displayed) -->
+      <div *ngIf="showMessageInput" class="message-leader-area">
+        <textarea [(ngModel)]="leaderMessage" placeholder="Write your message to the team leader..."></textarea>
+        <div class="message-actions">
+          <button class="send-message-button" (click)="sendMessageToLeader()" [disabled]="!leaderMessage.trim() || sendingMessage">
+            <span *ngIf="!sendingMessage">Send Message</span>
+            <div class="spinner-small" *ngIf="sendingMessage"></div>
+          </button>
+          <div *ngIf="messageSendSuccess" class="message-success-alert">Message sent successfully!</div>
+          <div *ngIf="messageSendError" class="message-error-alert">{{ messageSendError }}</div>
+        </div>
+      </div>
+
       <button class="action-button tasks-button"
-              [routerLink]="['/team-tasks', teamData?.data?.team?.id, getCurrentUserId()]"
-              [disabled]="!teamData?.data?.team?.id || !getCurrentUserId()">
+              [routerLink]="['/team-tasks', teamData.data.team.id, getCurrentUserId()]"
+              [disabled]="!teamData.data.team.id || !getCurrentUserId()">
         <i class="bi bi-list-task"></i> Team Tasks
       </button>
       <button class="action-button projects-button"
-              [routerLink]="['/team-projects', teamData?.data?.team?.id]"
-              [disabled]="!teamData?.data?.team?.id">
+              [routerLink]="['/team-projects', teamData.data.team.id]"
+              [disabled]="!teamData.data.team.id">
         <i class="bi bi-folder2-open"></i> Team Projects
       </button>
-      <button class="action-button leave-team-button"><i class="bi bi-box-arrow-right"></i> Leave Team</button>
+      <button *ngIf="!isCurrentUserLeader"
+              class="action-button leave-team-button"
+              (click)="leaveTeam()"
+              [disabled]="leavingTeam">
+        <i class="bi bi-box-arrow-right"></i> 
+        <span *ngIf="!leavingTeam">Leave Team</span>
+        <div class="spinner-small" *ngIf="leavingTeam"></div>
+      </button>
+    </div>
+
+    <!-- Leave Team Success/Error Messages -->
+    <div *ngIf="leaveTeamSuccess" class="alert success-alert leave-team-alert">
+      You have successfully left the team.
+    </div>
+    <div *ngIf="leaveTeamError" class="alert error-message leave-team-alert">
+      {{ leaveTeamError }}
     </div>
 
     <!-- Team Members List (Table-like display) -->
@@ -44,7 +82,7 @@
         </div>
 
         <!-- All Members Rows (including leader) -->
-        <div class="table-row" *ngFor="let member of teamData?.data?.members" [class.is-current-user]="member.id === getCurrentUserId()">
+        <div class="table-row" *ngFor="let member of teamData.data.members" [class.is-current-user]="member.id === getCurrentUserId()">
           <div class="cell member-cell">
             <div class="member-avatar-small">
               <img [src]="member.profile_picture || 'assets/profile.jpg'" alt="Member Avatar">
@@ -65,14 +103,14 @@
         </div>
 
         <!-- Message if no members found -->
-        <div class="table-row" *ngIf="!teamData?.data?.members?.length">
+        <div class="table-row" *ngIf="!teamData.data.members.length">
           <div class="cell no-members-cell">No team members found.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <div *ngIf="!loading && !error && (!teamData?.data || !teamData?.data?.members?.length)" class="no-team">
+  <div *ngIf="!loading && !error && (!teamData || !teamData.data || !teamData.data.members || teamData.data.members.length === 0)" class="no-team">
     <h2>This space is only for teams</h2>
     <img src="assets/team.png" alt="Team illustration" class="no-team-illustration">
     <p>Create a new team or join an existing one to access this workspace.</p>

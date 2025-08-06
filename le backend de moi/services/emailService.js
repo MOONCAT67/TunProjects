@@ -269,3 +269,59 @@ exports.sendTaskStatusUpdateEmail = async ({ recipientEmail, recipientName, work
     throw error;
   }
 };
+
+exports.sendPasswordRecoveryEmail = async ({ recipientEmail, recipientName, password }) => {
+  try {
+    const mailOptions = {
+      from: `"TunProjects Team" <${process.env.EMAIL_FROM}>`,
+      to: recipientEmail,
+      subject: `Your Password Recovery`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #2563eb;">Password Recovery</h2>
+          <p>Hello ${recipientName},</p>
+          <p>Here is your password: <strong>${password}</strong></p>
+          <p>For security reasons, we recommend changing your password after logging in.</p>
+          <a href="${process.env.APP_URL}/login" 
+             style="display: inline-block; padding: 10px 20px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 5px;">
+            Login Now
+          </a>
+          <p style="margin-top: 30px;">The TunProjects Team</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error('Error sending password recovery email:', error);
+    throw error;
+  }
+};
+
+exports.sendEmail = async ({ to, subject, template, data }) => {
+  try {
+    const mailOptions = {
+      from: `"TunProjects Team" <${process.env.EMAIL_FROM}>`,
+      to: to,
+      subject: subject,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #2563eb;">${subject}</h2>
+          ${data.message || ''}
+          ${data.downloadUrl ? `
+            <a href="${process.env.APP_URL}${data.downloadUrl}" 
+               style="display: inline-block; padding: 10px 20px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 5px;">
+              Download Contract
+            </a>
+          ` : ''}
+          <p style="margin-top: 30px;">The TunProjects Team</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw error;
+  }
+};

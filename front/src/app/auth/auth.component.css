@@ -1,67 +1,66 @@
-/* Full height and font setup */
-
+/* === Base Styles === */
 html, body {
   height: 100%;
   margin: 0;
-  padding: 0; /* Added to prevent any default padding issues */
+  padding: 0;
   font-family: 'Arial Black', Arial, sans-serif;
   font-weight: bold;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
-/* Background and body styling */
+/* === Body Background === */
 body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  min-height: 100vh; /* Ensures body takes full viewport height */
-  display: flex; /* Added to ensure body supports centering */
-  flex-direction: column; /* Aligns children in a column */
-}
-
-/* Center container on screen */
-.main-container {
-  background-color: rgb(241, 112, 20);
+  min-height: 100vh;
   display: flex;
-  justify-content: center; /* Horizontal centering */
-  align-items: center; /* Vertical centering */
-  height: 100vh; /* Full viewport height */
-  width: 100%; /* Full viewport width */
-  position: fixed; /* Ensures it stays centered regardless of content */
-  top: 0;
-  left: 0;
-  margin: 0; /* Removes any default margins */
-  padding: 0; /* Removes any default padding */
-  box-sizing: border-box; /* Ensures padding doesn't affect size */
+  flex-direction: column;
 }
 
-/* New outer container (grey wrapper) */
+/* === Main Container === */
+.main-container {
+  background-image: url('../../assets/background.png');
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* === Outer Container === */
+.outer-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* === Form Container === */
 .container {
-  width: 460px; /* Increased from 400px (~15%) */
+  width: 460px;
   background-color: rgba(236, 212, 184, 0.95);
-  padding: 45px 35px; /* Scaled up slightly */
-  border-radius: 18px; /* Adjusted for larger size */
+  padding: 45px 35px;
+  border-radius: 6px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
   position: relative;
-  overflow: hidden;
 }
 
-/* Form card */
-.container {
-  width: 350px;
-  background-color: rgba(236, 212, 184, 0.9);
-  padding: 30px 25px;
-  border-radius: 15px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  position: relative;
-}
-
-/* Form sections */
 .form-container {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Input styling */
+/* === Inputs === */
 input[type="email"],
 input[type="password"],
 input[type="text"],
@@ -71,13 +70,13 @@ input[type="tel"] {
   margin: 10px 0;
   border-radius: 8px;
   border: 1px solid #ccc;
-  background: white;
+  background-color: white;
   box-sizing: border-box;
   font-family: 'Arial Black', Arial, sans-serif;
   font-weight: bold;
 }
 
-/* Buttons */
+/* === Buttons === */
 button {
   width: 100%;
   padding: 12px;
@@ -89,22 +88,22 @@ button {
   font-weight: bold;
   margin-top: 10px;
   cursor: pointer;
-  transition: 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out;
 }
 
 button:hover {
   background-color: #333;
 }
 
-/* Logo image */
+/* === Logo === */
 .logo {
   width: 150px;
   height: auto;
-  margin: 0 auto 20px auto;
+  margin: 0 auto 20px;
   display: block;
 }
 
-/* Headings */
+/* === Headings === */
 h1 {
   font-size: 24px;
   margin-bottom: 15px;
@@ -122,33 +121,29 @@ h1 {
   font-weight: bold;
 }
 
-/* Links and bottom text */
+/* === Links & Text === */
 a {
   font-size: 12px;
   color: black;
   text-decoration: none;
   display: block;
   margin-bottom: 10px;
-  font-family: 'Arial Black', Arial, sans-serif;
-  font-weight: bold;
 }
 
 p {
   font-size: 12px;
   margin-top: 15px;
   color: #444;
-  font-family: 'Arial Black', Arial, sans-serif;
-  font-weight: bold;
 }
 
 .signup,
 .login {
   color: orange;
   cursor: pointer;
-  font-weight: bold;
   text-decoration: underline;
 }
 
+/* === Map Styling === */
 .map-container {
   width: 100%;
   margin: 10px 0;
@@ -172,7 +167,7 @@ p {
   border-top: 1px solid #eee;
 }
 
-/* Ensure the map tiles are loaded correctly */
+/* === Leaflet Map Styling === */
 :host ::ng-deep .leaflet-tile {
   filter: brightness(0.95) contrast(1.1);
 }
@@ -181,7 +176,7 @@ p {
   background-color: #f8f8f8;
 }
 
-/* Style for the readonly address input */
+/* === Readonly Input Styling === */
 input[readonly] {
   background-color: #f8f8f8;
   cursor: default;
@@ -192,15 +187,18 @@ input[readonly]:focus {
   border-color: #ccc;
 }
 
+/* === Address Field Styling === */
 .address-input-group {
   position: relative;
   width: 100%;
-  margin: 10px 0 0 0;
+  margin-top: 10px;
 }
+
 .address-input-group input[readonly] {
   cursor: pointer;
   padding-right: 40px;
 }
+
 .location-icon {
   position: absolute;
   right: 12px;
@@ -212,57 +210,60 @@ input[readonly]:focus {
   z-index: 2;
 }
 
+/* === Modal Styling === */
 .map-modal-backdrop {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.35);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .map-modal {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-  padding: 0 0 18px 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  padding-bottom: 18px;
   width: 370px;
   max-width: 95vw;
-  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
 }
+
 .map-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 18px 8px 18px;
+  padding: 16px 18px 8px;
   border-bottom: 1px solid #f0f0f0;
-  font-weight: bold;
   color: #ff8500;
   font-size: 1.1rem;
 }
+
 .close-btn {
   background: none;
   border: none;
   font-size: 1.7rem;
   color: #ff8500;
   cursor: pointer;
-  line-height: 1;
 }
+
 #map-modal {
   width: 100%;
   height: 220px;
   border-radius: 0 0 12px 12px;
   margin-bottom: 10px;
 }
+
 .map-modal-actions {
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  padding: 0 18px 8px 18px;
+  padding: 0 18px 8px;
 }
+
 .map-modal-actions button {
   flex: 1;
   padding: 8px 0;
@@ -272,30 +273,42 @@ input[readonly]:focus {
   background: #ff8500;
   color: #fff;
   cursor: pointer;
-  margin-top: 0;
   transition: background 0.2s;
 }
+
 .map-modal-actions .confirm-btn {
   background: #222;
-  color: #fff;
 }
+
 .map-modal-actions button:hover {
   opacity: 0.92;
 }
+
 .selected-address {
-  padding: 8px 18px 0 18px;
+  padding: 8px 18px 0;
   font-size: 0.95rem;
   color: #333;
   min-height: 32px;
   word-break: break-word;
 }
+
+/* === Responsive Design === */
 @media (max-width: 500px) {
   .map-modal {
     width: 98vw;
-    min-width: 0;
-    padding: 0 0 10px 0;
+    padding-bottom: 10px;
   }
+
   #map-modal {
     height: 160px;
+  }
+
+  .container {
+    width: 100%;
+    padding: 30px 20px;
+  }
+
+  h1 {
+    font-size: 20px;
   }
 }

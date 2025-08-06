@@ -17,7 +17,7 @@
     <div class="application-card" *ngFor="let application of applications">
       <div class="application-header">
         <div class="worker-info">
-          <img [src]="application.profile_picture" alt="Profile" class="profile-picture" *ngIf="application.profile_picture">
+          <img src=" assets/profile.png" alt="Profile" class="profile-picture" *ngIf="application.profile_picture">
           <div class="worker-details">
             <h2>{{ application.fullname }}</h2>
             <span class="job-category">{{ application.job_category_name }}</span>

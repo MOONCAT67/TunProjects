@@ -249,3 +249,60 @@ exports.addSubtaskToMainTask = async (req, res) => {
     });
   }
 };
+
+exports.createMainTaskWithSequence = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { title, description, deadline, assigned_to, assigned_type } = req.body;
+
+    if (!projectId || !title) {
+      return res.status(400).json({
+        success: false,
+        message: "Project ID and title are required"
+      });
+    }
+
+    const result = await taskService.createMainTaskWithSequence({
+      projectId,
+      title,
+      description,
+      deadline,
+      assigned_to,
+      assigned_type
+    });
+
+    res.status(result.statusCode).json(result);
+  } catch (err) {
+    res.status(err.statusCode || 500).json({
+      success: false,
+      message: err.message || "Failed to create main task"
+    });
+  }
+};
+
+exports.addSubtaskWithAssignee = async (req, res) => {
+  try {
+    const { mainTaskId } = req.params;
+    const { title, description, assigned_to } = req.body;
+
+    if (!mainTaskId || !title || !assigned_to) {
+      return res.status(400).json({
+        success: false,
+        message: "Main task ID, title, and assigned_to are required"
+      });
+    }
+
+    const result = await taskService.addSubtaskWithAssignee(mainTaskId, {
+      title,
+      description,
+      assigned_to
+    });
+
+    res.status(result.statusCode).json(result);
+  } catch (err) {
+    res.status(err.statusCode || 500).json({
+      success: false,
+      message: err.message || "Failed to add subtask"
+    });
+  }
+};

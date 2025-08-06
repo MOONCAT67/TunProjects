@@ -624,3 +624,176 @@ exports.downloadContractByProject = async (projectId) => {
     };
   }
 }; 
+
+exports.checkWorkerSignatureByProject = async (params) => {
+  const { projectId } = params;
+
+  if (!projectId) throw { message: "Project ID is required", statusCode: 400 };
+
+  try {
+    // First, let's get the contract structure
+    const [columns] = await db.query(
+      `SHOW COLUMNS FROM contracts`
+    );
+    
+    // Find the worker signature column
+    const workerSignatureColumn = columns.find(col => 
+      col.Field.toLowerCase().includes('worker') && 
+      col.Field.toLowerCase().includes('signature')
+    );
+
+    if (!workerSignatureColumn) {
+      throw { 
+        message: "Could not find worker signature column in contracts table", 
+        statusCode: 500 
+      };
+    }
+
+    const [contracts] = await db.query(
+      `SELECT c.*, c.${workerSignatureColumn.Field} IS NOT NULL as is_signed
+       FROM contracts c
+       WHERE c.project_id = ?`,
+      [projectId]
+    );
+
+    if (contracts.length === 0) {
+      return {
+        statusCode: 404,
+        message: "No contract found for this project",
+        isSigned: false
+      };
+    }
+
+    return {
+      statusCode: 200,
+      isSigned: contracts[0].is_signed,
+      contractId: contracts[0].id
+    };
+  } catch (err) {
+    throw { 
+      message: err.message || "Failed to check worker signature status", 
+      statusCode: err.statusCode || 500 
+    };
+  }
+};
+
+exports.getContractIdByProject = async (params) => {
+  const { projectId } = params;
+
+  if (!projectId) throw { message: "Project ID is required", statusCode: 400 };
+
+  try {
+    const [contracts] = await db.query(
+      `SELECT id 
+       FROM contracts 
+       WHERE project_id = ?`,
+      [projectId]
+    );
+
+    if (contracts.length === 0) {
+      return {
+        statusCode: 404,
+        message: "No contract found for this project"
+      };
+    }
+
+    return {
+      statusCode: 200,
+      contractId: contracts[0].id
+    };
+  } catch (err) {
+    throw { 
+      message: err.message || "Failed to get contract ID", 
+      statusCode: err.statusCode || 500 
+    };
+  }
+}; 
+
+exports.updateContractContentByProject = async (projectId, content, userId) => {
+  const connection = await db.getConnection();
+
+  try {
+    // First check if contract exists for this project and user has permission
+    const [contract] = await connection.query(
+      `SELECT * FROM contracts WHERE project_id = ? AND client_id = ?`,
+      [projectId, userId]
+    );
+
+    if (contract.length === 0) {
+      throw { message: "Contract not found or unauthorized", statusCode: 404 };
+    }
+
+    // Check if contract is already signed
+    if (contract[0].status === 'signed') {
+      throw { message: "Cannot update signed contract", statusCode: 400 };
+    }
+
+    await connection.beginTransaction();
+
+    // Update contract content
+    await connection.query(
+      `UPDATE contracts 
+       SET content = ?
+       WHERE project_id = ?`,
+      [content, projectId]
+    );
+
+    // Generate new PDF with updated content
+    const filename = path.basename(contract[0].pdf_url);
+    const pdfPath = path.join(__dirname, '../uploads/contracts', filename);
+
+    const doc = new PDFDocument();
+    const writeStream = fs.createWriteStream(pdfPath);
+    doc.pipe(writeStream);
+
+    // Add content to PDF
+    doc.fontSize(16).text('Contract Agreement', { align: 'center' });
+    doc.moveDown();
+    doc.fontSize(12).text(content);
+    doc.moveDown();
+    doc.text('Client Signature:');
+    
+    // Handle client signature
+    if (contract[0].client_signature_data) {
+      try {
+        const base64Data = contract[0].client_signature_data.replace(/^data:image\/\w+;base64,/, '');
+        const signatureBuffer = Buffer.from(base64Data, 'base64');
+        doc.image(signatureBuffer, { width: 200 });
+      } catch (err) {
+        console.error('Error processing client signature:', err);
+        doc.text('Client signature could not be processed');
+      }
+    }
+    
+    doc.moveDown();
+    doc.text('Worker Signature: _________________');
+
+    doc.end();
+
+    // Wait for PDF to be written
+    await new Promise((resolve, reject) => {
+      writeStream.on('finish', resolve);
+      writeStream.on('error', reject);
+    });
+
+    await connection.commit();
+
+    return {
+      statusCode: 200,
+      message: "Contract content updated successfully",
+      data: {
+        projectId,
+        content
+      }
+    };
+
+  } catch (err) {
+    await connection.rollback();
+    throw {
+      message: err.message || "Failed to update contract content",
+      statusCode: err.statusCode || 500
+    };
+  } finally {
+    connection.release();
+  }
+}; 

@@ -9,4 +9,11 @@ router.get('/projects/:projectId/applications', clientController.get_project_app
 router.put('/projects/:projectId/applications/:applicationId/accept', clientController.accept_application);
 router.get('/workers', clientController.get_all_workers);
 
+// Get client profile by ID
+router.get('/:userId/profile', clientController.getClientProfile);
+
+router.put('/:userId/profile-picture', clientController.updateProfilePicture);
+router.put('/:userId/fullname', clientController.updateFullName);
+router.put('/:userId/phone', clientController.updatePhoneNumber);
+
 module.exports = router;

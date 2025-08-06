@@ -365,3 +365,367 @@ exports.getAllWorkers = async () => {
     };
   }
 };
+
+exports.getClientProfile = async (params) => {
+  const { userId } = params;
+
+  if (!userId) throw { message: "User ID is required", statusCode: 400 };
+
+  const connection = await db.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    // First, verify if the user exists
+    const [users] = await connection.query(
+      `SELECT id, role 
+       FROM users 
+       WHERE id = ?`,
+      [userId]
+    );
+
+    if (users.length === 0) {
+      return {
+        statusCode: 404,
+        message: "User not found"
+      };
+    }
+
+    // Get user basic information
+    const [userInfo] = await connection.query(
+      `SELECT 
+        u.id,
+        u.fullname,
+        u.profile_picture,
+        u.phone_number,
+        u.email,
+        u.created_at,
+        u.role,
+        u.profile_description,
+        u.location,
+        u.is_verified,
+        u.is_online,
+        u.last_activity
+       FROM users u
+       WHERE u.id = ?`,
+      [userId]
+    );
+
+    const user = userInfo[0];
+
+    // Get user's projects where they are the client
+    const [projects] = await connection.query(
+      `SELECT 
+        p.id,
+        p.title,
+        p.description,
+        p.budget,
+        p.status,
+        p.created_at,
+        p.completion_date,
+        p.project_type,
+        p.current_progress,
+        p.current_phase,
+        (
+          SELECT COUNT(*) 
+          FROM project_applications pa 
+          WHERE pa.project_id = p.id
+        ) as total_applications,
+        (
+          SELECT COUNT(*) 
+          FROM contracts c 
+          WHERE c.project_id = p.id
+        ) as total_contracts
+       FROM projects p
+       WHERE p.client_id = ?
+       ORDER BY p.created_at DESC`,
+      [userId]
+    );
+
+    // Get reviews received by the user (if they are a worker)
+    const [receivedReviews] = await connection.query(
+      `SELECT 
+        wr.id,
+        wr.rating,
+        wr.comment,
+        wr.created_at,
+        p.title as project_title,
+        u.fullname as client_name,
+        u.profile_picture as client_picture,
+        jc.name as job_category_name
+       FROM worker_reviews wr
+       JOIN projects p ON wr.project_id = p.id
+       JOIN users u ON wr.client_id = u.id
+       JOIN job_categories jc ON wr.job_category_id = jc.id
+       WHERE wr.worker_id = ?
+       ORDER BY wr.created_at DESC`,
+      [userId]
+    );
+
+    // Get reviews given by the user (as a client)
+    const [givenReviews] = await connection.query(
+      `SELECT 
+        wr.id,
+        wr.rating,
+        wr.comment,
+        wr.created_at,
+        p.title as project_title,
+        u.fullname as worker_name,
+        u.profile_picture as worker_picture,
+        jc.name as job_category_name
+       FROM worker_reviews wr
+       JOIN projects p ON wr.project_id = p.id
+       JOIN users u ON wr.worker_id = u.id
+       JOIN job_categories jc ON wr.job_category_id = jc.id
+       WHERE wr.client_id = ?
+       ORDER BY wr.created_at DESC`,
+      [userId]
+    );
+
+    // Calculate statistics
+    const totalProjects = projects.length;
+    const completedProjects = projects.filter(p => p.status === 'completed').length;
+    const activeProjects = projects.filter(p => p.status === 'in_progress').length;
+    const totalSpent = projects
+      .filter(p => p.status === 'completed')
+      .reduce((sum, p) => sum + (p.budget || 0), 0);
+
+    // Calculate average rating from received reviews
+    const averageRating = receivedReviews.length > 0
+      ? receivedReviews.reduce((sum, review) => sum + review.rating, 0) / receivedReviews.length
+      : 0;
+
+    await connection.commit();
+
+    return {
+      statusCode: 200,
+      data: {
+        ...user,
+        projects,
+        receivedReviews,
+        givenReviews,
+        statistics: {
+          totalProjects,
+          completedProjects,
+          activeProjects,
+          totalSpent,
+          averageRating,
+          totalReceivedReviews: receivedReviews.length,
+          totalGivenReviews: givenReviews.length
+        }
+      }
+    };
+
+  } catch (err) {
+    await connection.rollback();
+    console.error('Error in getClientProfile:', err);
+    throw { 
+      message: err.message || "Failed to get user profile", 
+      statusCode: err.statusCode || 500 
+    };
+  } finally {
+    connection.release();
+  }
+};
+
+exports.updateProfilePicture = async (params) => {
+  const { userId, profilePicture } = params;
+
+  if (!userId) throw { message: "User ID is required", statusCode: 400 };
+  if (!profilePicture) throw { message: "Profile picture is required", statusCode: 400 };
+
+  // Validate base64 string format
+  if (!profilePicture.startsWith('data:image/')) {
+    throw { 
+      message: "Invalid image format. Please provide a valid base64 encoded image", 
+      statusCode: 400 
+    };
+  }
+
+  // Calculate base64 size in MB
+  const base64Data = profilePicture.split(',')[1];
+  const sizeInBytes = Math.ceil((base64Data.length * 3) / 4);
+  const sizeInMB = sizeInBytes / (1024 * 1024);
+
+  // Check if image size is within limit (10MB)
+  if (sizeInMB > 10) {
+    throw {
+      message: "Image size exceeds 10MB limit. Please upload a smaller image.",
+      statusCode: 400
+    };
+  }
+
+  const connection = await db.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    // First verify if the user exists
+    const [users] = await connection.query(
+      `SELECT id FROM users WHERE id = ?`,
+      [userId]
+    );
+
+    if (users.length === 0) {
+      throw { message: "User not found", statusCode: 404 };
+    }
+
+    // Update the profile picture
+    const [result] = await connection.query(
+      `UPDATE users 
+       SET profile_picture = ? 
+       WHERE id = ?`,
+      [profilePicture, userId]
+    );
+
+    if (result.affectedRows === 0) {
+      throw { message: "Failed to update profile picture", statusCode: 500 };
+    }
+
+    await connection.commit();
+
+    return {
+      statusCode: 200,
+      message: "Profile picture updated successfully",
+      data: {
+        userId: userId,
+        imageSize: `${sizeInMB.toFixed(2)}MB`
+      }
+    };
+
+  } catch (err) {
+    await connection.rollback();
+    console.error('Error in updateProfilePicture:', err);
+    throw { 
+      message: err.message || "Failed to update profile picture", 
+      statusCode: err.statusCode || 500 
+    };
+  } finally {
+    connection.release();
+  }
+};
+
+exports.updateFullName = async (params) => {
+  const { userId, fullname } = params;
+
+  if (!userId) throw { message: "User ID is required", statusCode: 400 };
+  if (!fullname) throw { message: "Full name is required", statusCode: 400 };
+
+  // Validate fullname length
+  if (fullname.length < 2 || fullname.length > 255) {
+    throw {
+      message: "Full name must be between 2 and 255 characters",
+      statusCode: 400
+    };
+  }
+
+  const connection = await db.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    // First verify if the user exists
+    const [users] = await connection.query(
+      `SELECT id FROM users WHERE id = ?`,
+      [userId]
+    );
+
+    if (users.length === 0) {
+      throw { message: "User not found", statusCode: 404 };
+    }
+
+    // Update the full name
+    const [result] = await connection.query(
+      `UPDATE users 
+       SET fullname = ? 
+       WHERE id = ?`,
+      [fullname, userId]
+    );
+
+    if (result.affectedRows === 0) {
+      throw { message: "Failed to update full name", statusCode: 500 };
+    }
+
+    await connection.commit();
+
+    return {
+      statusCode: 200,
+      message: "Full name updated successfully",
+      data: {
+        userId: userId,
+        fullname: fullname
+      }
+    };
+
+  } catch (err) {
+    await connection.rollback();
+    console.error('Error in updateFullName:', err);
+    throw { 
+      message: err.message || "Failed to update full name", 
+      statusCode: err.statusCode || 500 
+    };
+  } finally {
+    connection.release();
+  }
+};
+
+exports.updatePhoneNumber = async (params) => {
+  const { userId, phoneNumber } = params;
+
+  if (!userId) throw { message: "User ID is required", statusCode: 400 };
+  if (!phoneNumber) throw { message: "Phone number is required", statusCode: 400 };
+
+  // Validate phone number format (basic validation)
+  const phoneRegex = /^\+?[0-9]{8,15}$/;
+  if (!phoneRegex.test(phoneNumber)) {
+    throw {
+      message: "Invalid phone number format. Please provide a valid phone number (8-15 digits, optional + prefix)",
+      statusCode: 400
+    };
+  }
+
+  const connection = await db.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    // First verify if the user exists
+    const [users] = await connection.query(
+      `SELECT id FROM users WHERE id = ?`,
+      [userId]
+    );
+
+    if (users.length === 0) {
+      throw { message: "User not found", statusCode: 404 };
+    }
+
+    // Update the phone number
+    const [result] = await connection.query(
+      `UPDATE users 
+       SET phone_number = ? 
+       WHERE id = ?`,
+      [phoneNumber, userId]
+    );
+
+    if (result.affectedRows === 0) {
+      throw { message: "Failed to update phone number", statusCode: 500 };
+    }
+
+    await connection.commit();
+
+    return {
+      statusCode: 200,
+      message: "Phone number updated successfully",
+      data: {
+        userId: userId,
+        phoneNumber: phoneNumber
+      }
+    };
+
+  } catch (err) {
+    await connection.rollback();
+    console.error('Error in updatePhoneNumber:', err);
+    throw { 
+      message: err.message || "Failed to update phone number", 
+      statusCode: err.statusCode || 500 
+    };
+  } finally {
+    connection.release();
+  }
+};

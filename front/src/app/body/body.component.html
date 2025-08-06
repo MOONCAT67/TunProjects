@@ -5,8 +5,24 @@
 
 <div class="body-section">
     <div class="content">
-        <h1>We connect people to bring projects to life</h1>
-        <button class="become-partner-btn" routerLink="/become-partner">Become a Partner</button>
+        <h1 *ngIf="!currentUser || currentUser.role !== 'worker'">
+          We connect people to bring projects to life
+        </h1>
+        <h1 *ngIf="currentUser?.role === 'worker'">
+          Welcome back, looking for work
+        </h1>
+        <button 
+          class="become-partner-btn" 
+          [routerLink]="authService.isAuthenticated() ? '/become-partner' : '/auth'" 
+          *ngIf="!currentUser || currentUser.role !== 'worker'">
+          {{ authService.isAuthenticated() ? 'Become a Partner' : 'Connect now' }}
+        </button>
+        <button 
+          class="become-partner-btn" 
+          routerLink="/worker" 
+          *ngIf="currentUser?.role === 'worker'">
+          Browse Projects
+        </button>
         <!--<button>ADD PROJECT</button>--> 
     </div>
 </div>
@@ -45,8 +61,22 @@
         </div>
 
         <div class="buttons">
-            <button class="btn primary" (click)="goToAuth()">Sign up for free</button>
-            <button class="btn secondary">Learn how to hire</button>
+          <button 
+            class="btn primary" 
+            [routerLink]="['/postproject']" 
+            *ngIf="currentUser">
+            Post Project
+          </button>
+          <button 
+            class="btn primary" 
+            data-tooltip="Connect to upload a project here"
+            (click)="goToAuth()"
+            *ngIf="!currentUser">
+            Post Project
+          </button>
+          <ng-container *ngIf="!currentUser">
+            <button class="btn secondary" routerLink="/about-us">Learn how to hire</button>
+          </ng-container>
         </div>
     </div>
 </div>
@@ -55,7 +85,7 @@
     <!-- Left Side: Content with text and button -->
     <div class="enterprise-left">
         <p class="tagline">Enterprise Suite</p>
-        <h1 class="headline">This is how<br><span>good companies<br>find good company.</span></h1>
+        <h1 class="headline">This is how<br><span>good companies<br>find good team.</span></h1>
         <p class="description">
             Access the top 1% of talent with us, and a full suite of hybrid workforce
             management tools. This is how innovation works now.
@@ -67,7 +97,7 @@
             <li>🎧 <strong>Contact freely</strong> with your client/worker</li>
         </ul>
 
-        <button class="learn-more-btn">learn more</button>
+        <button class="learn-more-btn" routerLink="/about-us">learn more</button>
     </div>
 
     <!-- Right Side: Image (m.png) -->
@@ -81,211 +111,49 @@
 <section id="categories" style="background-color: #f9f9f9; padding: 60px 20px;">
     <div class="container">
       <h2>Browse Talent by Category</h2>
-      <p>Looking for work? <a href="#">Browse jobs</a></p>
+      <p>Looking for work? <a routerLink="/become-partner">Become partner</a></p>
   
+      <div class="category-slider-container">
+        <button class="slide-btn prev-btn" (click)="prevCategory()"></button>
       <div class="category-grid">
-        <div class="category-card" (click)="goToBuilding()" style="cursor: pointer;">
-            <i class="fas fa-hard-hat fa-2x"></i>
-                <h3>Building and Construction</h3>
+          <div class="category-card" *ngFor="let category of displayedCategories" (click)="goToCategory(category.id)" style="cursor: pointer;">
+              <img [src]="category.icon" [alt]="category.name + ' icon'" class="category-icon" *ngIf="category.icon">
+              <h3>{{category.name}}</h3>
+              <!-- Static rating and skills can be removed or made dynamic if data is available -->
                 <div class="rating"><span class="star">★</span> 4.8/5</div>
-                <div class="skills">1502 skills</div>
+              <div class="skills">{{ workerCounts.get(category.id) || 0 }} workers</div>
         </div>
-        <!--<div class="stat-box" (click)="goToPlumber()" style="cursor: pointer;"></div>-->
-        <div class="category-card" (click)="goToPlumber()" style="cursor: pointer;">
-            <i class="fas fa-wrench fa-2x"></i>
-                <h3>Plumber</h3>
-                <div class="rating"><span class="star">★</span> 4.9/5</div>
-                <div class="skills">1800 skills</div>
         </div>
-        <div class="category-card" (click)="goToCarpenter()" style="cursor: pointer;">
-            <i class="fas fa-hammer fa-2x"></i>
-                <h3>Carpenter</h3>
-                <div class="rating"><span class="star">★</span> 4.7/5</div>
-                <div class="skills">1250 skills</div>
-        </div>
-        <div class="category-card" (click)="goToPainter()" style="cursor: pointer;">
-            <i class="fas fa-paint-roller fa-2x"></i>
-                <h3>Painter</h3>
-                <div class="rating"><span class="star">★</span> 4.6/5</div>
-                <div class="skills">980 skills</div>
-        </div>
-        <div class="category-card" (click)="goToTilier()" style="cursor: pointer;">
-            <i class="fas fa-th-large fa-2x"></i>
-                <h3>Tiler</h3>
-                <div class="rating"><span class="star">★</span> 4.8/5</div>
-                <div class="skills">1130 skills</div>
-        </div>
-        <div class="category-card" (click)="goToElectrician()" style="cursor: pointer;">
-            <i class="fas fa-bolt fa-2x"></i> <!-- lightning bolt icon for electrician -->
-            <h3>Electrician</h3>
-            <div class="rating"><span class="star">★</span> 4.7/5</div>
-            <div class="skills">1100 skills</div>
-          </div>
+        <button class="slide-btn next-btn" (click)="nextCategory()"></button>
       </div>
     </div>
   </section>
   
-  <section class="how-it-works">
-  <h2>How it works!</h2>
-  <div class="steps">
-    <!-- Step 1 -->
-    <div class="step">
-      <div class="number">1</div>
-      <img src="assets/to.webp" alt="Step 1">
-      <h3>Find your pro / service</h3>
-      <p>Service providers and professionals with top ratings & closest to your location.</p>
-    </div>
-
-    <!-- Step 2 -->
-    <div class="step">
-      <div class="number">2</div>
-      <img src="assets/ttt.jpg" alt="Step 2">
-      <h3>Contact & book</h3>
-      <p>Call directly or use the built-in chat to provide more details about your need.</p>
-    </div>
-
-    <!-- Step 3 -->
-    <div class="step">
-      <div class="number">3</div>
-      <img src="assets/TO.jpg" alt="Step 3">
-      <h3>All set!</h3>
-      <p>Happy with the service? Help the next client make the right choice.</p>
-    </div>
-  </div>
-</section>
-
-
-<section id="why-us" class="why-us-section">
-    <h2>Why Choose Us?</h2>
-    <p>
-        At our company, we prioritize quality, reliability, and customer satisfaction above all. With a dedicated team of professionals and a passion for innovation, we strive to provide solutions that truly make a difference. Whether you're looking for cutting-edge technology, exceptional service, or a partner who genuinely cares about your success — you've come to the right place. Join the growing number of satisfied clients who trust us to deliver excellence every step of the way.
-    </p>
-  </section>
-  
-<!-- Client Home Page -->
-<ng-container *ngIf="!currentUser || currentUser.role === 'client'">
-  <div class="hero">
-    <div class="hero-content">
-      <h1>Find the Perfect Freelance Services for Your Business</h1>
-      <p>Connect with talented freelancers and get your projects done</p>
-      <div class="search-bar">
-        <input type="text" placeholder="Search for any service..." />
-        <button>Search</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="categories">
-    <h2>Popular Categories</h2>
-    <div class="category-grid">
-      <div class="category-card">
-        <span class="icon">💻</span>
-        <h3>Web Development</h3>
-        <p>Custom websites and web applications</p>
-      </div>
-      <div class="category-card">
-        <span class="icon">📱</span>
-        <h3>Mobile Development</h3>
-        <p>iOS and Android apps</p>
-      </div>
-      <div class="category-card">
-        <span class="icon">🎨</span>
-        <h3>UI/UX Design</h3>
-        <p>Beautiful and intuitive interfaces</p>
-      </div>
-      <div class="category-card">
-        <span class="icon">📊</span>
-        <h3>Data Science</h3>
-        <p>Data analysis and visualization</p>
-      </div>
-    </div>
-  </div>
-</ng-container>
-
-<!-- Worker Home Page -->
-<ng-container *ngIf="currentUser?.role === 'worker'">
-  <div class="worker-dashboard">
-    <!-- Welcome Section -->
-    <div class="welcome-section">
-      <h1>Welcome back, {{ currentUser.fullname }}!</h1>
-      <p>Here's your work overview</p>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon">📊</div>
-        <div class="stat-info">
-          <h3>Completed Projects</h3>
-          <p class="stat-value">{{ workerStats.completedProjects }}</p>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">⭐</div>
-        <div class="stat-info">
-          <h3>Rating</h3>
-          <p class="stat-value">{{ workerStats.rating }}</p>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">💰</div>
-        <div class="stat-info">
-          <h3>Total Earnings</h3>
-          <p class="stat-value">${{ workerStats.earnings }}</p>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">📝</div>
-        <div class="stat-info">
-          <h3>Active Projects</h3>
-          <p class="stat-value">{{ workerStats.activeProjects }}</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Top Workers Section -->
-    <div class="top-workers-section">
-      <h2>Top Workers This Month</h2>
-      <div class="workers-grid">
-        <div class="worker-card" *ngFor="let worker of topWorkers">
-          <div class="worker-image">
-            <img [src]="worker.image" [alt]="worker.name">
-          </div>
-          <div class="worker-info">
-            <h3>{{ worker.name }}</h3>
-            <div class="worker-rating">
-              <span *ngFor="let star of getRatingStars(worker.rating)" [class.filled]="star === '★'">
-                {{ star }}
-              </span>
-            </div>
-            <p>{{ worker.projects }} Projects</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Trending Projects -->
-    <div class="trending-section">
-      <h2>Trending Projects</h2>
-      <div class="trending-grid">
-        <div class="trending-card" *ngFor="let project of trendingProjects">
-          <span class="trending-icon">{{ project.icon }}</span>
-          <div class="trending-info">
-            <h3>{{ project.title }}</h3>
-            <p>{{ project.count }} active projects</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</ng-container>
+ 
 
 <!-- Tunisia Workers Map Section -->
-<div *ngIf="showTunisiaMap" class="tunisia-map-section">
-  <h2>Workers Across Tunisia</h2>
-  <div id="tunisia-map"></div>
-  <div class="map-legend">
-    <span class="legend-circle"></span> 10km radius around each worker
+<div class="workers-map-section">
+  <div class="workers-list-container">
+    <h2 class="section-title">FIND THE <span class="highlight-text">BEST WORKERS</span></h2>
+    <div class="worker-list">
+      <!-- Iterate over real workers -->
+      <div class="worker-item" *ngFor="let worker of workers" [class.dimmed]="worker.is_online === 0">
+        <div class="worker-details-map">
+          <img [src]="worker.profile_picture || 'assets/profile.jpg'" alt="Worker Profile" class="worker-avatar">
+          <span class="worker-name">
+            {{ worker.fullname }}
+            <i class="bi bi-patch-check-fill verified-icon" *ngIf="worker.is_verified === 1"></i>
+          </span>
+        </div>
+        <button class="message-worker-btn" (click)="navigateToWorkerMessage(worker.id, worker.fullname, worker.profile_picture || null)"><i class="bi bi-chat-dots-fill"></i></button>
+      </div>
+    </div>
+  </div>
+  <div class="map-container-right">
+    <div id="tunisia-map"></div>
+    <div class="map-legend">
+      <span class="legend-circle"></span> 10km radius around each worker
+    </div>
   </div>
 </div>
   

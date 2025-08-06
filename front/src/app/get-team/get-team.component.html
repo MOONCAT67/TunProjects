@@ -1,4 +1,68 @@
 <div class="teams-container">
+  <!-- Create Team Section -->
+  <div class="create-team-section" [@formAnimation]>
+    <div class="create-team-header">
+      <h2>Create Your Team</h2>
+      <p>Start your journey by creating a new team</p>
+    </div>
+    
+    <form [formGroup]="createTeamForm" (ngSubmit)="createTeam()" class="create-team-form">
+      <div class="form-group">
+        <label for="teamName">Team Name</label>
+        <input 
+          type="text" 
+          id="teamName" 
+          formControlName="name" 
+          placeholder="Enter your team name"
+          [class.error]="createTeamForm.get('name')?.invalid && createTeamForm.get('name')?.touched"
+        >
+        <div class="error-message" *ngIf="createTeamForm.get('name')?.invalid && createTeamForm.get('name')?.touched">
+          Team name is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="teamDescription">Team Description</label>
+        <textarea 
+          id="teamDescription" 
+          formControlName="description" 
+          placeholder="Describe your team's mission and goals"
+          [class.error]="createTeamForm.get('description')?.invalid && createTeamForm.get('description')?.touched"
+        ></textarea>
+        <div class="error-message" *ngIf="createTeamForm.get('description')?.invalid && createTeamForm.get('description')?.touched">
+          Team description is required
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="create-team-button"
+          [disabled]="createTeamForm.invalid || teamFormLoading"
+        >
+          <span *ngIf="!teamFormLoading">Create Team</span>
+          <div class="spinner-small" *ngIf="teamFormLoading"></div>
+        </button>
+      </div>
+
+      <div class="form-error" *ngIf="teamFormError">
+        {{ teamFormError }}
+      </div>
+    </form>
+  </div>
+
+  <!-- Divider -->
+  <div class="section-divider">
+    <span>or</span>
+  </div>
+
+  <!-- Existing Teams Section -->
+  <div class="existing-teams-section">
+    <div class="section-header">
+      <h2>Join Existing Teams</h2>
+      <p>Find and join teams that match your skills</p>
+    </div>
+
   <div *ngIf="loading" class="loading">
     <div class="spinner"></div>
     <p>Loading teams...</p>
@@ -13,7 +77,7 @@
   </div>
 
   <div *ngIf="!loading && !error" class="teams-list">
-    <div *ngFor="let team of teams" class="team-card">
+      <div *ngFor="let team of teams" class="team-card" [@formAnimation]>
       <div class="team-info">
         <h3>{{ team.name }}</h3>
         <p>{{ team.description }}</p>
@@ -21,6 +85,7 @@
       <button class="view-details-button" (click)="viewTeamDetails(team)">
         View Team Details
       </button>
+      </div>
     </div>
   </div>
 

@@ -1,25 +1,45 @@
 <div class="admin-dashboard">
-  <h1>Admin Dashboard</h1>
-
-  <!-- Navigation Tabs -->
-  <div class="tabs">
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>Admin Panel</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <button 
+        [class.active]="activeTab === 'dashboard'"
+        (click)="changeTab('dashboard')">
+        <i class="fas fa-chart-line"></i>
+        Dashboard
+      </button>
     <button 
       [class.active]="activeTab === 'requests'"
       (click)="changeTab('requests')">
+        <i class="fas fa-user-check"></i>
       Verification Requests
     </button>
     <button 
       [class.active]="activeTab === 'clients'"
       (click)="changeTab('clients')">
-      Clients
+        <i class="fas fa-users"></i>
+      Users
     </button>
     <button 
       [class.active]="activeTab === 'projects'"
       (click)="changeTab('projects')">
+        <i class="fas fa-project-diagram"></i>
       Projects
     </button>
+    <button 
+      [class.active]="activeTab === 'jobs'"
+      (click)="changeTab('jobs')">
+        <i class="fas fa-briefcase"></i>
+      Jobs
+    </button>
+    </nav>
   </div>
 
+  <!-- Main Content -->
+  <div class="main-content">
   <!-- Loading State -->
   <div *ngIf="loading" class="loading">
     Loading...
@@ -30,6 +50,50 @@
     {{ error }}
   </div>
 
+    <!-- Dashboard Overview -->
+    <div *ngIf="activeTab === 'dashboard'" class="dashboard-overview">
+      <h1>Dashboard Overview</h1>
+      
+      <!-- Statistics Cards -->
+      <div class="stats-cards">
+        <div class="stat-card">
+          <h3>Today's Workers</h3>
+          <p class="stat-number">{{ todayStats.newWorkers }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>Today's Projects</h3>
+          <p class="stat-number">{{ todayStats.newProjects }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>Total Projects</h3>
+          <p class="stat-number">{{ todayStats.totalProjects }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>Total Users</h3>
+          <p class="stat-number">{{ todayStats.totalUsers }}</p>
+        </div>
+      </div>
+
+      <!-- Charts Container -->
+      <div class="charts-container">
+        <!-- User Distribution Chart -->
+        <div class="chart-container">
+          <h2>User Distribution</h2>
+          <div class="pie-chart">
+            <canvas #userDistributionChart></canvas>
+          </div>
+        </div>
+
+        <!-- Weekly User Growth Chart -->
+        <div class="chart-container">
+          <h2>Weekly User Growth</h2>
+          <div class="line-chart">
+            <canvas #userGrowthChart></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
   <!-- Verification Requests Tab -->
   <div *ngIf="activeTab === 'requests'" class="tab-content">
     <div class="requests-list" *ngIf="!selectedRequest">
@@ -37,58 +101,95 @@
         No pending verification requests
       </div>
       <div *ngFor="let request of verificationRequests" class="request-card">
-        <div class="request-info">
-          <h3>{{ request.fullname }}</h3>
-          <p>{{ request.email }}</p>
-          <p class="date">Requested on: {{ request.created_at | date }}</p>
+        <div class="card-header">
+          <h3 class="fullname">{{ request.fullname }}</h3>
+          <span class="status-badge" [ngClass]="{
+            'status-pending': request.status === 'pending',
+            'status-approved': request.status === 'approved',
+            'status-rejected': request.status === 'rejected'
+          }">
+            {{ request.status | titlecase }}
+          </span>
         </div>
-        <button (click)="viewRequestDetails(request.id)" class="view-btn">
-          View Details
+        <div class="card-body">
+          <p class="email"><i class="bi bi-envelope"></i> {{ request.email }}</p>
+          <p class="submitted-date"><i class="bi bi-calendar"></i> Requested on: {{ request.submitted_at | date }}</p>
+        </div>
+        <div class="card-actions">
+          <button (click)="viewRequestDetails(request.id, request.fullname, request.email)" class="view-btn">
+            <i class="bi bi-eye"></i> View Details
         </button>
+        </div>
       </div>
     </div>
 
     <!-- Request Details Modal -->
-    <div *ngIf="selectedRequest" class="request-details">
-      <button (click)="closeRequestDetails()" class="close-btn">×</button>
-      
+    <div *ngIf="selectedRequest" class="request-details-modal">
+      <div class="modal-header">
       <h2>Verification Request Details</h2>
-      
-      <div class="details-section">
-        <h3>User Information</h3>
-        <p><strong>User ID:</strong> {{ selectedRequest.request.user_id }}</p>
-        <p><strong>Status:</strong> {{ selectedRequest.request.status }}</p>
-        <p><strong>Submitted At:</strong> {{ selectedRequest.request.submitted_at | date:'medium' }}</p>
+        <button (click)="closeRequestDetails()" class="close-btn"><i class="bi bi-x-lg"></i></button>
       </div>
+      <div class="modal-content">
+        <div class="user-info-section section-card">
+          <h3><i class="bi bi-person-circle"></i> User Information</h3>
+          <div class="info-grid">
+            <p><i class="bi bi-person"></i> <strong>Name:</strong> {{ selectedRequest.fullname }}</p>
+            <p><i class="bi bi-envelope"></i> <strong>Email:</strong> {{ selectedRequest.email }}</p>
+            <p><i class="bi bi-patch-check"></i> <strong>Status:</strong> <span class="status-text" [ngClass]="{
+              'status-pending': selectedRequest.request.status === 'pending',
+              'status-approved': selectedRequest.request.status === 'approved',
+              'status-rejected': selectedRequest.request.status === 'rejected'
+            }">{{ selectedRequest.request.status | titlecase }}</span></p>
+            <p><i class="bi bi-calendar-check"></i> <strong>Submitted At:</strong> {{ selectedRequest.request.submitted_at | date:'medium' }}</p>
+            <p *ngIf="selectedRequest.request.processed_at"><i class="bi bi-clock-history"></i> <strong>Processed At:</strong> {{ selectedRequest.request.processed_at | date:'medium' }}</p>
+            <p *ngIf="selectedRequest.request.admin_notes"><i class="bi bi-file-text"></i> <strong>Admin Notes:</strong> {{ selectedRequest.request.admin_notes }}</p>
+          </div>
+          <div class="request-description-section">
+            <h4><i class="bi bi-chat-left-text"></i> Request Description</h4>
+            <p>{{ selectedRequest.request.request_description }}</p>
+          </div>
+        </div>
 
-      <div class="details-section">
-        <h3>Jobs</h3>
-        <div *ngFor="let job of selectedRequest.jobs" class="job-item">
-          <p><strong>Category:</strong> {{ job.category_name }}</p>
-          <p><strong>Experience:</strong> {{ job.years_experience }} years</p>
-          <p><strong>Hourly Rate:</strong> ${{ job.hourly_rate }}</p>
+        <div class="jobs-section section-card" *ngIf="selectedRequest.jobs && selectedRequest.jobs.length > 0">
+          <h3><i class="bi bi-briefcase"></i> Professional Jobs</h3>
+          <div class="item-list">
+            <div *ngFor="let job of selectedRequest.jobs" class="job-item detail-item">
+              <p><i class="bi bi-tag"></i> <strong>Category:</strong> {{ job.category_name }}</p>
+              <p><i class="bi bi-hourglass-split"></i> <strong>Experience:</strong> {{ job.years_experience }} years</p>
+            </div>
         </div>
       </div>
 
-      <div class="details-section">
-        <h3>Certificates</h3>
-        <div *ngFor="let cert of selectedRequest.certificates" class="cert-item">
-          <p><strong>Name:</strong> {{ cert.certificate_name }}</p>
-          <p><strong>Issued by:</strong> {{ cert.issuing_organization }}</p>
-          <p><strong>Year Obtained:</strong> {{ cert.year_obtained }}</p>
+        <div class="certificates-section section-card" *ngIf="selectedRequest.certificates && selectedRequest.certificates.length > 0">
+          <h3><i class="bi bi-award"></i> Certificates</h3>
+          <div class="item-list">
+            <div *ngFor="let cert of selectedRequest.certificates" class="cert-item detail-item">
+              <p><i class="bi bi-file-earmark-text"></i> <strong>Name:</strong> {{ cert.certificate_name }}</p>
+              <p><i class="bi bi-building"></i> <strong>Issued by:</strong> {{ cert.issuing_organization }}</p>
+              <p><i class="bi bi-calendar-event"></i> <strong>Year Obtained:</strong> {{ cert.year_obtained }}</p>
+              <a *ngIf="cert.certificate_url" [href]="cert.certificate_url" target="_blank" class="view-document-btn">
+                <i class="bi bi-box-arrow-up-right"></i> View Certificate
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="projects-section section-card" *ngIf="selectedRequest.projects && selectedRequest.projects.length > 0">
+          <h3><i class="bi bi-laptop"></i> Past Projects</h3>
+          <div class="item-list">
+            <div *ngFor="let project of selectedRequest.projects" class="project-item detail-item">
+              <p><i class="bi bi-journal-text"></i> <strong>Title:</strong> {{ project.project_name }}</p>
+              <p><i class="bi bi-card-text"></i> <strong>Description:</strong> {{ project.project_description }}</p>
+              <p><i class="bi bi-calendar-event"></i> <strong>Year Completed:</strong> {{ project.year_completed }}</p>
+              <a *ngIf="project.project_url" [href]="project.project_url" target="_blank" class="view-document-btn">
+                <i class="bi bi-box-arrow-up-right"></i> View Project
+              </a>
+        </div>
+      </div>
         </div>
       </div>
 
-      <div class="details-section">
-        <h3>Past Projects</h3>
-        <div *ngFor="let project of selectedRequest.projects" class="project-item">
-          <p><strong>Title:</strong> {{ project.project_title }}</p>
-          <p><strong>Description:</strong> {{ project.project_description }}</p>
-          <p><strong>Year Completed:</strong> {{ project.year_completed }}</p>
-        </div>
-      </div>
-
-      <div class="action-section">
+      <div class="modal-footer">
         <textarea 
           [(ngModel)]="processingNotes" 
           placeholder="Add notes (required for rejection)"
@@ -99,12 +200,12 @@
           <button 
             (click)="processRequest(selectedRequest.request.id, 'approved')"
             class="approve-btn">
-            Approve
+            <i class="bi bi-check-circle-fill"></i> Approve
           </button>
           <button 
             (click)="processRequest(selectedRequest.request.id, 'rejected')"
             class="reject-btn">
-            Reject
+            <i class="bi bi-x-circle-fill"></i> Reject
           </button>
         </div>
       </div>
@@ -113,16 +214,81 @@
 
   <!-- Clients Tab -->
   <div *ngIf="activeTab === 'clients'" class="tab-content">
+    <div class="clients-header">
+      <h1>Client Management</h1>
+      <div class="clients-stats">
+        <div class="stat-item">
+          <i class="fas fa-users"></i>
+          <span>Total Clients: {{ clients.length }}</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-project-diagram"></i>
+          <span>Total Projects: {{ getTotalProjects() }}</span>
+        </div>
+      </div>
+    </div>
+
     <div class="clients-list">
       <div *ngIf="clients.length === 0" class="no-data">
-        No clients found
+        <i class="fas fa-users-slash"></i>
+        <p>No clients found</p>
       </div>
+      
       <div *ngFor="let client of clients" class="client-card">
+        <div class="client-header">
+          <div class="client-avatar">
+            <img [src]="client.profile_picture || 'assets/profile.jpg'" alt="Profile Picture">
+            <span class="online-status" [class.online]="client.is_online"></span>
+          </div>
+          <div class="client-status">
+            <span class="verified-badge" *ngIf="client.is_verified">
+              <i class="fas fa-check-circle"></i> Verified
+            </span>
+            <span class="role-badge" [ngClass]="client.role">
+              {{ client.role | titlecase }}
+            </span>
+          </div>
+        </div>
+
         <div class="client-info">
           <h3>{{ client.fullname }}</h3>
-          <p>{{ client.email }}</p>
-          <p class="date">Joined: {{ client.created_at | date }}</p>
-          <p class="projects">Projects Posted: {{ client.projects_posted }}</p>
+          <div class="info-grid">
+            <div class="info-item">
+              <i class="fas fa-envelope"></i>
+              <span>{{ client.email }}</span>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-phone"></i>
+              <span>{{ client.phone_number }}</span>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ client.location }}</span>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-calendar-alt"></i>
+              <span>Joined: {{ client.created_at | date }}</span>
+            </div>
+          </div>
+          
+          <div class="client-stats">
+            <div class="stat">
+              <i class="fas fa-project-diagram"></i>
+              <span>{{ client.projects_posted }} Projects</span>
+            </div>
+            <div class="stat">
+              <i class="fas fa-briefcase"></i>
+              <span>{{ client.jobs_count }} Jobs</span>
+            </div>
+          </div>
+
+          <p class="profile-description">{{ client.profile_description }}</p>
+        </div>
+
+        <div class="client-actions">
+          <button class="action-btn delete-btn" (click)="deleteClient(client.id)">
+            <i class="fas fa-trash-alt"></i> Delete
+          </button>
         </div>
       </div>
     </div>
@@ -130,17 +296,216 @@
 
   <!-- Projects Tab -->
   <div *ngIf="activeTab === 'projects'" class="tab-content">
+    <div class="projects-header">
+      <h1>Project Management</h1>
+      <div class="projects-stats">
+        <div class="stat-item">
+          <i class="fas fa-project-diagram"></i>
+          <span>Total Projects: {{ projects.length }}</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-tasks"></i>
+          <span>In Progress: {{ getInProgressCount() }}</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-check-circle"></i>
+          <span>Completed: {{ getCompletedCount() }}</span>
+        </div>
+      </div>
+    </div>
+
     <div class="projects-list">
       <div *ngIf="projects.length === 0" class="no-data">
-        No projects found
+        <i class="fas fa-project-diagram"></i>
+        <p>No projects found</p>
       </div>
+      
       <div *ngFor="let project of projects" class="project-card">
-        <div class="project-info">
-          <h3>{{ project.title }}</h3>
-          <p><strong>Client:</strong> {{ project.client_name }}</p>
-          <p><strong>Categories:</strong> {{ project.categories }}</p>
-          <p><strong>Applications:</strong> {{ project.applications }}</p>
-          <p class="date">Posted: {{ project.created_at | date }}</p>
+        <div class="project-header" [ngClass]="project.status">
+          <div class="project-status">
+            <span class="status-badge" [ngClass]="project.status">
+              {{ project.status === 'in progress' ? 'Under Work' : project.status }}
+            </span>
+            <span class="phase-badge">Phase {{ project.current_phase }}</span>
+          </div>
+          <div class="project-budget">
+            <i class="fas fa-dollar-sign"></i>
+            {{ project.budget | number:'1.2-2' }}
+          </div>
+        </div>
+
+        <div class="project-content">
+          <h3 class="project-title">{{ project.title }}</h3>
+          <p class="project-description">{{ project.description }}</p>
+          
+          <div class="project-meta">
+            <div class="meta-item">
+              <i class="fas fa-user"></i>
+              <span>{{ project.client_name }}</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-calendar"></i>
+              <span>{{ project.created_at | date }}</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-file-alt"></i>
+              <span>{{ project.applications_count }} Applications</span>
+            </div>
+          </div>
+
+          <div class="project-categories">
+            <span *ngFor="let category of project.categories" class="category-tag">
+              {{ category }}
+            </span>
+          </div>
+
+          <div class="project-details" *ngIf="project.contract">
+            <div class="contract-info">
+              <h4>Contract Details</h4>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <i class="fas fa-file-contract"></i>
+                  <span>Status: {{ project.contract.status | titlecase }}</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-clock"></i>
+                  <span>Created: {{ project.contract.created_at | date }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pricing-info" *ngIf="project.accepted_application">
+              <h4>Pricing</h4>
+              <div class="price-grid">
+                <div class="price-item">
+                  <i class="fas fa-tools"></i>
+                  <span>Labor: ${{ project.accepted_application.labor_price | number:'1.2-2' }}</span>
+                </div>
+                <div class="price-item">
+                  <i class="fas fa-box"></i>
+                  <span>Materials: ${{ project.accepted_application.materials_price | number:'1.2-2' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="current-task" *ngIf="project.current_task">
+            <h4>Current Task</h4>
+            <div class="task-card">
+              <div class="task-header">
+                <h5>{{ project.current_task.title }}</h5>
+                <span class="task-status" [ngClass]="project.current_task.status">
+                  {{ project.current_task.status | titlecase }}
+                </span>
+              </div>
+              <p>{{ project.current_task.description }}</p>
+              <div class="task-footer">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Deadline: {{ project.current_task.deadline | date }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Jobs Tab -->
+  <div *ngIf="activeTab === 'jobs'" class="tab-content">
+    <div class="jobs-header">
+      <h1>Job Categories Management</h1>
+      <button class="add-job-btn" (click)="toggleAddJobForm()">
+        <i class="fas fa-plus"></i> Add Job Category
+      </button>
+    </div>
+
+    <!-- Add Job Category Form -->
+    <div *ngIf="showAddJobForm" class="add-job-form">
+      <div class="form-header">
+        <h2>Add New Job Category</h2>
+        <button class="close-btn" (click)="toggleAddJobForm()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="form-content">
+        <div class="form-group">
+          <label for="jobName">Job Name</label>
+          <input 
+            type="text" 
+            id="jobName" 
+            [(ngModel)]="newJobCategory.name" 
+            placeholder="Enter job category name"
+            class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label for="jobDescription">Description</label>
+          <textarea 
+            id="jobDescription" 
+            [(ngModel)]="newJobCategory.description" 
+            placeholder="Enter job category description"
+            class="form-textarea">
+          </textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="jobIcon">Icon</label>
+          <div class="icon-upload" (click)="triggerFileInput()">
+            <input 
+              #jobIconInput
+              type="file" 
+              id="jobIcon" 
+              (change)="onIconSelect($event)" 
+              accept="image/jpeg,image/jpg,image/png,image/svg+xml,image/gif,image/webp"
+              class="icon-input">
+            <div class="icon-preview" *ngIf="iconPreview">
+              <img [src]="iconPreview" alt="Icon Preview">
+            </div>
+            <div class="icon-placeholder" *ngIf="!iconPreview">
+              <i class="fas fa-image"></i>
+              <span>Click to upload icon</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="cancel-btn" (click)="toggleAddJobForm()">Cancel</button>
+          <button class="submit-btn" (click)="addJobCategory()">Add Job Category</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job Categories List -->
+    <div class="jobs-list">
+      <div *ngIf="jobCategories.length === 0" class="no-data">
+        <i class="fas fa-briefcase"></i>
+        <p>No job categories found</p>
+      </div>
+      
+      <div *ngFor="let job of jobCategories" class="job-card">
+        <div class="job-icon">
+          <img [src]="job.icon" [alt]="job.name + ' icon'">
+        </div>
+        
+        <div class="job-info">
+          <h3>{{ job.name }}</h3>
+          <p class="job-description">{{ job.description }}</p>
+          
+          <div class="job-stats">
+            <div class="stat">
+              <i class="fas fa-users"></i>
+              <span>{{ job.workers_count }} Workers</span>
+            </div>
+            <div class="stat">
+              <i class="fas fa-project-diagram"></i>
+              <span>{{ job.projects_count }} Projects</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-status" [class.active]="job.is_active === 1">
+          {{ job.is_active === 1 ? 'Active' : 'Inactive' }}
         </div>
       </div>
     </div>

@@ -158,15 +158,17 @@ h2, h3, h4, h5 {
 
 .progress-bar-bg {
   height: 100%;
-  background: #ffe5c2; /* Light beige */
+  background: #e5e5e5; /* Background for the overall bar, changed from var(--gray) for direct hex */
   border-radius: 6px;
+  /* display: flex; */ /* Removed as inner fill will manage segments via gradient */
+  overflow: hidden; /* Ensure segments don't overflow */
 }
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient to right, #ff8500, #ff6b00; /* Orange gradient */
+  /* background: linear-gradient(to right, #ff8500, #ff6b00); */ /* Removed to allow dynamic background */
   border-radius: 6px;
-  transition: width 0.5s ease-in-out;
+  transition: width 0.5s ease-in-out; /* Keep the smooth transition for width */
 }
 
 .progress-points {
@@ -175,14 +177,16 @@ h2, h3, h4, h5 {
   left: 0;
   right: 0;
   transform: translateY(-50%);
-  display: flex;
-  justify-content: space-between;
+  display: block; /* Changed from flex to block for absolute children */
+  /* justify-content: space-between; */ /* Removed */
   padding: 0;
 }
 
 .progress-point {
   position: absolute;
-  transform: translateX(-50%);
+  top: 0; /* Position within the progress-points container */
+  transform: none; /* Removed translateX(-50%) */
+  margin-left: -6px; /* Centers the 12px wide circle */
   cursor: pointer;
   z-index: 1;
 }
@@ -191,23 +195,23 @@ h2, h3, h4, h5 {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 2px solid #fff8f0; /* Beige border */
+  border: 2px solid var(--white); /* White border for the points */
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .point-circle.completed {
-  background-color: #4CAF50; /* Green */
-  border-color: #e8f5e9; /* Light green */
+  background-color: var(--orange-dark); /* Darker orange for completed */
+  border-color: var(--orange); /* Lighter orange border */
 }
 
 .point-circle.in-progress {
-  background-color: #ff6600; /* Orange */
-  border-color: #ffe0b2; /* Light orange */
+  background-color: var(--orange); /* Orange for in-progress */
+  border-color: var(--black); /* Black border */
 }
 
 .point-circle.not-started {
-  background-color: #ccc; /* Grey */
-  border-color: #eee; /* Lighter grey */
+  background-color: var(--gray); /* Grey for not-started */
+  border-color: var(--beige); /* Beige border */
 }
 
 .progress-point .point-tooltip {
@@ -617,4 +621,25 @@ h2, h3, h4, h5 {
   transform: translateY(-2px);
   transition: transform 0.3s ease;
   box-shadow: 0 6px 24px rgba(255, 133, 0, 0.12);
+}
+
+.progress-info {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 4px;
+}
+
+.subtask-progress {
+  font-size: 0.9em;
+  color: var(--primary-color);
+  margin-left: 4px;
+}
+
+.point-tooltip {
+  background-color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  z-index: 1000;
 }

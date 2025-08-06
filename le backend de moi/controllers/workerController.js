@@ -326,3 +326,72 @@ exports.trackProjectDetailView = async (req, res, next) => {
   }
 };
 
+// Get number of workers for a job category
+exports.getWorkersCountByJobCategory = async (req, res, next) => {
+  try {
+    const { jobCategoryId } = req.params;
+
+    if (!jobCategoryId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Job category ID is required'
+      });
+    }
+
+    const result = await workerService.getWorkersCountByJobCategory(jobCategoryId);
+    res.status(result.statusCode).json({
+      success: true,
+      message: result.message,
+      data: result.data
+    });
+  } catch (err) {
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Failed to get workers count";
+    res.status(statusCode).json({
+      success: false,
+      message
+    });
+    next(err);
+  }
+};
+
+exports.getWorkerWallet = async (req, res) => {
+  try {
+    const { workerId } = req.params;
+
+    if (!workerId) {
+      return res.status(400).json({
+        statusCode: 400,
+        message: "workerId is required"
+      });
+    }
+
+    const result = await workerService.getWorkerWallet(workerId);
+    res.status(result.statusCode).json(result);
+  } catch (err) {
+    res.status(err.statusCode || 500).json({
+      statusCode: err.statusCode || 500,
+      message: err.message || "Failed to get worker wallet"
+    });
+  }
+};
+
+exports.getCompletedProjects = async (req, res) => {
+  try {
+    const { workerId } = req.params;
+
+    if (!workerId) {
+      return res.status(400).json({
+        message: "workerId is required"
+      });
+    }
+
+    const result = await workerService.getCompletedProjects(workerId);
+    res.status(result.statusCode).json(result);
+  } catch (err) {
+    res.status(err.statusCode || 500).json({
+      message: err.message || "Failed to get completed projects"
+    });
+  }
+};
+

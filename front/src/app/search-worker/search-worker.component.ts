@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { WorkerService, WorkerListItem } from '../services/worker.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { MessagerieService } from '../services/messagerie.service';
 import { AuthService } from '../services/authService';
 import { TeamService } from '../services/team.service';
+import { JobCategory } from '../models/verification.model';
 
 @Component({
   selector: 'app-search-worker',
@@ -18,10 +19,14 @@ export class SearchWorkerComponent implements OnInit {
   workers: WorkerListItem[] = [];
   filteredWorkers: WorkerListItem[] = [];
   searchEmail: string = '';
+  searchName: string = '';
   isLoading = true;
   error: string | null = null;
   showNearbyWorkers: boolean = false;
   userLocation: string | null = null;
+
+  jobCategories: JobCategory[] = [];
+  selectedJobCategory: number | null = null;
 
   openMessageWorkerId: number | null = null;
   messageInputs: { [workerId: number]: string } = {};
@@ -30,18 +35,34 @@ export class SearchWorkerComponent implements OnInit {
 
   isTeamLeader: boolean = false;
 
+  showAllSkills = false;
+
   constructor(
     private workerService: WorkerService,
     private messagerieService: MessagerieService,
-    private authService: AuthService,
-    private teamService: TeamService
+    public authService: AuthService,
+    private teamService: TeamService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    // Subscribe to query params for navbar search
+    this.route.queryParams.subscribe(params => {
+      if (params['search']) {
+        this.searchName = params['search'];
+        this.applyFilters();
+      }
+    });
+
     this.workerService.getAllWorkers().subscribe({
       next: (workers) => {
-        this.workers = workers;
-        this.filteredWorkers = workers;
+        this.workers = workers.map(worker => ({
+          ...worker,
+          job_categories: Array.isArray(worker.job_categories) ? worker.job_categories : [],
+          years_experience: Array.isArray(worker.years_experience) ? worker.years_experience : []
+        }));
+        this.applyFilters();
         this.isLoading = false;
       },
       error: (err) => {
@@ -49,6 +70,8 @@ export class SearchWorkerComponent implements OnInit {
         this.isLoading = false;
       }
     });
+
+    this.loadJobCategories();
 
     const currentUser = this.authService.getCurrentUser();
     if (currentUser && currentUser.id) {
@@ -61,7 +84,6 @@ export class SearchWorkerComponent implements OnInit {
         }
       });
 
-      // Get user location from current user object
       if (currentUser.location) {
         this.userLocation = currentUser.location;
         console.log('User location from current user:', this.userLocation);
@@ -72,12 +94,81 @@ export class SearchWorkerComponent implements OnInit {
   }
 
   onSearch() {
-    const email = this.searchEmail.trim().toLowerCase();
-    if (!email) {
-      this.filteredWorkers = this.workers;
-    } else {
-      this.filteredWorkers = this.workers.filter(w => w.email.toLowerCase().includes(email));
+    console.log('Search triggered with email:', this.searchEmail); // Debug log
+    this.applyFilters();
+  }
+
+  onJobCategoryChange() {
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    let tempWorkers = [...this.workers];
+    console.log('Initial workers count:', tempWorkers.length); // Debug log
+
+    // Email search
+    if (this.searchEmail && this.searchEmail.trim()) {
+      const email = this.searchEmail.trim().toLowerCase();
+      console.log('Filtering by email:', email); // Debug log
+      tempWorkers = tempWorkers.filter(w => {
+        const matches = w.email.toLowerCase().includes(email);
+        console.log(`Worker ${w.email} matches: ${matches}`); // Debug log
+        return matches;
+      });
+      console.log('Workers after email filter:', tempWorkers.length); // Debug log
     }
+
+    // Name search (from navbar)
+    if (this.searchName && this.searchName.trim()) {
+      const name = this.searchName.trim().toLowerCase();
+      tempWorkers = tempWorkers.filter(w => w.fullname.toLowerCase().includes(name));
+    }
+
+    // Nearby workers filter
+    if (this.showNearbyWorkers && this.userLocation) {
+      const userCoords = this.parseCoordinates(this.userLocation);
+      if (userCoords) {
+        tempWorkers = tempWorkers.filter(worker => {
+          if (!worker.location) return false;
+          const workerCoords = this.parseCoordinates(worker.location);
+          if (!workerCoords) return false;
+          const distance = this.calculateDistance(
+            userCoords.lat,
+            userCoords.lon,
+            workerCoords.lat,
+            workerCoords.lon
+          );
+          return distance <= 20;
+        });
+      }
+    }
+
+    // Job category filter
+    if (this.selectedJobCategory !== null) {
+      tempWorkers = tempWorkers.filter(worker =>
+        worker.job_categories.some(cat => cat.toLowerCase() === this.jobCategories.find(jc => jc.id === this.selectedJobCategory)?.name.toLowerCase())
+      );
+    }
+
+    // Filter out the current user
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser && currentUser.id) {
+      tempWorkers = tempWorkers.filter(worker => worker.id !== currentUser.id);
+    }
+
+    console.log('Final filtered workers count:', tempWorkers.length); // Debug log
+    this.filteredWorkers = tempWorkers;
+  }
+
+  loadJobCategories() {
+    this.workerService.getJobs().subscribe({
+      next: (jobCategories) => {
+        this.jobCategories = jobCategories;
+      },
+      error: (err) => {
+        console.error('Failed to load job categories:', err);
+      }
+    });
   }
 
   openMessageModal(worker: WorkerListItem) {
@@ -119,20 +210,22 @@ export class SearchWorkerComponent implements OnInit {
   sendTeamRequest(worker: WorkerListItem) {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser || !currentUser.id) {
-      console.error('No current user found');
+      alert('Error: No current user found');
       return;
     }
     const payload = {
       senderId: currentUser.id,
       userEmail: worker.email,
-      teamId: 1 // Replace with the actual team ID if available
+      teamId: 1
     };
     this.teamService.sendTeamRequest(payload).subscribe({
       next: (response) => {
         console.log('Team request sent successfully:', response);
+        alert(`Team request sent successfully to ${worker.fullname}!`);
       },
       error: (err) => {
         console.error('Error sending team request:', err);
+        alert('Failed to send team request. Please try again later.');
       }
     });
   }
@@ -142,56 +235,15 @@ export class SearchWorkerComponent implements OnInit {
     console.log('Current user location:', this.userLocation);
     this.showNearbyWorkers = !this.showNearbyWorkers;
     if (this.showNearbyWorkers && this.userLocation) {
-      this.filterNearbyWorkers();
+      this.applyFilters();
     } else {
       this.filteredWorkers = this.workers;
     }
   }
 
-  private filterNearbyWorkers() {
-    console.log('Filtering nearby workers');
-    if (!this.userLocation) {
-      console.log('No user location found');
-      this.filteredWorkers = this.workers;
-      return;
-    }
-
-    const userCoords = this.parseCoordinates(this.userLocation);
-    console.log('Parsed user coordinates:', userCoords);
-    if (!userCoords) {
-      console.log('Failed to parse user coordinates');
-      this.filteredWorkers = this.workers;
-      return;
-    }
-
-    this.filteredWorkers = this.workers.filter(worker => {
-      if (!worker.location) {
-        console.log(`Worker ${worker.id} has no location`);
-        return false;
-      }
-      const workerCoords = this.parseCoordinates(worker.location);
-      if (!workerCoords) {
-        console.log(`Failed to parse coordinates for worker ${worker.id}`);
-        return false;
-      }
-      
-      const distance = this.calculateDistance(
-        userCoords.lat,
-        userCoords.lon,
-        workerCoords.lat,
-        workerCoords.lon
-      );
-      console.log(`Distance to worker ${worker.id}: ${distance}km`);
-      
-      return distance <= 20; // 20 km radius
-    });
-    console.log('Filtered workers:', this.filteredWorkers);
-  }
-
   private parseCoordinates(location: string): { lat: number; lon: number } | null {
     try {
       console.log('Parsing location string:', location);
-      // Extract coordinates from OpenStreetMap location string
       const match = location.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
       if (match) {
         const coords = {
@@ -210,7 +262,7 @@ export class SearchWorkerComponent implements OnInit {
   }
 
   private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371; // Earth's radius in kilometers
+    const R = 6371;
     const dLat = this.toRad(lat2 - lat1);
     const dLon = this.toRad(lon2 - lon1);
     const a = 
@@ -223,5 +275,13 @@ export class SearchWorkerComponent implements OnInit {
 
   private toRad(degrees: number): number {
     return degrees * (Math.PI / 180);
+  }
+
+  toggleSkills() {
+    this.showAllSkills = !this.showAllSkills;
+  }
+
+  navigateToWorkerProfile(workerId: number) {
+    this.router.navigate(['/profile', workerId]);
   }
 }

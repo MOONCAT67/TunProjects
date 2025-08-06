@@ -201,26 +201,44 @@ exports.acceptTeamRequest = async (params) => {
       throw { message: "Unauthorized to accept this request", statusCode: 403 };
     }
 
-    // Get the team where the accepting user is a leader
-    const [leaderTeam] = await connection.query(
-      `SELECT t.id, t.name 
+    // Get team information for both users
+    const [senderTeam] = await connection.query(
+      `SELECT t.id, t.name, tm.role 
        FROM teams t
        JOIN team_memberships tm ON t.id = tm.team_id
-       WHERE tm.worker_id = ? AND tm.role = 'leader' AND t.is_active = 1`,
+       WHERE tm.worker_id = ? AND t.is_active = 1`,
+      [senderId]
+    );
+
+    const [userTeam] = await connection.query(
+      `SELECT t.id, t.name, tm.role 
+       FROM teams t
+       JOIN team_memberships tm ON t.id = tm.team_id
+       WHERE tm.worker_id = ? AND t.is_active = 1`,
       [userId]
     );
 
-    if (leaderTeam.length === 0) {
-      throw { message: "You are not a team leader", statusCode: 400 };
+    let teamId, teamName, joiningUserId;
+
+    // Determine which team the user will join
+    if (userTeam.length > 0 && userTeam[0].role === 'leader') {
+      // User is a team leader, accepting someone to join their team
+      teamId = userTeam[0].id;
+      teamName = userTeam[0].name;
+      joiningUserId = senderId;
+    } else if (senderTeam.length > 0 && senderTeam[0].role === 'leader') {
+      // Sender is a team leader, user is accepting to join their team
+      teamId = senderTeam[0].id;
+      teamName = senderTeam[0].name;
+      joiningUserId = userId;
+    } else {
+      throw { message: "Neither user is a team leader", statusCode: 400 };
     }
 
-    const teamId = leaderTeam[0].id;
-    const teamName = leaderTeam[0].name;
-
-    // Get user info for the joining user (the sender of the request)
+    // Get user info for the joining user
     const [user] = await connection.query(
           `SELECT fullname, email FROM users WHERE id = ?`,
-      [senderId]
+      [joiningUserId]
     );
 
     if (user.length === 0) {
@@ -230,7 +248,7 @@ exports.acceptTeamRequest = async (params) => {
     // Check if joining user is already in a team
     const [currentMemberships] = await connection.query(
           `SELECT id, team_id FROM team_memberships WHERE worker_id = ?`,
-      [senderId]
+      [joiningUserId]
         );
 
     // If user is already in a team, remove them
@@ -244,13 +262,13 @@ exports.acceptTeamRequest = async (params) => {
     // Delete all other pending requests from this user
     await connection.query(
       `DELETE FROM team_request WHERE user_id = ? AND id != ?`,
-      [senderId, requestId]
+      [joiningUserId, requestId]
     );
 
     // Add user to team
     await connection.query(
           `INSERT INTO team_memberships (team_id, worker_id, role) VALUES (?, ?, 'member')`,
-      [teamId, senderId]
+      [teamId, joiningUserId]
         );
 
     // Delete the accepted request
@@ -259,9 +277,17 @@ exports.acceptTeamRequest = async (params) => {
           [requestId]
         );
 
+    // Get team leader info for notifications
+    const [leader] = await connection.query(
+      `SELECT id, email, fullname 
+       FROM users 
+       WHERE id = (SELECT leader_id FROM teams WHERE id = ?)`,
+      [teamId]
+        );
+
     // Notify both parties
         await notificationService.createNotification({
-      userId: requestUserId,
+      userId: leader[0].id,
           title: "Team Request Accepted",
           message: `${user[0].fullname} joined your team ${teamName}`,
           type: "team",
@@ -275,11 +301,6 @@ exports.acceptTeamRequest = async (params) => {
           teamName,
           status: "accepted"
         });
-
-    const [leader] = await connection.query(
-          `SELECT email, fullname FROM users WHERE id = ?`,
-      [userId]
-        );
 
         await emailService.sendTeamMemberJoinedEmail({
       recipientEmail: leader[0].email,
@@ -1399,6 +1420,63 @@ exports.getTeamProjects = async (teamId) => {
     throw { 
       message: err.message || "Failed to get team projects", 
       statusCode: err.statusCode || 500 
+    };
+  }
+};
+
+exports.getTeamLeader = async (userId) => {
+  try {
+    // Get the team leader information for the user's team
+    const [teamLeader] = await db.query(
+      `SELECT 
+        t.id as team_id,
+        t.name as team_name,
+        u.id as leader_id,
+        u.fullname as leader_name,
+        u.email as leader_email,
+        u.phone_number as leader_phone,
+        u.profile_picture as leader_picture,
+        tm.role as user_role
+       FROM teams t
+       JOIN team_memberships tm ON t.id = tm.team_id
+       JOIN users u ON t.leader_id = u.id
+       WHERE tm.worker_id = ? 
+       AND t.is_active = 1
+       AND tm.role != 'leader'`,
+      [userId]
+    );
+
+    if (!teamLeader || teamLeader.length === 0) {
+      return {
+        statusCode: 404,
+        success: false,
+        message: "No active team found for this user"
+      };
+    }
+
+    return {
+      statusCode: 200,
+      success: true,
+      message: "Team leader retrieved successfully",
+      data: {
+        team_id: teamLeader[0].team_id,
+        team_name: teamLeader[0].team_name,
+        leader: {
+          id: teamLeader[0].leader_id,
+          name: teamLeader[0].leader_name,
+          email: teamLeader[0].leader_email,
+          phone: teamLeader[0].leader_phone,
+          profile_picture: teamLeader[0].leader_picture
+        },
+        user_role: teamLeader[0].user_role
+      }
+    };
+
+  } catch (err) {
+    console.error('Error in getTeamLeader:', err);
+    throw {
+      statusCode: 500,
+      message: "Failed to get team leader: " + err.message
     };
   }
 };

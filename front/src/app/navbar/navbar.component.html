@@ -8,14 +8,52 @@
   <nav class="nav-links">
     <!-- Client Navigation -->
     <ng-container *ngIf="!currentUser || currentUser.role === 'client'">
-      <a routerLink="/search-worker">FIND TALENT</a>
-      <a>FIND WORK</a>
-      <a>WHY US</a>
+      <div class="dropdown">
+        <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          FIND TALENT
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <li>
+            <a class="dropdown-item" routerLink="/search-worker">Find Worker</a>
+          </li>
+          <li>
+            <div class="notification-container" *ngIf="isAuthenticated">
+            <a class="dropdown-item" routerLink="/postproject">Post Project</a></div>
+          </li>
+        </ul>
+      </div>
+      <a class="find-work-link" (mouseenter)="showDropdown = true" (mouseleave)="showDropdown = false">
+        FIND WORK
+        <div class="dropdown-menu" [class.show]="showDropdown">
+          <div class="dropdown-content">
+            <p class="dropdown-message">Ready to start your journey?</p>
+            <button class="become-partner-btn" 
+                    [routerLink]="authService.isAuthenticated() ? '/become-partner' : '/auth'"
+                    [title]="authService.isAuthenticated() ? '' : 'you need to connect first'">
+              {{ authService.isAuthenticated() ? 'Become a Partner' : 'you need to connect first' }}
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </a>
+      <a routerLink="/about-us">WHY US</a>
     </ng-container>
     
     <!-- Worker Navigation -->
     <ng-container *ngIf="currentUser?.role === 'worker'">
-      <a routerLink="/search-worker">FIND TALENT</a>
+      <div class="dropdown">
+        <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          FIND TALENT
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <li>
+            <a class="dropdown-item" routerLink="/search-worker">Find Worker</a>
+          </li>
+          <li>
+            <a class="dropdown-item" routerLink="/postproject">Post Project</a>
+          </li>
+        </ul>
+      </div>
       <div class="worker-space-dropdown" (clickOutside)="closeDropdowns()">
         <a (click)="toggleWorkerSpace($event)" class="worker-space-link">
           WORKER SPACE
@@ -39,14 +77,22 @@
           </div>
         </div>
       </div>
-      <a>WHY US</a>
+      <a routerLink="/about-us">WHY US</a>
     </ng-container>
   </nav>
   
   <div class="right-section">
     <div class="search-container">
-      <input type="text" placeholder="Search..." />
-      <span class="icon"><i class="bi bi-search"></i></span>
+      <input 
+        type="text" 
+        placeholder="Search a worker" 
+        [(ngModel)]="searchQuery"
+        (input)="onSearchInput($event)"
+        (keyup.enter)="onSearchInput($event)"
+      />
+      <span class="icon" (click)="clearSearch()">
+        <i class="bi" [class.bi-search]="!searchQuery" [class.bi-x]="searchQuery"></i>
+      </span>
     </div>
     
     <!-- Notification Icon -->
@@ -140,8 +186,16 @@
               </ng-container>
             </div>
             <div class="team-request-actions">
-              <button class="accept-button" (click)="acceptTeamRequest(request)">V</button>
-              <button class="reject-button" (click)="rejectTeamRequest(request)">X</button>
+              <button 
+                class="accept-button" 
+                (click)="acceptTeamRequest(request)"
+                [disabled]="processingRequests[request.request_id]"
+              >V</button>
+              <button 
+                class="reject-button" 
+                (click)="rejectTeamRequest(request)"
+                [disabled]="processingRequests[request.request_id]"
+              >X</button>
             </div>
           </div>
 
@@ -157,6 +211,44 @@
       </div>
     </div>
 
+    <!-- Wallet Icon for Workers -->
+    <div class="wallet-container" *ngIf="currentUser?.role === 'worker'">
+      <button class="wallet-btn" (click)="toggleWalletDropdown()">
+        <i class="bi bi-wallet2"></i>
+      </button>
+      
+      <!-- Wallet Dropdown -->
+      <div class="wallet-dropdown" *ngIf="showWalletDropdown">
+        <div class="wallet-header">
+          <h4>Total Earned</h4>
+          <p class="total-amount">{{ formatCurrency(walletData?.total_earned || 0) }}</p>
+        </div>
+        
+        <div class="projects-list">
+          <div class="project-item" *ngFor="let project of walletData?.projects">
+            <ng-container *ngIf="project.deposit_paid > 0">
+              <div class="project-info">
+                <h5>{{ project.project_title }}</h5>
+                <span class="payment-status" [ngClass]="{
+                  'status-paid': project.deposit_paid === 2,
+                  'status-partial': project.deposit_paid === 1
+                }">
+                  {{ getPaymentStatus(project.deposit_paid) }}
+                </span>
+              </div>
+              <div class="project-amount">
+                {{ formatCurrency(project.earned_amount) }}
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        
+        <button class="withdraw-btn">
+          <i class="bi bi-cash-stack"></i> Get Your Money
+        </button>
+      </div>
+    </div>
+
     <!-- Profile Dropdown -->
     <div class="profile-container" (clickOutside)="closeDropdowns()">
       <div class="profile" (click)="toggleDropdown($event)">
@@ -167,14 +259,16 @@
       <!-- Dropdown Menu -->
       <div class="dropdown-menu" [class.show]="isDropdownOpen">
         <ng-container *ngIf="!isAuthenticated">
-          <a (click)="goToAuth()">Sign In</a>
-          <a (click)="goToAuth()">Login</a>
+          <a (click)="goToAuth()">Connect now</a>
+          
         </ng-container>
         <ng-container *ngIf="isAuthenticated">
           <a (click)="goToMyProjects()">My Projects</a>
+          <a (click)="goToProfile()">My Profile</a>
           <a (click)="logout()">Logout</a>
         </ng-container>
       </div>
     </div>
+
   </div>
 </header>

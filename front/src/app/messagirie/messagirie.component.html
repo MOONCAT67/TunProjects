@@ -13,7 +13,7 @@
       </div>
       <div class="convo-info">
         <div class="convo-name">{{ convo.other_user_name || 'User ' + convo.other_user_id }}</div>
-        <div class="convo-last">{{ convo.last_message || 'No messages yet.' }}</div>
+        <div class="convo-last">{{ convo.last_message && convo.last_message.trim().length > 0 ? convo.last_message : 'No messages yet.' }}</div>
       </div>
     </div>
   </div>
@@ -30,7 +30,7 @@
     </div>
     <div class="messages-list" id="messages-list">
       <div *ngIf="isLoadingMessages" class="loading">Loading messages...</div>
-      <div *ngIf="!isLoadingMessages && messages.length === 0 && selectedConversation" class="empty">No messages yet.</div>
+      <div *ngIf="!isLoadingMessages && messages.length === 0 && selectedConversation" class="empty"></div>
        <div *ngIf="!selectedConversation" class="empty">Select a conversation to start messaging</div>
       
       <div *ngFor="let msg of messages" 

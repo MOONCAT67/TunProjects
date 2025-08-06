@@ -3,6 +3,7 @@ const {
   loginUser,
   getUserRoleByEmail,
   logoutUser,
+  forgotPassword,
 } = require("../services/authService");
 
 const {
@@ -86,5 +87,32 @@ exports.logoutUser = async (req, res) => {
       success: false,
       message: err.message || "Failed to logout"
     });
+  }
+};
+
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required"
+      });
+    }
+
+    const result = await forgotPassword(email);
+    res.status(result.statusCode).json({
+      success: true,
+      message: result.message
+    });
+  } catch (err) {
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Failed to process password recovery";
+    res.status(statusCode).json({
+      success: false,
+      message
+    });
+    next(err);
   }
 };

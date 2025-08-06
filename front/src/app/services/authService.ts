@@ -166,4 +166,8 @@ export class AuthService {
     const user = this.getCurrentUser();
     return user ? user.id : null;
   }
+
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/forgot-password`, { email });
+  }
 } 

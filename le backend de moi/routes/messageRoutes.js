@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const messageController = require('../controllers/messageController');
 
+// Create new conversation
+router.post('/conversation', messageController.createNewConversation);
+
 // Get conversation between two users
 router.get('/conversation/:userId1/:userId2', messageController.getConversation);
 

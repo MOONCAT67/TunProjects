@@ -239,94 +239,258 @@
 
 .team-actions-bar {
   display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
   align-items: center;
-  gap: 1.5rem; /* Space between elements */
-  padding: 1.5rem 2rem; /* Padding around the bar */
-  background-color: #f8f6f2; /* Light beige background */
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 2rem; /* Space below the bar */
-  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
-  justify-content: center; /* Center items when wrapped */
+  justify-content: flex-start;
+  background: #fdfdfd;
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
 .search-worker-container {
   position: relative;
-  background-color: #fff; /* White background */
-  border-radius: 20px; /* Rounded corners */
-  border: 1px solid #e0e0e0; /* Light border */
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  padding: 0 1rem;
-  height: 45px; /* Height for the search bar */
-  width: 250px; /* Fixed width */
+  flex-grow: 1;
+  max-width: 300px;
 }
 
 .search-worker-container input {
-  padding: 0.5rem 0.5rem 0.5rem 0; /* Adjusted padding */
-  border: none;
-  background-color: transparent;
-  color: #000; /* Black text */
-  flex-grow: 1;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  padding-right: 2.5rem; /* Space for icon */
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
   font-size: 1rem;
-  outline: none;
+  transition: all 0.3s ease;
 }
 
-.search-worker-container .search-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #888; /* Grey icon */
-  font-size: 1.2rem;
+.search-worker-container input:focus {
+  border-color: #ff6b00;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7f8c8d;
 }
 
 .action-button {
-  padding: 0.8rem 1.5rem; /* Button padding */
+  background-color: #2c3e50; /* Dark button */
+  color: white;
   border: none;
-  border-radius: 20px; /* Rounded buttons */
-  cursor: pointer;
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* Space between icon and text */
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  gap: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.action-button:hover {
+  background-color: #34495e; /* Slightly lighter dark */
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.action-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
 }
 
 .add-worker-button {
-  background-color: #FF6B00; /* Orange */
-  color: white;
+  background-color: #ff6b00; /* Orange */
 }
 
 .add-worker-button:hover {
-  background-color: #ff8500; /* Darker orange */
-  box-shadow: 0 2px 6px rgba(255, 107, 0, 0.3);
+  background-color: #e05e00; /* Darker orange */
 }
 
-.tasks-button, .projects-button {
-  background-color: #fff; /* White */
-  color: #000; /* Black text */
-  border: 1px solid #ccc; /* Light border */
+.contact-leader-button {
+  background-color: #ffd700; /* Golden */
+  color: #333; /* Dark text for contrast */
 }
 
-.tasks-button:hover, .projects-button:hover {
-  background-color: #f0f0f0; /* Light grey hover */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+.contact-leader-button:hover {
+  background-color: #e0b800; /* Darker golden */
 }
 
-.leave-team-button {
-  background-color: #dc3545; /* Red */
+/* Leave Team Success/Error Alerts */
+.leave-team-alert {
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  margin-top: 1.5rem; /* Space from the actions bar */
+  margin-bottom: 1.5rem; /* Space before members list */
+  font-weight: 600;
+  text-align: center;
+  animation: fadeIn 0.4s ease-out forwards;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.leave-team-alert.success-alert {
+  background-color: #28a745; /* Deeper green */
   color: white;
 }
 
-.leave-team-button:hover {
-  background-color: #c82333; /* Darker red */
-  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+.leave-team-alert.error-message {
+  background-color: #dc3545; /* Deeper red */
+  color: white;
 }
 
-.action-button i {
-    font-size: 1.2rem; /* Icon size */
+/* Enhanced Message Leader Area */
+.message-leader-area {
+  width: 100%;
+  margin-top: 1.5rem; /* Increased space from buttons */
+  background: #fdfdfd; /* Very light background */
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.message-leader-area textarea {
+  width: 100%;
+  min-height: 100px; /* Increased min-height */
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  resize: vertical;
+  margin-bottom: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.message-leader-area textarea:focus {
+  border-color: #ff6b00;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.15);
+}
+
+.message-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.send-message-button {
+  background: linear-gradient(90deg, #27ae60, #2ecc71); /* Green gradient for send */
+  color: white;
+  border: none;
+  padding: 0.9rem 1.8rem;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 150px;
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.25);
+}
+
+.send-message-button:hover {
+  background: linear-gradient(90deg, #229954, #27ae60);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(39, 174, 96, 0.35);
+}
+
+.send-message-button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+.spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+}
+
+.message-success-alert,
+.message-error-alert {
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  flex-grow: 1;
+  text-align: center;
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.message-success-alert {
+  background: #27ae60; /* Green */
+  color: white;
+}
+
+.message-error-alert {
+  background: #e74c3c; /* Red */
+  color: white;
+}
+
+/* Responsive adjustments for new elements */
+@media (max-width: 768px) {
+  .message-leader-area {
+    padding: 1rem;
+  }
+
+  .message-leader-area textarea {
+    min-height: 80px;
+    font-size: 1rem;
+  }
+
+  .message-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .send-message-button {
+    width: 100%;
+    min-width: unset;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .message-success-alert,
+  .message-error-alert {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+}
+
+  .leave-team-alert {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .message-leader-area {
+    margin-top: 1rem;
+  }
 }
 
 /* Team Members Table Styles */

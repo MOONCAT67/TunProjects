@@ -184,11 +184,25 @@ exports.getAvailableProjects = async (params) => {
       score_breakdown: p.score_breakdown
     })));
     
-    // If filter is provided, apply it
-    let filteredProjects = recommendedProjects;
+    // Get projects that have contracts
+    const [projectsWithContracts] = await db.query(
+      `SELECT DISTINCT project_id 
+       FROM contracts 
+       WHERE project_id IN (?)`,
+      [recommendedProjects.map(p => p.id)]
+    );
+
+    const projectIdsWithContracts = new Set(projectsWithContracts.map(p => p.project_id));
+
+    // Filter projects to only include those with contracts
+    let filteredProjects = recommendedProjects.filter(project => 
+      projectIdsWithContracts.has(project.id)
+    );
+
+    // If additional filter is provided, apply it
     if (filter) {
       console.log('Applying filter:', filter);
-      filteredProjects = recommendedProjects.filter(project => {
+      filteredProjects = filteredProjects.filter(project => {
         // Filter by job category if specified
         if (filter.jobCategoryId) {
           const hasJob = project.required_jobs.some(job => 
@@ -216,7 +230,7 @@ exports.getAvailableProjects = async (params) => {
     })));
       
     return {
-      statusCode: 200,
+        statusCode: 200,
       message: `${filteredProjects.length} projects found`,
       data: filteredProjects
     };
@@ -881,5 +895,255 @@ exports.trackProjectDetailView = async ({ workerId, projectId, viewDuration, job
   } catch (error) {
     console.error('Error in trackProjectDetailView:', error);
     throw error;
+  }
+};
+
+// Get number of workers for a job category
+exports.getWorkersCountByJobCategory = async (jobCategoryId) => {
+  try {
+    // Get count of verified workers for the specified job category
+    const [result] = await db.query(
+      `SELECT COUNT(DISTINCT wj.worker_id) as worker_count
+       FROM worker_jobs wj
+       JOIN users u ON wj.worker_id = u.id
+       WHERE wj.job_category_id = ?
+       AND u.is_worker = 1
+       AND u.worker_verified_at IS NOT NULL`,
+      [jobCategoryId]
+    );
+
+    // Get job category name for the response
+    const [jobCategory] = await db.query(
+      `SELECT name 
+       FROM job_categories 
+       WHERE id = ?`,
+      [jobCategoryId]
+    );
+
+    if (!jobCategory.length) {
+      return {
+        statusCode: 404,
+        message: "Job category not found",
+        data: { workerCount: 0 }
+      };
+    }
+
+    return {
+      statusCode: 200,
+      message: "Worker count retrieved successfully",
+      data: {
+        jobCategoryId,
+        jobCategoryName: jobCategory[0].name,
+        workerCount: result[0].worker_count
+      }
+    };
+
+  } catch (error) {
+    console.error('Error in getWorkersCountByJobCategory:', error);
+    throw {
+      statusCode: 500,
+      message: 'Failed to get workers count'
+    };
+  }
+};
+
+exports.getWorkerWallet = async (workerId) => {
+  if (!workerId) throw { message: "workerId was not provided", statusCode: 400 };
+
+  try {
+    // Get all projects where the worker is assigned and their accepted applications
+    const [projects] = await db.query(
+      `SELECT 
+        p.id as project_id,
+        p.title as project_title,
+        p.deposit_paid,
+        pa.labor_price,
+        pa.materials_price,
+        pa.total_price
+       FROM projects p
+       JOIN project_applications pa ON p.id = pa.project_id
+       WHERE p.employer_id = ? 
+       AND pa.worker_id = ?
+       AND pa.status = 'accepted'`,
+      [workerId, workerId]
+    );
+
+    let totalEarned = 0;
+    const projectDetails = [];
+
+    // Calculate earnings for each project
+    for (const project of projects) {
+      let projectEarnings = 0;
+      
+      // If deposit is paid (1), add labor price
+      if (project.deposit_paid === 1) {
+        projectEarnings += parseFloat(project.labor_price);
+      }
+      // If deposit is paid (2), add both labor and materials price
+      else if (project.deposit_paid === 2) {
+        projectEarnings += parseFloat(project.labor_price) + parseFloat(project.materials_price);
+      }
+
+      totalEarned += projectEarnings;
+
+      projectDetails.push({
+        project_id: project.project_id,
+        project_title: project.project_title,
+        labor_price: parseFloat(project.labor_price),
+        materials_price: parseFloat(project.materials_price),
+        total_price: parseFloat(project.total_price),
+        deposit_paid: project.deposit_paid,
+        earned_amount: projectEarnings
+      });
+    }
+
+    return {
+      statusCode: 200,
+      message: "Worker wallet retrieved successfully",
+      data: {
+        total_earned: totalEarned,
+        projects: projectDetails
+      }
+    };
+
+  } catch (err) {
+    throw {
+      message: err.message || "Failed to get worker wallet",
+      statusCode: err.statusCode || 500
+    };
+  }
+};
+
+exports.getCompletedProjects = async (workerId) => {
+  try {
+    // Get all completed projects where the worker is the employer or part of the team
+    const [projects] = await db.query(
+      `SELECT DISTINCT
+        p.id,
+        p.title,
+        p.description,
+        p.status,
+        p.current_phase,
+        p.main_tasks_number,
+        p.created_at,
+        p.completion_date,
+        p.project_type,
+        p.address,
+        p.client_id,
+        p.deposit_paid,
+        u.fullname as client_name,
+        u.email as client_email,
+        u.phone_number as client_phone,
+        CASE 
+          WHEN p.employer_id = ? THEN 'solo'
+          ELSE 'team'
+        END as project_ownership,
+        t.id as team_id,
+        t.name as team_name,
+        pa.labor_price,
+        pa.materials_price,
+        (pa.labor_price + pa.materials_price) as total_budget
+       FROM projects p
+       LEFT JOIN users u ON p.client_id = u.id
+       LEFT JOIN project_teams pt ON p.id = pt.project_id
+       LEFT JOIN teams t ON pt.team_id = t.id
+       LEFT JOIN team_memberships tm ON t.id = tm.team_id
+       LEFT JOIN main_tasks mt ON p.id = mt.project_id
+       LEFT JOIN sub_tasks st ON mt.id = st.main_task_id
+       LEFT JOIN project_applications pa ON p.id = pa.project_id AND pa.status = 'accepted'
+       WHERE (
+         -- Solo projects where worker is employer
+         (p.employer_id = ? AND p.status = 'completed')
+         OR 
+         -- Team projects where worker is part of the team and completed subtasks
+         (
+           p.status = 'completed'
+           AND tm.worker_id = ?
+           AND EXISTS (
+             SELECT 1 
+             FROM sub_tasks st2 
+             JOIN main_tasks mt2 ON st2.main_task_id = mt2.id 
+             WHERE mt2.project_id = p.id 
+             AND st2.assigned_to = ?
+             AND st2.status = 'completed'
+           )
+         )
+       )
+       ORDER BY p.created_at DESC`,
+      [workerId, workerId, workerId, workerId]
+    );
+
+    if (projects.length === 0) {
+      return {
+        statusCode: 200,
+        message: "No completed projects found",
+        data: []
+      };
+    }
+
+    // Get subtasks for each project where the worker contributed
+    const projectsWithSubtasks = await Promise.all(projects.map(async (project) => {
+      let subtasks = [];
+      
+      if (project.project_ownership === 'team') {
+        // Get subtasks completed by this worker for this project
+        const [workerSubtasks] = await db.query(
+          `SELECT 
+            st.id,
+            st.title,
+            st.description,
+            st.status,
+            st.completed_at,
+            mt.title as main_task_title
+           FROM sub_tasks st
+           JOIN main_tasks mt ON st.main_task_id = mt.id
+           WHERE mt.project_id = ?
+           AND st.assigned_to = ?
+           AND st.status = 'completed'`,
+          [project.id, workerId]
+        );
+        subtasks = workerSubtasks;
+      }
+
+      return {
+        id: project.id,
+        title: project.title,
+        description: project.description,
+        budget: project.total_budget || 0, // Use the calculated total from accepted application
+        status: project.status,
+        current_phase: project.current_phase,
+        main_tasks_number: project.main_tasks_number,
+        created_at: project.created_at,
+        completion_date: project.completion_date,
+        project_type: project.project_type,
+        address: project.address,
+        project_ownership: project.project_ownership,
+        team_info: project.project_ownership === 'team' ? {
+          team_id: project.team_id,
+          team_name: project.team_name
+        } : null,
+        client: {
+          id: project.client_id,
+          name: project.client_name,
+          email: project.client_email,
+          phone: project.client_phone
+        },
+        deposit_paid: project.deposit_paid,
+        completed_subtasks: subtasks
+      };
+    }));
+
+    return {
+      statusCode: 200,
+      message: `${projects.length} completed projects found`,
+      data: projectsWithSubtasks
+    };
+
+  } catch (err) {
+    console.error('Error in getCompletedProjects:', err);
+    throw {
+      message: err.message || "Failed to get completed projects",
+      statusCode: err.statusCode || 500
+    };
   }
 };

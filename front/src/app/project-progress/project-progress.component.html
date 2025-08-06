@@ -58,29 +58,40 @@
     <!-- Progress Bar -->
     <div class="progress-bar-wrapper">
       <div class="progress-bar-bg">
-        <div class="progress-bar-fill" [style.width.%]="totalProgress"></div>
+        <div class="progress-bar-fill" [style.width.%]="100" [style.background]="getProgressBarGradient()"></div>
       </div>
       <div class="progress-points">
         <div *ngFor="let task of mainTasks; let i = index"
              class="progress-point"
              [ngClass]="{'active': selectedTask?.id === task.id}"
-             [style.left.%]="(i / (mainTasks.length - 1)) * 100"
+             [style.left]="calculateLeft(i, mainTasks.length)"
              (mouseenter)="hoveredTask = task"
              (mouseleave)="hoveredTask = null"
              (click)="selectTask(task)">
           <div class="point-circle" [ngClass]="{
             'completed': task.status === 'completed',
-            'in-progress': task.status === 'in progress',
-            'not-started': task.status === 'not started'
+            'in-progress': task.status === 'in progress' || taskProgress[task.id] > 0,
+            'not-started': task.status === 'not started' && taskProgress[task.id] === 0
           }"></div>
           <div *ngIf="hoveredTask?.id === task.id" class="point-tooltip">
             {{ task.title }}
+            <div class="progress-info">
+              {{ taskProgress[task.id] | number:'1.0-0' }}% Complete
+              ({{ getCompletedSubtasksCount(task) }}/{{ getTotalSubtasksCount(task) }} subtasks)
+            </div>
           </div>
         </div>
       </div>
     </div>
     <div class="progress-bar-labels">
-      <span *ngFor="let task of mainTasks; let i = index" [style.left.%]="(i / (mainTasks.length - 1)) * 100" class="bar-label">{{ task.title }}</span>
+      <span *ngFor="let task of mainTasks; let i = index" 
+            [style.left]="calculateLeft(i, mainTasks.length)"
+            class="bar-label">
+        {{ task.title }}
+        <span class="subtask-progress" *ngIf="taskProgress[task.id] > 0">
+          ({{ taskProgress[task.id] | number:'1.0-0' }}%)
+        </span>
+      </span>
     </div>
 
     <!-- Main Task & Subtasks -->

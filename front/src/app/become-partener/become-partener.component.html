@@ -1,13 +1,15 @@
 <div class="verification-form-container">
   <div class="form-header">
-    <h1>Become a Partner</h1>
+    <h1>Become a Partner <i class="bi bi-person-workspace"></i></h1>
     <p class="subtitle">Complete the form below to submit your verification request</p>
   </div>
 
   <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()" class="verification-form">
     <!-- Request Description -->
     <div class="form-section">
-      <h2>Request Description</h2>
+      <div class="section-title">
+        <h2><i class="bi bi-file-earmark-text"></i> Request Description</h2>
+      </div>
       <div class="form-group">
         <label for="requestDescription">Tell us about yourself and why you want to become a partner</label>
         <textarea
@@ -26,15 +28,21 @@
     <!-- Jobs Section -->
     <div class="form-section" formArrayName="jobs">
       <div class="section-header">
-        <h2>Your Skills & Experience</h2>
-        <button type="button" class="add-btn" (click)="addJob()">+ Add Another Job</button>
+        <div class="section-title">
+          <h2><i class="bi bi-tools"></i> Your Skills & Experience</h2>
+        </div>
+        <button type="button" class="add-btn" (click)="addJob()">
+          <i class="bi bi-plus-circle-fill"></i> Add Another Job
+        </button>
       </div>
 
       <div class="form-group" *ngFor="let job of jobs.controls; let i = index" [formGroupName]="i">
         <div class="card">
           <div class="card-header">
             <h3>Job {{i + 1}}</h3>
-            <button type="button" class="remove-btn" (click)="removeJob(i)" *ngIf="jobs.length > 1">×</button>
+            <button type="button" class="remove-btn" (click)="removeJob(i)" *ngIf="jobs.length > 1">
+              <i class="bi bi-x-circle-fill"></i>
+            </button>
           </div>
           
           <div class="form-row">
@@ -73,15 +81,21 @@
     <!-- Certificates Section -->
     <div class="form-section" formArrayName="certificates">
       <div class="section-header">
-        <h2>Certifications</h2>
-        <button type="button" class="add-btn" (click)="addCertificate()">+ Add Another Certificate</button>
+        <div class="section-title">
+          <h2><i class="bi bi-award"></i> Certifications</h2>
+        </div>
+        <button type="button" class="add-btn" (click)="addCertificate()">
+          <i class="bi bi-plus-circle-fill"></i> Add Another Certificate
+        </button>
       </div>
 
       <div class="form-group" *ngFor="let certificate of certificates.controls; let i = index" [formGroupName]="i">
         <div class="card">
           <div class="card-header">
             <h3>Certificate {{i + 1}}</h3>
-            <button type="button" class="remove-btn" (click)="removeCertificate(i)" *ngIf="certificates.length > 1">×</button>
+            <button type="button" class="remove-btn" (click)="removeCertificate(i)" *ngIf="certificates.length > 1">
+              <i class="bi bi-x-circle-fill"></i>
+            </button>
           </div>
 
           <div class="form-row">
@@ -133,15 +147,21 @@
     <!-- Past Projects Section -->
     <div class="form-section" formArrayName="pastProjects">
       <div class="section-header">
-        <h2>Past Projects</h2>
-        <button type="button" class="add-btn" (click)="addPastProject()">+ Add Another Project</button>
+        <div class="section-title">
+          <h2><i class="bi bi-journal-check"></i> Past Projects</h2>
+        </div>
+        <button type="button" class="add-btn" (click)="addPastProject()">
+          <i class="bi bi-plus-circle-fill"></i> Add Another Project
+        </button>
       </div>
 
       <div class="form-group" *ngFor="let project of pastProjects.controls; let i = index" [formGroupName]="i">
         <div class="card">
           <div class="card-header">
             <h3>Project {{i + 1}}</h3>
-            <button type="button" class="remove-btn" (click)="removePastProject(i)" *ngIf="pastProjects.length > 1">×</button>
+            <button type="button" class="remove-btn" (click)="removePastProject(i)" *ngIf="pastProjects.length > 1">
+              <i class="bi bi-x-circle-fill"></i>
+            </button>
           </div>
 
           <div class="form-row">
@@ -193,17 +213,29 @@
     <!-- Submit Button -->
     <div class="form-actions">
       <button type="submit" class="submit-btn" [disabled]="loading">
-        <span *ngIf="!loading">Submit Verification Request</span>
-        <span *ngIf="loading">Submitting...</span>
+        <span *ngIf="!loading">Submit Verification Request <i class="bi bi-send-fill"></i></span>
+        <span *ngIf="loading">Submitting... <i class="bi bi-hourglass-split"></i></span>
       </button>
     </div>
 
     <!-- Messages -->
     <div class="messages">
-      <div class="error-message" *ngIf="error">{{ error }}</div>
+      <div class="error-message" *ngIf="error"><i class="bi bi-exclamation-circle-fill"></i> {{ error }}</div>
       <div class="success-message" *ngIf="success">
-        Your verification request has been submitted successfully! We will review it and get back to you soon.
+        <i class="bi bi-check-circle-fill"></i> Your verification request has been submitted successfully! We will review it and get back to you soon.
       </div>
     </div>
   </form>
+</div>
+
+<!-- Custom Alert -->
+<div class="custom-alert-overlay" *ngIf="showCustomAlert">
+  <div class="custom-alert">
+    <i class="bi bi-check-circle-fill custom-alert-icon"></i>
+    <h2 class="custom-alert-title">Verification Request Submitted!</h2>
+    <p class="custom-alert-message">We will notify you when you get verified. Thank you for your patience.</p>
+    <button class="custom-alert-button" (click)="onAlertConfirm()">
+      OK
+    </button>
+  </div>
 </div>

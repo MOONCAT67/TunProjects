@@ -135,7 +135,7 @@ export class ContractComponent implements OnInit, AfterViewInit {
       next: (response) => {
         console.log('Contract created and signed successfully:', response);
         alert('Contract submitted successfully!');
-        this.router.navigate(['/client-projects']);
+        window.location.href = '/client/projects';
       },
       error: (error) => {
         console.error('Error submitting contract:', error);
@@ -144,7 +144,6 @@ export class ContractComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // Add method to handle contract modification
   updateContract(): void {
     if (!this.projectId || !this.clientId) {
       alert('Missing required information. Please try again.');
@@ -156,13 +155,11 @@ export class ContractComponent implements OnInit, AfterViewInit {
       userId: this.clientId
     };
 
-    // Note: We'll need the contractId here - this should be fetched when loading the contract
-    // For now, we'll need to implement a way to get the contractId
     this.contractService.updateContractContent(this.projectId, payload).subscribe({
       next: (response) => {
         console.log('Contract updated successfully:', response);
         alert('Contract updated successfully!');
-        this.router.navigate(['/client-projects']);
+        window.location.href = '/client/projects';
       },
       error: (error) => {
         console.error('Error updating contract:', error);

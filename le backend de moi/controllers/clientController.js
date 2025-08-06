@@ -3,7 +3,11 @@ const {
     getClientProjects,
     getProjectApplications,
     acceptApplication,
-    getAllWorkers
+    getAllWorkers,
+    getClientProfile,
+    updateProfilePicture,
+    updateFullName,
+    updatePhoneNumber
   } = require("../services/clientService");
   
   exports.create_project = async (req, res, next) => {
@@ -76,5 +80,74 @@ const {
       res.status(result.statusCode).json(result);
     } catch (error) {
       res.status(error.statusCode || 500).json(error);
+    }
+  };
+
+  exports.getClientProfile = async (req, res, next) => {
+    try {
+      const { userId } = req.params;
+
+      const result = await getClientProfile({ userId });
+      res.status(result.statusCode).send({ ...result });
+    } catch (err) {
+      const { statusCode = 400, message } = err;
+      res.status(statusCode).send({ message }) && next(err);
+    }
+  };
+
+  exports.updateProfilePicture = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const { profilePicture } = req.body;
+
+      const result = await updateProfilePicture({
+        userId,
+        profilePicture
+      });
+
+      res.status(result.statusCode).json(result);
+    } catch (error) {
+      console.error('Error in updateProfilePicture controller:', error);
+      res.status(error.statusCode || 500).json({
+        message: error.message || 'Internal server error'
+      });
+    }
+  };
+
+  exports.updateFullName = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const { fullname } = req.body;
+
+      const result = await updateFullName({
+        userId,
+        fullname
+      });
+
+      res.status(result.statusCode).json(result);
+    } catch (error) {
+      console.error('Error in updateFullName controller:', error);
+      res.status(error.statusCode || 500).json({
+        message: error.message || 'Internal server error'
+      });
+    }
+  };
+
+  exports.updatePhoneNumber = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const { phoneNumber } = req.body;
+
+      const result = await updatePhoneNumber({
+        userId,
+        phoneNumber
+      });
+
+      res.status(result.statusCode).json(result);
+    } catch (error) {
+      console.error('Error in updatePhoneNumber controller:', error);
+      res.status(error.statusCode || 500).json({
+        message: error.message || 'Internal server error'
+      });
     }
   };

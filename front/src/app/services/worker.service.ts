@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Job, Certificate, PastProject, VerificationRequest, JobCategory } from '../models/verification.model';
 import { Project, ProjectApplication } from '../models/project.model';
+import { JobNumbers } from '../models/jobs-numbers.model';
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { AuthService } from './authService';
@@ -153,6 +154,36 @@ interface InProgressSoloProjectsResponse {
   data: SoloProject[];
 }
 
+export interface Client {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  picture: string | null;
+}
+
+export interface CompletedProject {
+  id: number;
+  title: string;
+  description: string;
+  budget: string;
+  status: string;
+  current_phase: number;
+  main_tasks_number: number;
+  created_at: string;
+  completion_date: string | null;
+  project_type: string;
+  address: string;
+  client: Client;
+  deposit_paid: number;
+}
+
+export interface CompletedProjectsResponse {
+  statusCode: number;
+  message: string;
+  data: CompletedProject[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -267,9 +298,20 @@ export class WorkerService {
   }
 
   trackProjectDetailView(workerId: number | string, projectId: number | string, viewDuration: number, jobCategoryIds: number[]): Observable<any> {
-    const body = { workerId: workerId, projectId: projectId, viewDuration: viewDuration, jobCategories: jobCategoryIds };
-    return this.http.post<any>(`${this.apiUrl}/track-detail-view`, body).pipe(
+    const headers = this.getHeaders();
+    return this.http.post(`${this.apiUrl}/track-detail-view`, { workerId, projectId, viewDuration, jobCategories: jobCategoryIds }, { headers }).pipe(
       catchError(this.handleError)
     );
+  }
+
+  getWorkerCountForJobCategory(jobCategoryId: number): Observable<JobNumbers> {
+    return this.http.get<ApiResponse<JobNumbers>>(`${this.apiUrl}/job-category/${jobCategoryId}/count`).pipe(
+      map(response => response.data),
+      catchError(this.handleError)
+    );
+  }
+
+  getCompletedProjects(workerId: number): Observable<CompletedProjectsResponse> {
+    return this.http.get<CompletedProjectsResponse>(`${this.apiUrl}/${workerId}/completed-projects`);
   }
 } 

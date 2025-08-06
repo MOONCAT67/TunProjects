@@ -3,8 +3,11 @@ import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../services/authService';
-import { Subscription } from 'rxjs';
-import { WorkerService, WorkerAddress } from '../services/worker.service';
+import { Subscription, forkJoin } from 'rxjs';
+import { WorkerService, WorkerAddress, WorkerListItem } from '../services/worker.service';
+import { JobCategory } from '../models/verification.model';
+import { JobNumbers } from '../models/jobs-numbers.model';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-body',
@@ -17,9 +20,14 @@ export class BodyComponent implements OnInit, OnDestroy {
   currentUser: any = null;
   private authSubscription: Subscription | null = null;
   isVisible = false;
+  jobCategories: JobCategory[] = [];
+  currentIndex: number = 0;
+  itemsPerPage: number = 3;
+  workerCounts: Map<number, number> = new Map();
+  workers: WorkerListItem[] = [];
 
   // Map-related
-  workerLocations: { id: number; fullname: string; lat: number; lng: number; location: string }[] = [];
+  workerLocations: { id: number; fullname: string; lat: number; lng: number; location: string; profile_picture?: string; is_verified: number }[] = [];
   showTunisiaMap = false;
   private leafletModule: any = null;
   private map: any = null;
@@ -43,12 +51,12 @@ export class BodyComponent implements OnInit, OnDestroy {
     { title: 'Web Development', count: 156, icon: '💻' },
     { title: 'Mobile Apps', count: 98, icon: '📱' },
     { title: 'UI/UX Design', count: 87, icon: '🎨' },
-    { title: 'Data Science', count: 76, icon: '📊' }
+    { title: 'Data Science', count: 76, icon: '📊' },
   ];
 
   constructor(
     private router: Router,
-    private authService: AuthService,
+    public authService: AuthService,
     private workerService: WorkerService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -57,7 +65,8 @@ export class BodyComponent implements OnInit, OnDestroy {
     this.authSubscription = this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
-    this.loadWorkerLocations();
+    this.loadAllWorkersAndLocations();
+    this.loadCategories();
   }
 
   ngOnDestroy() {
@@ -69,38 +78,81 @@ export class BodyComponent implements OnInit, OnDestroy {
     }
   }
 
-  async loadWorkerLocations() {
-    if (!isPlatformBrowser(this.platformId)) return;
-    const addresses = await this.workerService.getWorkerAddresses().toPromise();
-    this.workerLocations = [];
-    if (!addresses) return;
-    for (const worker of addresses) {
-      // Try to parse coordinates from @lat,lng format
-      const coords = this.parseCoordinates(worker.location);
-      if (coords) {
-        this.workerLocations.push({
-          id: worker.id,
-          fullname: worker.fullname,
-          lat: coords.lat,
-          lng: coords.lng,
-          location: worker.location
+  loadCategories() {
+    this.workerService.getJobs().subscribe({
+      next: (jobCategoriesResponse: JobCategory[]) => {
+        this.jobCategories = jobCategoriesResponse;
+        console.log('Loaded Job Categories:', this.jobCategories);
+
+        const workerCountObservables = this.jobCategories.map(category =>
+          this.workerService.getWorkerCountForJobCategory(category.id).pipe(
+            map(workerCountData => ({ categoryId: category.id, count: workerCountData.workerCount }))
+          )
+        );
+
+        forkJoin(workerCountObservables).subscribe({
+          next: (counts) => {
+            counts.forEach(item => {
+              this.workerCounts.set(item.categoryId, item.count);
+            });
+            console.log('Loaded Worker Counts:', this.workerCounts);
+          },
+          error: (error) => {
+            console.error('Failed to load worker counts:', error);
+          }
         });
-      } else {
-        // fallback to geocoding if not in @lat,lng format
-        const geo = await this.geocodeLocation(worker.location);
-        if (geo) {
-          this.workerLocations.push({
-            id: worker.id,
-            fullname: worker.fullname,
-            lat: geo.lat,
-            lng: geo.lng,
-            location: worker.location
-          });
+
+      },
+      error: (error) => {
+        console.error('Failed to load job categories:', error);
+      }
+    });
+  }
+
+  async loadAllWorkersAndLocations() {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    try {
+      const allWorkers = await this.workerService.getAllWorkers().toPromise();
+      if (!allWorkers) return;
+      this.workers = allWorkers;
+
+      this.workerLocations = [];
+      for (const worker of allWorkers) {
+        if (worker.location) {
+          const coords = this.parseCoordinates(worker.location);
+          if (coords) {
+            this.workerLocations.push({
+              id: worker.id,
+              fullname: worker.fullname,
+              lat: coords.lat,
+              lng: coords.lng,
+              location: worker.location,
+              profile_picture: worker.profile_picture || 'assets/profile.jpg',
+              is_verified: worker.is_verified || 0
+            });
+          } else {
+            const geo = await this.geocodeLocation(worker.location);
+            if (geo) {
+              this.workerLocations.push({
+                id: worker.id,
+                fullname: worker.fullname,
+                lat: geo.lat,
+                lng: geo.lng,
+                location: worker.location,
+                profile_picture: worker.profile_picture || 'assets/profile.jpg',
+                is_verified: worker.is_verified || 0
+              });
+            }
+          }
         }
       }
+      this.showTunisiaMap = true;
+      setTimeout(() => this.initMap(), 0);
+
+    } catch (error) {
+      console.error('Error loading all workers and locations:', error);
     }
-    this.showTunisiaMap = true;
-    setTimeout(() => this.initMap(), 0);
   }
 
   parseCoordinates(location: string): { lat: number, lng: number } | null {
@@ -195,38 +247,57 @@ export class BodyComponent implements OnInit, OnDestroy {
     this.router.navigate(['/auth']);
   }
 
-  goToBuilding() {
-    this.router.navigate(['/building']);  
-  }
-
-  goToPlumber() {
-    this.router.navigate(['/plumber']);
-  }
-
-  goToCarpenter() {
-    this.router.navigate(['/carpenter']);  
-  }
-
-  goToPainter() {
-    this.router.navigate(['/painter']);
-  }
-
-  goToTilier() {
-    this.router.navigate(['/tilier']);  
-  }
-
-  goToElectrician() {
-    this.router.navigate(['/electrician']);
+  goToCategory(categoryId: number) {
+    this.router.navigate(['/worker-page'], { queryParams: { categoryId: categoryId } });
   }
 
   private async getDefaultProfilePictureBase64(): Promise<string> {
-    const response = await fetch('assets/profile.jpg');
-    const blob = await response.blob();
-    return new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
+    // Implementation for default profile picture (if needed)
+    return ''; // Placeholder
+  }
+
+  get displayedCategories(): JobCategory[] {
+    const start = this.currentIndex;
+    const end = this.currentIndex + this.itemsPerPage;
+    if (end <= this.jobCategories.length) {
+      return this.jobCategories.slice(start, end);
+    } else if (this.jobCategories.length > 0) {
+      const remaining = this.jobCategories.length - this.currentIndex;
+      if (remaining > 0) {
+        return this.jobCategories.slice(this.currentIndex, this.currentIndex + remaining);
+      } else {
+        this.currentIndex = 0;
+        return this.jobCategories.slice(0, this.itemsPerPage);
+      }
+    }
+    return [];
+  }
+
+  nextCategory() {
+    if (this.currentIndex + this.itemsPerPage < this.jobCategories.length) {
+      this.currentIndex += 1;
+    } else {
+      this.currentIndex = 0;
+    }
+  }
+
+  prevCategory() {
+    if (this.currentIndex > 0) {
+      this.currentIndex -= 1;
+    } else {
+      this.currentIndex = this.jobCategories.length - this.itemsPerPage;
+      if (this.currentIndex < 0) this.currentIndex = 0;
+    }
+  }
+
+  navigateToWorkerMessage(workerId: number, workerName: string, workerPicture: string | null) {
+    this.router.navigate(['/messagerie'], { 
+      queryParams: { 
+        clientId: workerId,
+        clientName: workerName,
+        clientPicture: workerPicture || null,
+        startConversation: true 
+      }
     });
   }
 }

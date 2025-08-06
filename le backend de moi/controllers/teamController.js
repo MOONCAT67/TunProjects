@@ -15,7 +15,7 @@ exports.createTeam = async (req, res, next) => {
 
     // Verify user is a worker
     const [users] = await db.query(
-      `SELECT id, role, is_worker 
+      `SELECT id, role 
        FROM users 
        WHERE id = ?`,
       [userId]
@@ -26,8 +26,8 @@ exports.createTeam = async (req, res, next) => {
     }
 
     const user = users[0];
-    if (user.role !== 'worker' || !user.is_worker) {
-      return res.status(403).send({ message: "Only verified workers can create teams" });
+    if (user.role !== 'worker') {
+      return res.status(403).send({ message: "Only workers can create teams" });
     }
 
     // Check if user already has a team
@@ -375,6 +375,19 @@ exports.getTeamProjects = async (req, res) => {
     return res.status(err.statusCode || 500).json({
       statusCode: err.statusCode || 500,
       message: err.message || "Failed to get team projects"
+    });
+  }
+};
+
+exports.getTeamLeader = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const result = await teamService.getTeamLeader(userId);
+    res.status(result.statusCode).json(result);
+  } catch (err) {
+    res.status(err.statusCode || 500).json({
+      success: false,
+      message: err.message || "Failed to get team leader"
     });
   }
 };

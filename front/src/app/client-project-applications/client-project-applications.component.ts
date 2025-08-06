@@ -102,6 +102,8 @@ export class ClientProjectApplicationsComponent implements OnInit, OnDestroy {
       next: (response: any) => {
         // Reload applications after accepting
         this.loadApplications();
+        // Reload the entire page
+        window.location.reload();
       },
       error: (err) => {
         this.error = err.message || 'Failed to accept application';

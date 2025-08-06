@@ -23,4 +23,12 @@ router.post('/job-categories', adminController.addJobCategory);
 // Get all users without authentication
 router.get('/users', adminController.getAllUsers);
 
+// Stats routes
+router.get('/stats/weekly', adminController.get_weekly_stats);
+router.get('/stats/distribution', adminController.get_distribution_stats);
+router.get('/stats/today', adminController.get_today_stats);
+
+// Job Categories Management
+router.get('/job-categories', adminController.getAllJobCategories);
+
 module.exports = router;

@@ -141,7 +141,7 @@ exports.checkProjectContract = async (req, res) => {
 
 exports.updateContractContent = async (req, res) => {
   try {
-    const { contractId } = req.params;
+    const { projectId } = req.params;
     const { content, userId } = req.body;
 
     if (!content || !userId) {
@@ -150,7 +150,7 @@ exports.updateContractContent = async (req, res) => {
       });
     }
 
-    const result = await contractService.updateContractContent(contractId, content, userId);
+    const result = await contractService.updateContractContentByProject(projectId, content, userId);
     res.status(result.statusCode).json(result);
   } catch (err) {
     res.status(err.statusCode || 500).json({
@@ -180,5 +180,29 @@ exports.downloadContractByProject = async (req, res) => {
     res.status(err.statusCode || 500).json({
       message: err.message || "Failed to download contract"
     });
+  }
+}; 
+
+exports.checkWorkerSignatureByProject = async (req, res, next) => {
+  try {
+    const { projectId } = req.params;
+
+    const result = await contractService.checkWorkerSignatureByProject({ projectId });
+    res.status(result.statusCode).send({ ...result });
+  } catch (err) {
+    const { statusCode = 400, message } = err;
+    res.status(statusCode).send({ message }) && next(err);
+  }
+};
+
+exports.getContractIdByProject = async (req, res, next) => {
+  try {
+    const { projectId } = req.params;
+
+    const result = await contractService.getContractIdByProject({ projectId });
+    res.status(result.statusCode).send({ ...result });
+  } catch (err) {
+    const { statusCode = 400, message } = err;
+    res.status(statusCode).send({ message }) && next(err);
   }
 }; 

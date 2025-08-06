@@ -174,4 +174,68 @@ exports.getUnreadMessagesCount = async (userId) => {
       message: "Failed to fetch unread messages count: " + err.message
     };
   }
+};
+
+exports.createNewConversation = async (userId1, userId2) => {
+  try {
+    // Check if both users exist
+    const [users] = await db.query(
+      `SELECT id FROM users WHERE id IN (?, ?)`,
+      [userId1, userId2]
+    );
+
+    if (users.length !== 2) {
+      throw {
+        statusCode: 404,
+        message: "One or both users not found"
+      };
+    }
+
+    // Check if conversation already exists
+    const [existingConversation] = await db.query(
+      `SELECT * FROM messages 
+       WHERE (sender_id = ? AND receiver_id = ?)
+       OR (sender_id = ? AND receiver_id = ?)
+       LIMIT 1`,
+      [userId1, userId2, userId2, userId1]
+    );
+
+    if (existingConversation.length > 0) {
+      return {
+        success: true,
+        statusCode: 200,
+        message: "Conversation already exists",
+        data: {
+          userId1,
+          userId2,
+          createdAt: existingConversation[0].sent_at
+        }
+      };
+    }
+
+    // Create a new conversation by inserting an empty message
+    const [result] = await db.query(
+      `INSERT INTO messages (sender_id, receiver_id, message, is_read)
+       VALUES (?, ?, '', 0)`,
+      [userId1, userId2]
+    );
+
+    return {
+      success: true,
+      statusCode: 201,
+      message: "Conversation created successfully",
+      data: {
+        userId1,
+        userId2,
+        createdAt: new Date()
+      }
+    };
+
+  } catch (err) {
+    console.error('Error in createNewConversation:', err);
+    throw {
+      statusCode: err.statusCode || 500,
+      message: err.message || "Failed to create conversation"
+    };
+  }
 }; 
