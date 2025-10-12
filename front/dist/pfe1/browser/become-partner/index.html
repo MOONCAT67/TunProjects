@@ -1,0 +1,1766 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="utf-8">
+  <title>TunProjects</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="assets/a.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<link rel="stylesheet" href="styles.css"><link rel="modulepreload" href="chunk-WKYGNSYM.js"><style ng-app-id="ng">
+
+[_nghost-ng-c4070505595] {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+*[_ngcontent-ng-c4070505595] {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html[_ngcontent-ng-c4070505595], body[_ngcontent-ng-c4070505595] {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+app-navbar[_ngcontent-ng-c4070505595], app-footer[_ngcontent-ng-c4070505595] {
+  display: block;
+  width: 100%;
+}
+router-outlet[_ngcontent-ng-c4070505595] {
+  flex: 1;
+  display: block;
+}
+/*# sourceMappingURL=app.component.css.map */</style><style ng-app-id="ng">
+
+.dropdown[_ngcontent-ng-c4046531683] {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-toggle[_ngcontent-ng-c4046531683] {
+  background-color: transparent;
+  border: none;
+  font-size: 1.2rem;
+  font-weight: 100;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0;
+  transition: color 0.2s ease-in-out;
+}
+.dropdown-toggle[_ngcontent-ng-c4046531683]:hover {
+  color: #ff8500;
+}
+.dropdown-menu[_ngcontent-ng-c4046531683] {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  min-width: 280px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 133, 0, 0.1);
+}
+.dropdown-menu.show[_ngcontent-ng-c4046531683] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+.dropdown-menu[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683] {
+  display: block;
+  padding: 0.75rem 1.5rem;
+  color: #000;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+.dropdown-menu[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683]:hover {
+  background-color: #ffe5c2;
+  color: #ff8500;
+}
+@keyframes _ngcontent-ng-c4046531683_fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.navbar[_ngcontent-ng-c4046531683] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 3rem;
+  background-color: #f8f6f2;
+  color: #000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  font-family: "Arial", sans-serif;
+  font-weight: normal;
+  height: 70px;
+  transition: all 0.3s ease-in-out;
+}
+.tt[_ngcontent-ng-c4046531683] {
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+.logo[_ngcontent-ng-c4046531683] {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 26px;
+  font-weight: bold;
+  color: #000;
+  font-family: "Arial", sans-serif;
+  margin-right: 50px;
+}
+.logo-icon[_ngcontent-ng-c4046531683] {
+  height: 45px;
+  margin-right: 8px;
+}
+.orange[_ngcontent-ng-c4046531683] {
+  color: #ff8500;
+}
+.nav-links[_ngcontent-ng-c4046531683] {
+  display: flex;
+  gap: 1.8rem;
+  flex-grow: 1;
+  align-items: center;
+}
+.nav-links[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683] {
+  color: #000;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  position: relative;
+}
+.nav-links[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683]:hover {
+  color: #ff8500;
+}
+.nav-links[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683]::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #ff8500;
+  transition: width 0.2s ease-in-out;
+}
+.nav-links[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683]:hover::after {
+  width: 100%;
+}
+.right-section[_ngcontent-ng-c4046531683] {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-family: "Arial", sans-serif;
+  font-weight: normal;
+}
+.search-container[_ngcontent-ng-c4046531683] {
+  position: relative;
+  background-color: #fff;
+  border-radius: 20px;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem 0 1rem;
+  height: 40px;
+  width: 250px;
+}
+.search-container[_ngcontent-ng-c4046531683]   input[_ngcontent-ng-c4046531683] {
+  padding: 0.5rem 0.5rem 0.5rem 0;
+  border: none;
+  background-color: transparent;
+  color: #000;
+  flex-grow: 1;
+  font-family: "Arial", sans-serif;
+  font-weight: normal;
+  outline: none;
+}
+.search-container[_ngcontent-ng-c4046531683]   .icon[_ngcontent-ng-c4046531683] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.search-container[_ngcontent-ng-c4046531683]   .icon[_ngcontent-ng-c4046531683]   i[_ngcontent-ng-c4046531683] {
+  font-size: 1.1rem;
+}
+.notification-container[_ngcontent-ng-c4046531683] {
+  position: relative;
+}
+.notification-icon[_ngcontent-ng-c4046531683] {
+  position: relative;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: color 0.2s ease-in-out;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.notification-icon[_ngcontent-ng-c4046531683]:hover {
+  color: #ff8500;
+}
+.notification-icon[_ngcontent-ng-c4046531683]   i[_ngcontent-ng-c4046531683] {
+  font-size: 1.4rem;
+}
+.notification-badge[_ngcontent-ng-c4046531683] {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff8500;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(255, 133, 0, 0.3);
+}
+.messages-container[_ngcontent-ng-c4046531683] {
+  position: relative;
+}
+.messages-icon[_ngcontent-ng-c4046531683] {
+  position: relative;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: color 0.2s ease-in-out;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.messages-icon[_ngcontent-ng-c4046531683]:hover {
+  color: #ff8500;
+}
+.messages-icon[_ngcontent-ng-c4046531683]   i[_ngcontent-ng-c4046531683] {
+  font-size: 1.4rem;
+}
+.messages-badge[_ngcontent-ng-c4046531683] {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff8500;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(255, 107, 0, 0.2);
+}
+.profile-container[_ngcontent-ng-c4046531683] {
+  position: relative;
+}
+.profile[_ngcontent-ng-c4046531683] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 20px;
+  transition: background-color 0.2s ease-in-out;
+}
+.profile[_ngcontent-ng-c4046531683]:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.profile[_ngcontent-ng-c4046531683]   i[_ngcontent-ng-c4046531683] {
+  font-size: 1.8rem;
+  color: #000;
+}
+.user-name[_ngcontent-ng-c4046531683] {
+  font-size: 1rem;
+  color: #000;
+  font-weight: 500;
+}
+.dropdown-menu[_ngcontent-ng-c4046531683] {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  min-width: 150px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: none;
+  z-index: 1000;
+}
+.dropdown-menu.show[_ngcontent-ng-c4046531683] {
+  display: block;
+}
+.dropdown-menu[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683] {
+  display: block;
+  padding: 0.75rem 1.5rem;
+  color: #000;
+  text-decoration: none;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+.dropdown-menu[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683]:hover {
+  background-color: #ffe5c2;
+  color: #ff8500;
+}
+[_nghost-ng-c4046531683] {
+  display: block;
+}
+body[_ngcontent-ng-c4046531683] {
+  margin: 0;
+  font-family: "Arial", sans-serif;
+  font-weight: normal;
+}
+.clickable[_ngcontent-ng-c4046531683] {
+  cursor: pointer;
+}
+.logo[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683] {
+  text-decoration: none;
+  color: inherit;
+}
+.worker-space-dropdown[_ngcontent-ng-c4046531683] {
+  position: relative;
+  display: inline-block;
+}
+.worker-space-link[_ngcontent-ng-c4046531683] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: #000;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+  font-size: 1rem;
+}
+.worker-space-link[_ngcontent-ng-c4046531683]:hover {
+  color: #ff8500;
+}
+.worker-space-link[_ngcontent-ng-c4046531683]   i[_ngcontent-ng-c4046531683] {
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+  margin-left: 4px;
+  color: #ff8500;
+}
+.worker-space-link[_ngcontent-ng-c4046531683]   i.rotate[_ngcontent-ng-c4046531683] {
+  transform: rotate(180deg);
+}
+.worker-space-menu[_ngcontent-ng-c4046531683] {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  min-width: 250px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+.worker-space-menu.show[_ngcontent-ng-c4046531683] {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  animation: _ngcontent-ng-c4046531683_slideDown 0.3s ease forwards;
+}
+.worker-space-menu[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683] {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  color: #000;
+  text-decoration: none;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  cursor: pointer;
+}
+.worker-space-menu[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683]:hover {
+  background-color: #ffe5c2;
+  color: #ff8500;
+}
+.worker-space-menu[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683]   i[_ngcontent-ng-c4046531683] {
+  width: 20px;
+  text-align: center;
+  color: #ff8500;
+}
+.worker-space-policy[_ngcontent-ng-c4046531683] {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid #eee;
+}
+.worker-space-policy[_ngcontent-ng-c4046531683]   p[_ngcontent-ng-c4046531683] {
+  font-size: 0.75rem;
+  color: #888;
+  margin: 0;
+  line-height: 1.4;
+}
+@keyframes _ngcontent-ng-c4046531683_slideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+.notification-dropdown[_ngcontent-ng-c4046531683] {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 350px;
+  max-height: 500px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow: hidden;
+}
+.notification-header[_ngcontent-ng-c4046531683] {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f8f8;
+}
+.notification-header[_ngcontent-ng-c4046531683]   h3[_ngcontent-ng-c4046531683] {
+  margin: 0;
+  color: #000;
+  font-size: 1.1rem;
+}
+.unread-count[_ngcontent-ng-c4046531683] {
+  background-color: #ff8500;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+.notification-list[_ngcontent-ng-c4046531683] {
+  max-height: 400px;
+  overflow-y: auto;
+}
+.notification-item[_ngcontent-ng-c4046531683] {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s ease-in-out;
+}
+.notification-item[_ngcontent-ng-c4046531683]:hover {
+  background-color: #f8f8f8;
+}
+.notification-item.unread[_ngcontent-ng-c4046531683] {
+  background-color: rgba(255, 133, 0, 0.05);
+}
+.notification-content[_ngcontent-ng-c4046531683] {
+  margin-bottom: 10px;
+}
+.notification-content[_ngcontent-ng-c4046531683]   .message[_ngcontent-ng-c4046531683] {
+  margin: 0 0 8px 0;
+  color: #333;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+.notification-footer[_ngcontent-ng-c4046531683] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #666;
+}
+.read-status[_ngcontent-ng-c4046531683] {
+  color: #25D366;
+}
+.notification-actions[_ngcontent-ng-c4046531683] {
+  display: flex;
+  gap: 10px;
+}
+.mark-read-btn[_ngcontent-ng-c4046531683], .delete-btn[_ngcontent-ng-c4046531683], .sign-contract-btn[_ngcontent-ng-c4046531683] {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease-in-out;
+}
+.mark-read-btn[_ngcontent-ng-c4046531683] {
+  background-color: #ff8500;
+  color: white;
+}
+.mark-read-btn[_ngcontent-ng-c4046531683]:hover {
+  background-color: #ffb347;
+}
+.sign-contract-btn[_ngcontent-ng-c4046531683] {
+  background-color: #4CAF50;
+  color: white;
+}
+.sign-contract-btn[_ngcontent-ng-c4046531683]:hover {
+  background-color: #45a049;
+}
+.delete-btn[_ngcontent-ng-c4046531683] {
+  background-color: #eee;
+  color: #666;
+}
+.delete-btn[_ngcontent-ng-c4046531683]:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+.loading-state[_ngcontent-ng-c4046531683] {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+.loader[_ngcontent-ng-c4046531683] {
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #ff8500;
+  width: 24px;
+  height: 24px;
+  animation: _ngcontent-ng-c4046531683_spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
+@keyframes _ngcontent-ng-c4046531683_spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.empty-state[_ngcontent-ng-c4046531683] {
+  padding: 30px;
+  text-align: center;
+  color: #666;
+}
+.empty-state[_ngcontent-ng-c4046531683]   i[_ngcontent-ng-c4046531683] {
+  font-size: 2rem;
+  color: #ccc;
+  margin-bottom: 10px;
+}
+.notification-list[_ngcontent-ng-c4046531683]::-webkit-scrollbar {
+  width: 6px;
+}
+.notification-list[_ngcontent-ng-c4046531683]::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.notification-list[_ngcontent-ng-c4046531683]::-webkit-scrollbar-thumb {
+  background: #ff8500;
+  border-radius: 3px;
+}
+.notification-list[_ngcontent-ng-c4046531683]::-webkit-scrollbar-thumb:hover {
+  background: #ffb347;
+}
+.messages-container[_ngcontent-ng-c4046531683] {
+  position: relative;
+}
+.messages-icon[_ngcontent-ng-c4046531683] {
+  position: relative;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: color 0.2s ease-in-out;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.messages-icon[_ngcontent-ng-c4046531683]:hover {
+  color: #ff8500;
+}
+.messages-icon[_ngcontent-ng-c4046531683]   i[_ngcontent-ng-c4046531683] {
+  font-size: 1.4rem;
+}
+.messages-badge[_ngcontent-ng-c4046531683] {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff8500;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(255, 107, 0, 0.2);
+}
+.notification-badge[_ngcontent-ng-c4046531683], .messages-badge[_ngcontent-ng-c4046531683] {
+  background-color: #ff8500;
+  color: white;
+}
+.profile[_ngcontent-ng-c4046531683]   i[_ngcontent-ng-c4046531683] {
+  font-size: 1.6rem;
+  color: #000;
+}
+.user-name[_ngcontent-ng-c4046531683] {
+  color: #000;
+}
+.dropdown-menu[_ngcontent-ng-c4046531683], .worker-space-menu[_ngcontent-ng-c4046531683] {
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.dropdown-menu[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683], .worker-space-menu[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683] {
+  color: #000;
+}
+.dropdown-menu[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683]:hover, .worker-space-menu[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683]:hover {
+  background-color: #ffe5c2;
+  color: #ff8500;
+}
+.worker-space-menu[_ngcontent-ng-c4046531683]   a[_ngcontent-ng-c4046531683]   i[_ngcontent-ng-c4046531683] {
+  color: #ff8500;
+}
+.worker-space-policy[_ngcontent-ng-c4046531683] {
+  border-top-color: #eee;
+}
+.worker-space-policy[_ngcontent-ng-c4046531683]   p[_ngcontent-ng-c4046531683] {
+  color: #888;
+}
+.notification-dropdown[_ngcontent-ng-c4046531683] {
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.notification-header[_ngcontent-ng-c4046531683] {
+  border-bottom-color: #eee;
+  background-color: #f8f8f8;
+}
+.notification-header[_ngcontent-ng-c4046531683]   h3[_ngcontent-ng-c4046531683] {
+  color: #000;
+}
+.unread-count[_ngcontent-ng-c4046531683] {
+  background-color: #ff8500;
+  color: white;
+}
+.notification-item[_ngcontent-ng-c4046531683] {
+  border-bottom-color: #eee;
+}
+.notification-item[_ngcontent-ng-c4046531683]:hover {
+  background-color: #f8f8f8;
+}
+.notification-item.unread[_ngcontent-ng-c4046531683] {
+  background-color: rgba(255, 133, 0, 0.05);
+}
+.notification-content[_ngcontent-ng-c4046531683]   .message[_ngcontent-ng-c4046531683] {
+  color: #333;
+}
+.notification-footer[_ngcontent-ng-c4046531683] {
+  color: #666;
+}
+.mark-read-btn[_ngcontent-ng-c4046531683] {
+  background-color: #ff8500;
+  color: white;
+}
+.mark-read-btn[_ngcontent-ng-c4046531683]:hover {
+  background-color: #ffb347;
+}
+.delete-btn[_ngcontent-ng-c4046531683] {
+  background-color: #eee;
+  color: #666;
+}
+.delete-btn[_ngcontent-ng-c4046531683]:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+.loader[_ngcontent-ng-c4046531683] {
+  border-top-color: #ff8500;
+}
+.empty-state[_ngcontent-ng-c4046531683]   i[_ngcontent-ng-c4046531683] {
+  color: #ccc;
+}
+.notification-list[_ngcontent-ng-c4046531683]::-webkit-scrollbar-thumb {
+  background: #ff8500;
+}
+.notification-list[_ngcontent-ng-c4046531683]::-webkit-scrollbar-thumb:hover {
+  background: #ffb347;
+}
+.team-request-item[_ngcontent-ng-c4046531683] {
+  background-color: #f8f6f2;
+  border-left: 5px solid #ff6b00;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.team-request-content[_ngcontent-ng-c4046531683] {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+.request-header[_ngcontent-ng-c4046531683] {
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 5px 0;
+  font-size: 1em;
+}
+.request-details[_ngcontent-ng-c4046531683] {
+  color: #ff6b00;
+  margin: 0;
+  font-size: 0.9em;
+}
+.sender-name[_ngcontent-ng-c4046531683], .team-name[_ngcontent-ng-c4046531683] {
+  font-weight: bold;
+}
+.team-request-actions[_ngcontent-ng-c4046531683] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.accept-button[_ngcontent-ng-c4046531683], .reject-button[_ngcontent-ng-c4046531683] {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+.accept-button[_ngcontent-ng-c4046531683] {
+  background-color: #28a745;
+}
+.accept-button[_ngcontent-ng-c4046531683]:hover {
+  background-color: #218838;
+}
+.reject-button[_ngcontent-ng-c4046531683] {
+  background-color: #dc3545;
+}
+.reject-button[_ngcontent-ng-c4046531683]:hover {
+  background-color: #c82333;
+}
+.find-work-link[_ngcontent-ng-c4046531683] {
+  position: relative;
+  cursor: pointer;
+}
+.dropdown-content[_ngcontent-ng-c4046531683] {
+  text-align: center;
+}
+.dropdown-message[_ngcontent-ng-c4046531683] {
+  color: #333;
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+.become-partner-btn[_ngcontent-ng-c4046531683] {
+  background:
+    linear-gradient(
+      135deg,
+      #ff8500,
+      #ff6b00);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+}
+.become-partner-btn[_ngcontent-ng-c4046531683]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 133, 0, 0.3);
+  background:
+    linear-gradient(
+      135deg,
+      #ff6b00,
+      #ff8500);
+}
+.become-partner-btn[_ngcontent-ng-c4046531683]   i[_ngcontent-ng-c4046531683] {
+  transition: transform 0.3s ease;
+}
+.become-partner-btn[_ngcontent-ng-c4046531683]:hover   i[_ngcontent-ng-c4046531683] {
+  transform: translateX(4px);
+}
+.dropdown-menu[_ngcontent-ng-c4046531683]::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid rgba(255, 255, 255, 0.98);
+}
+.find-work-link[_ngcontent-ng-c4046531683]   .dropdown-menu[_ngcontent-ng-c4046531683] {
+  position: absolute;
+  top: calc(100% + 15px);
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  min-width: 400px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 133, 0, 0.1);
+}
+.find-work-link[_ngcontent-ng-c4046531683]   .dropdown-menu.show[_ngcontent-ng-c4046531683] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+.find-work-link[_ngcontent-ng-c4046531683]   .dropdown-content[_ngcontent-ng-c4046531683] {
+  text-align: center;
+  padding: 10px;
+}
+.find-work-link[_ngcontent-ng-c4046531683]   .dropdown-message[_ngcontent-ng-c4046531683] {
+  color: #333;
+  font-size: 1.3rem;
+  margin-bottom: 25px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.find-work-link[_ngcontent-ng-c4046531683]   .become-partner-btn[_ngcontent-ng-c4046531683] {
+  background:
+    linear-gradient(
+      135deg,
+      #ff8500,
+      #ff6b00);
+  color: white;
+  border: none;
+  padding: 15px 35px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 auto;
+}
+.find-work-link[_ngcontent-ng-c4046531683]   .become-partner-btn[_ngcontent-ng-c4046531683]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 133, 0, 0.4);
+  background:
+    linear-gradient(
+      135deg,
+      #ff6b00,
+      #ff8500);
+}
+.find-work-link[_ngcontent-ng-c4046531683]   .dropdown-menu[_ngcontent-ng-c4046531683]::before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid rgba(255, 255, 255, 0.98);
+  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.05));
+}
+.find-work-link[_ngcontent-ng-c4046531683]   .dropdown-menu[_ngcontent-ng-c4046531683]::after {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid rgba(255, 255, 255, 0.98);
+}
+.dropdown[_ngcontent-ng-c4046531683]   .dropdown-menu[_ngcontent-ng-c4046531683] {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  min-width: 220px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 133, 0, 0.1);
+}
+.dropdown[_ngcontent-ng-c4046531683]   .dropdown-menu.show[_ngcontent-ng-c4046531683] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+.dropdown[_ngcontent-ng-c4046531683]   .dropdown-menu[_ngcontent-ng-c4046531683]   li[_ngcontent-ng-c4046531683] {
+  list-style: none;
+  margin: 4px 0;
+}
+.dropdown[_ngcontent-ng-c4046531683]   .dropdown-menu[_ngcontent-ng-c4046531683]   .dropdown-item[_ngcontent-ng-c4046531683] {
+  display: block;
+  padding: 10px 16px;
+  color: #333;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+.dropdown[_ngcontent-ng-c4046531683]   .dropdown-menu[_ngcontent-ng-c4046531683]   .dropdown-item[_ngcontent-ng-c4046531683]:hover {
+  background-color: #fff5eb;
+  color: #ff8500;
+  transform: translateX(4px);
+}
+.dropdown[_ngcontent-ng-c4046531683]   .dropdown-menu[_ngcontent-ng-c4046531683]::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid rgba(255, 255, 255, 0.98);
+  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.05));
+}
+.dropdown[_ngcontent-ng-c4046531683]   .dropdown-menu[_ngcontent-ng-c4046531683]::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid rgba(255, 255, 255, 0.98);
+}
+.dropdown-toggle[_ngcontent-ng-c4046531683] {
+  background: none;
+  border: none;
+  color: #000;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  position: relative;
+}
+.dropdown-toggle[_ngcontent-ng-c4046531683]:hover {
+  color: #ff8500;
+}
+.dropdown-toggle[_ngcontent-ng-c4046531683]::after {
+  content: "";
+  display: inline-block;
+  margin-left: 6px;
+  vertical-align: middle;
+  border-top: 4px solid #ff8500;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+  transition: transform 0.2s ease;
+}
+.dropdown-toggle[aria-expanded=true][_ngcontent-ng-c4046531683]::after {
+  transform: rotate(180deg);
+}
+.wallet-container[_ngcontent-ng-c4046531683] {
+  position: relative;
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+}
+.wallet-btn[_ngcontent-ng-c4046531683] {
+  background: none;
+  border: none;
+  color: #000;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wallet-btn[_ngcontent-ng-c4046531683]:hover {
+  color: #FF6B00;
+  background-color: rgba(255, 107, 0, 0.1);
+}
+.wallet-dropdown[_ngcontent-ng-c4046531683] {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: -10px;
+  width: 350px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+  z-index: 1000;
+}
+.wallet-dropdown[_ngcontent-ng-c4046531683]::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: 20px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid white;
+}
+.wallet-header[_ngcontent-ng-c4046531683] {
+  text-align: center;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 1rem;
+}
+.wallet-header[_ngcontent-ng-c4046531683]   h4[_ngcontent-ng-c4046531683] {
+  color: #333;
+  margin: 0;
+  font-size: 1.1rem;
+}
+.total-amount[_ngcontent-ng-c4046531683] {
+  color: #FF6B00;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0.5rem 0 0;
+}
+.projects-list[_ngcontent-ng-c4046531683] {
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 1rem 0;
+  padding-right: 0.5rem;
+}
+.projects-list[_ngcontent-ng-c4046531683]::-webkit-scrollbar {
+  width: 6px;
+}
+.projects-list[_ngcontent-ng-c4046531683]::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+.projects-list[_ngcontent-ng-c4046531683]::-webkit-scrollbar-thumb {
+  background: #FF6B00;
+  border-radius: 3px;
+}
+.project-item[_ngcontent-ng-c4046531683] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+.project-item[_ngcontent-ng-c4046531683]:last-child {
+  border-bottom: none;
+}
+.project-info[_ngcontent-ng-c4046531683] {
+  flex: 1;
+}
+.project-info[_ngcontent-ng-c4046531683]   h5[_ngcontent-ng-c4046531683] {
+  margin: 0;
+  color: #333;
+  font-size: 0.95rem;
+}
+.payment-status[_ngcontent-ng-c4046531683] {
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-top: 0.3rem;
+  display: inline-block;
+}
+.status-paid[_ngcontent-ng-c4046531683] {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+.status-partial[_ngcontent-ng-c4046531683] {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+.status-unpaid[_ngcontent-ng-c4046531683] {
+  background-color: #ffebee;
+  color: #c62828;
+}
+.project-amount[_ngcontent-ng-c4046531683] {
+  color: #FF6B00;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.withdraw-btn[_ngcontent-ng-c4046531683] {
+  width: 100%;
+  background-color: #FF6B00;
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.withdraw-btn[_ngcontent-ng-c4046531683]:hover {
+  background-color: #E65C00;
+  transform: translateY(-2px);
+}
+.withdraw-btn[_ngcontent-ng-c4046531683]   i[_ngcontent-ng-c4046531683] {
+  font-size: 1.2rem;
+}
+@media (max-width: 768px) {
+  .wallet-dropdown[_ngcontent-ng-c4046531683] {
+    width: 300px;
+    right: -50px;
+  }
+}
+/*# sourceMappingURL=navbar.component.css.map */</style><style ng-app-id="ng">
+
+.footer[_ngcontent-ng-c903572364] {
+  background-color: #333;
+  color: white;
+  padding: 40px 20px;
+  font-family: "Arial", sans-serif;
+}
+.footer-container[_ngcontent-ng-c903572364] {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+.footer-section[_ngcontent-ng-c903572364] {
+  width: 22%;
+  margin-bottom: 30px;
+}
+.footer-logo[_ngcontent-ng-c903572364] {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.footer-logo[_ngcontent-ng-c903572364]   img[_ngcontent-ng-c903572364] {
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+  object-fit: contain;
+}
+.footer-description[_ngcontent-ng-c903572364] {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #bbb;
+}
+.footer-links[_ngcontent-ng-c903572364] {
+  list-style: none;
+  padding: 0;
+}
+.footer-links[_ngcontent-ng-c903572364]   li[_ngcontent-ng-c903572364] {
+  margin-bottom: 10px;
+}
+.footer-links[_ngcontent-ng-c903572364]   a[_ngcontent-ng-c903572364] {
+  color: #fcbf8c;
+  text-decoration: none;
+  font-size: 16px;
+}
+.footer-links[_ngcontent-ng-c903572364]   a[_ngcontent-ng-c903572364]:hover {
+  text-decoration: underline;
+}
+.footer-section[_ngcontent-ng-c903572364]   h4[_ngcontent-ng-c903572364], .footer-subscription[_ngcontent-ng-c903572364]   h4[_ngcontent-ng-c903572364] {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.footer-subscription[_ngcontent-ng-c903572364] {
+  background-color: #444;
+  padding: 20px;
+  text-align: center;
+}
+.subscribe-form[_ngcontent-ng-c903572364] {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+.subscribe-input[_ngcontent-ng-c903572364] {
+  padding: 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  width: 250px;
+}
+.subscribe-btn[_ngcontent-ng-c903572364] {
+  padding: 10px 20px;
+  margin-left: 10px;
+  background-color: #ff7300;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.subscribe-btn[_ngcontent-ng-c903572364]:hover {
+  background-color: #de9f6b;
+}
+.social-icons[_ngcontent-ng-c903572364] {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+.social-icon[_ngcontent-ng-c903572364]   img[_ngcontent-ng-c903572364] {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+.social-icon[_ngcontent-ng-c903572364]   img[_ngcontent-ng-c903572364]:hover {
+  transform: scale(1.1);
+}
+.social-icon[_ngcontent-ng-c903572364] {
+  font-size: 20px;
+  color: white;
+  text-decoration: none;
+}
+.social-icon[_ngcontent-ng-c903572364]:hover {
+  color: #fcbf8c;
+}
+.footer-bottom[_ngcontent-ng-c903572364] {
+  text-align: center;
+  background-color: #222;
+  padding: 10px;
+  font-size: 14px;
+}
+.footer-logo[_ngcontent-ng-c903572364]   img[_ngcontent-ng-c903572364] {
+  width: 360px;
+  height: auto;
+  object-fit: contain;
+}
+@media (max-width: 768px) {
+  .footer-section[_ngcontent-ng-c903572364] {
+    width: 48%;
+  }
+  .footer-container[_ngcontent-ng-c903572364] {
+    flex-direction: column;
+    align-items: center;
+  }
+  .footer-bottom[_ngcontent-ng-c903572364] {
+    margin-top: 30px;
+  }
+}
+@media (max-width: 480px) {
+  .footer-section[_ngcontent-ng-c903572364] {
+    width: 100%;
+    text-align: center;
+  }
+  .footer-subscription[_ngcontent-ng-c903572364] {
+    padding: 10px;
+  }
+}
+/*# sourceMappingURL=footer.component.css.map */</style><style ng-app-id="ng">
+
+.verification-form-container[_ngcontent-ng-c3658205329] {
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 3rem;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  font-family: "Poppins", sans-serif;
+  animation: _ngcontent-ng-c3658205329_fadeInScale 0.6s ease-out;
+}
+.form-header[_ngcontent-ng-c3658205329] {
+  text-align: center;
+  margin-bottom: 3.5rem;
+  position: relative;
+}
+.form-header[_ngcontent-ng-c3658205329]::after {
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background-color: #ff8c42;
+  border-radius: 2px;
+}
+.form-header[_ngcontent-ng-c3658205329]   h1[_ngcontent-ng-c3658205329] {
+  color: #212121;
+  font-size: 3rem;
+  margin-bottom: 0.8rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.form-header[_ngcontent-ng-c3658205329]   h1[_ngcontent-ng-c3658205329]   i[_ngcontent-ng-c3658205329] {
+  color: #ff8c42;
+}
+.subtitle[_ngcontent-ng-c3658205329] {
+  color: #616161;
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+.form-section[_ngcontent-ng-c3658205329] {
+  margin-bottom: 3rem;
+  background: #fffbf7;
+  padding: 2.5rem;
+  border-radius: 15px;
+  border: 1px solid #ffe0b2;
+  animation: _ngcontent-ng-c3658205329_slideInUp 0.6s ease-out;
+  transition: all 0.3s ease;
+}
+.form-section[_ngcontent-ng-c3658205329]:hover {
+  box-shadow: 0 8px 25px rgba(255, 140, 66, 0.15);
+}
+.section-header[_ngcontent-ng-c3658205329] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed #e0e0e0;
+}
+.section-title[_ngcontent-ng-c3658205329] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-title[_ngcontent-ng-c3658205329]   h2[_ngcontent-ng-c3658205329] {
+  color: #212121;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+.section-title[_ngcontent-ng-c3658205329]   i[_ngcontent-ng-c3658205329] {
+  color: #ffd700;
+  font-size: 1.8rem;
+}
+.add-btn[_ngcontent-ng-c3658205329] {
+  background:
+    linear-gradient(
+      45deg,
+      #ff8c42,
+      #ffb300);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(255, 140, 66, 0.3);
+}
+.add-btn[_ngcontent-ng-c3658205329]:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(255, 140, 66, 0.4);
+}
+.add-btn[_ngcontent-ng-c3658205329]   i[_ngcontent-ng-c3658205329] {
+  font-size: 1.1rem;
+}
+.form-group[_ngcontent-ng-c3658205329] {
+  margin-bottom: 1.8rem;
+}
+.card[_ngcontent-ng-c3658205329] {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+.card[_ngcontent-ng-c3658205329]:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+.card-header[_ngcontent-ng-c3658205329] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f5f5f5;
+}
+.card-header[_ngcontent-ng-c3658205329]   h3[_ngcontent-ng-c3658205329] {
+  color: #424242;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.remove-btn[_ngcontent-ng-c3658205329] {
+  background: none;
+  border: none;
+  color: #f44336;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+.remove-btn[_ngcontent-ng-c3658205329]:hover {
+  color: #d32f2f;
+  transform: scale(1.1);
+}
+.form-row[_ngcontent-ng-c3658205329] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.form-field[_ngcontent-ng-c3658205329] {
+  margin-bottom: 0;
+}
+.form-field.full-width[_ngcontent-ng-c3658205329] {
+  grid-column: 1 / -1;
+}
+label[_ngcontent-ng-c3658205329] {
+  display: block;
+  margin-bottom: 0.6rem;
+  color: #424242;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+input[_ngcontent-ng-c3658205329], select[_ngcontent-ng-c3658205329], textarea[_ngcontent-ng-c3658205329] {
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  border: 1px solid #bdbdbd;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #333;
+  transition: all 0.3s ease;
+  background-color: #fcfcfc;
+}
+input[_ngcontent-ng-c3658205329]:focus, select[_ngcontent-ng-c3658205329]:focus, textarea[_ngcontent-ng-c3658205329]:focus {
+  outline: none;
+  border-color: #ff8c42;
+  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+  background-color: #ffffff;
+}
+input.error[_ngcontent-ng-c3658205329], select.error[_ngcontent-ng-c3658205329], textarea.error[_ngcontent-ng-c3658205329] {
+  border-color: #ff4444;
+  box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.2);
+}
+.error-message[_ngcontent-ng-c3658205329] {
+  color: #d32f2f;
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.form-actions[_ngcontent-ng-c3658205329] {
+  text-align: center;
+  margin-top: 3.5rem;
+}
+.submit-btn[_ngcontent-ng-c3658205329] {
+  background:
+    linear-gradient(
+      45deg,
+      #ff8c42,
+      #ffb300);
+  color: white;
+  border: none;
+  padding: 1.2rem 2.5rem;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 250px;
+  box-shadow: 0 8px 25px rgba(255, 140, 66, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.submit-btn[_ngcontent-ng-c3658205329]:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 12px 35px rgba(255, 140, 66, 0.5);
+}
+.submit-btn[_ngcontent-ng-c3658205329]:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+.messages[_ngcontent-ng-c3658205329] {
+  margin-top: 2.5rem;
+  text-align: center;
+}
+.success-message[_ngcontent-ng-c3658205329] {
+  color: #2e7d32;
+  font-size: 1.1rem;
+  padding: 1.2rem;
+  background: #e8f5e9;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  animation: _ngcontent-ng-c3658205329_fadeIn 0.5s ease-out;
+}
+@media (max-width: 768px) {
+  .verification-form-container[_ngcontent-ng-c3658205329] {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  .form-header[_ngcontent-ng-c3658205329]   h1[_ngcontent-ng-c3658205329] {
+    font-size: 2.2rem;
+  }
+  .subtitle[_ngcontent-ng-c3658205329] {
+    font-size: 1rem;
+  }
+  .form-section[_ngcontent-ng-c3658205329] {
+    padding: 1.5rem;
+  }
+  .section-title[_ngcontent-ng-c3658205329]   h2[_ngcontent-ng-c3658205329] {
+    font-size: 1.5rem;
+  }
+  .section-title[_ngcontent-ng-c3658205329]   i[_ngcontent-ng-c3658205329] {
+    font-size: 1.5rem;
+  }
+  .add-btn[_ngcontent-ng-c3658205329] {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  .card[_ngcontent-ng-c3658205329] {
+    padding: 1rem;
+  }
+  .card-header[_ngcontent-ng-c3658205329]   h3[_ngcontent-ng-c3658205329] {
+    font-size: 1.2rem;
+  }
+  .remove-btn[_ngcontent-ng-c3658205329] {
+    font-size: 1.2rem;
+  }
+  .form-row[_ngcontent-ng-c3658205329] {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  input[_ngcontent-ng-c3658205329], select[_ngcontent-ng-c3658205329], textarea[_ngcontent-ng-c3658205329] {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+  .submit-btn[_ngcontent-ng-c3658205329] {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    min-width: unset;
+    width: 100%;
+  }
+  .success-message[_ngcontent-ng-c3658205329] {
+    font-size: 0.95rem;
+    padding: 1rem;
+  }
+}
+@keyframes _ngcontent-ng-c3658205329_fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+@keyframes _ngcontent-ng-c3658205329_slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes _ngcontent-ng-c3658205329_fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.custom-alert-overlay[_ngcontent-ng-c3658205329] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: _ngcontent-ng-c3658205329_fadeIn 0.3s ease-out;
+}
+.custom-alert[_ngcontent-ng-c3658205329] {
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #fffbf7 100%);
+  border-radius: 20px;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  border: 2px solid #ff8c42;
+  animation: _ngcontent-ng-c3658205329_scaleIn 0.3s ease-out;
+  position: relative;
+}
+.custom-alert-icon[_ngcontent-ng-c3658205329] {
+  font-size: 4rem;
+  color: #ff8c42;
+  margin-bottom: 1.5rem;
+  animation: _ngcontent-ng-c3658205329_bounce 1s ease infinite;
+}
+.custom-alert-title[_ngcontent-ng-c3658205329] {
+  color: #212121;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.custom-alert-message[_ngcontent-ng-c3658205329] {
+  color: #616161;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+.custom-alert-button[_ngcontent-ng-c3658205329] {
+  background:
+    linear-gradient(
+      45deg,
+      #ff8c42,
+      #ffb300);
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 140, 66, 0.3);
+}
+.custom-alert-button[_ngcontent-ng-c3658205329]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 140, 66, 0.4);
+}
+@keyframes _ngcontent-ng-c3658205329_scaleIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes _ngcontent-ng-c3658205329_bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+/*# sourceMappingURL=become-partener.component.css.map */</style></head>
+<body><!--nghm-->
+  <app-root _nghost-ng-c4070505595="" ng-version="17.3.12" ngh="3" ng-server-context="ssg"><app-navbar _ngcontent-ng-c4070505595="" _nghost-ng-c4046531683="" ngh="0"><header _ngcontent-ng-c4046531683="" class="navbar"><div _ngcontent-ng-c4046531683="" class="logo"><img _ngcontent-ng-c4046531683="" src="assets/a.png" alt="logo" class="logo-icon"><span _ngcontent-ng-c4046531683="" class="tt"><span _ngcontent-ng-c4046531683="" class="orange">TUN</span>PROJECT </span></div><nav _ngcontent-ng-c4046531683="" class="nav-links"><div _ngcontent-ng-c4046531683="" class="dropdown"><button _ngcontent-ng-c4046531683="" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle"> FIND TALENT </button><ul _ngcontent-ng-c4046531683="" aria-labelledby="dropdownMenuButton" class="dropdown-menu"><li _ngcontent-ng-c4046531683=""><a _ngcontent-ng-c4046531683="" routerlink="/search-worker" class="dropdown-item" ng-reflect-router-link="/search-worker" href="/search-worker">Find Worker</a></li><li _ngcontent-ng-c4046531683=""><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></li></ul></div><a _ngcontent-ng-c4046531683="" class="find-work-link"> FIND WORK <div _ngcontent-ng-c4046531683="" class="dropdown-menu"><div _ngcontent-ng-c4046531683="" class="dropdown-content"><p _ngcontent-ng-c4046531683="" class="dropdown-message">Ready to start your journey?</p><button _ngcontent-ng-c4046531683="" class="become-partner-btn" tabindex="0" ng-reflect-router-link="/auth" title="you need to connect first"> you need to connect first <i _ngcontent-ng-c4046531683="" class="fas fa-arrow-right"></i></button></div></div></a><a _ngcontent-ng-c4046531683="" routerlink="/about-us" ng-reflect-router-link="/about-us" href="/about-us">WHY US</a><!--ng-container--><!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></nav><div _ngcontent-ng-c4046531683="" class="right-section"><div _ngcontent-ng-c4046531683="" class="search-container"><input _ngcontent-ng-c4046531683="" type="text" placeholder="Search a worker" ng-reflect-model="" value="" class="ng-untouched ng-pristine ng-valid"><span _ngcontent-ng-c4046531683="" class="icon"><i _ngcontent-ng-c4046531683="" class="bi bi-search"></i></span></div><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--><div _ngcontent-ng-c4046531683="" class="profile-container"><div _ngcontent-ng-c4046531683="" class="profile"><i _ngcontent-ng-c4046531683="" class="bi bi-person-circle"></i><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div><div _ngcontent-ng-c4046531683="" class="dropdown-menu"><a _ngcontent-ng-c4046531683="">Connect now</a><!--ng-container--><!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div></div></div></header></app-navbar><br _ngcontent-ng-c4070505595=""><br _ngcontent-ng-c4070505595=""><br _ngcontent-ng-c4070505595=""><router-outlet _ngcontent-ng-c4070505595=""></router-outlet><app-become-partener _nghost-ng-c3658205329="" ngh="1"><div _ngcontent-ng-c3658205329="" class="verification-form-container"><div _ngcontent-ng-c3658205329="" class="form-header"><h1 _ngcontent-ng-c3658205329="">Become a Partner <i _ngcontent-ng-c3658205329="" class="bi bi-person-workspace"></i></h1><p _ngcontent-ng-c3658205329="" class="subtitle">Complete the form below to submit your verification request</p></div><form _ngcontent-ng-c3658205329="" novalidate="" class="verification-form ng-untouched ng-pristine ng-invalid" ng-reflect-form="[object Object]"><div _ngcontent-ng-c3658205329="" class="form-section"><div _ngcontent-ng-c3658205329="" class="section-title"><h2 _ngcontent-ng-c3658205329=""><i _ngcontent-ng-c3658205329="" class="bi bi-file-earmark-text"></i> Request Description</h2></div><div _ngcontent-ng-c3658205329="" class="form-group"><label _ngcontent-ng-c3658205329="" for="requestDescription">Tell us about yourself and why you want to become a partner</label><textarea _ngcontent-ng-c3658205329="" id="requestDescription" formcontrolname="requestDescription" rows="4" placeholder="Describe your experience and motivation..." ng-reflect-name="requestDescription" class="ng-untouched ng-pristine ng-invalid"></textarea><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div></div><div _ngcontent-ng-c3658205329="" formarrayname="jobs" class="form-section ng-untouched ng-pristine ng-invalid" ng-reflect-name="jobs"><div _ngcontent-ng-c3658205329="" class="section-header"><div _ngcontent-ng-c3658205329="" class="section-title"><h2 _ngcontent-ng-c3658205329=""><i _ngcontent-ng-c3658205329="" class="bi bi-tools"></i> Your Skills &amp; Experience</h2></div><button _ngcontent-ng-c3658205329="" type="button" class="add-btn"><i _ngcontent-ng-c3658205329="" class="bi bi-plus-circle-fill"></i> Add Another Job </button></div><div _ngcontent-ng-c3658205329="" class="form-group ng-untouched ng-pristine ng-invalid" ng-reflect-name="0"><div _ngcontent-ng-c3658205329="" class="card"><div _ngcontent-ng-c3658205329="" class="card-header"><h3 _ngcontent-ng-c3658205329="">Job 1</h3><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div><div _ngcontent-ng-c3658205329="" class="form-row"><div _ngcontent-ng-c3658205329="" class="form-field"><label _ngcontent-ng-c3658205329="" for="jobCategory0">Job Category</label><select _ngcontent-ng-c3658205329="" formcontrolname="jobCategoryId" ng-reflect-name="jobCategoryId" id="jobCategory0" class="ng-untouched ng-pristine ng-invalid"><option _ngcontent-ng-c3658205329="" value="" ng-reflect-value="">Select a job category</option><option _ngcontent-ng-c3658205329="" value="2" ng-reflect-value="2"> building </option><option _ngcontent-ng-c3658205329="" value="4" ng-reflect-value="4"> Carpenter </option><option _ngcontent-ng-c3658205329="" value="3" ng-reflect-value="3"> Electrician </option><option _ngcontent-ng-c3658205329="" value="7" ng-reflect-value="7"> Flooring Specialist </option><option _ngcontent-ng-c3658205329="" value="10" ng-reflect-value="10"> HVAC Technician </option><option _ngcontent-ng-c3658205329="" value="11" ng-reflect-value="11"> Interior Designer </option><option _ngcontent-ng-c3658205329="" value="9" ng-reflect-value="9"> Landscaper </option><option _ngcontent-ng-c3658205329="" value="6" ng-reflect-value="6"> Mason </option><option _ngcontent-ng-c3658205329="" value="5" ng-reflect-value="5"> Painter </option><option _ngcontent-ng-c3658205329="" value="1" ng-reflect-value="1"> plumbing </option><option _ngcontent-ng-c3658205329="" value="8" ng-reflect-value="8"> Roofing Expert </option><!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}--></select><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div><div _ngcontent-ng-c3658205329="" class="form-field"><label _ngcontent-ng-c3658205329="" for="experience0">Years of Experience</label><input _ngcontent-ng-c3658205329="" type="number" formcontrolname="experienceYears" min="0" max="50" placeholder="Years" ng-reflect-min="0" ng-reflect-max="50" ng-reflect-name="experienceYears" id="experience0" value="" class="ng-untouched ng-pristine ng-invalid"><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div></div></div></div><!--bindings={
+  "ng-reflect-ng-for-of": "[object Object]"
+}--></div><div _ngcontent-ng-c3658205329="" formarrayname="certificates" class="form-section ng-untouched ng-pristine ng-invalid" ng-reflect-name="certificates"><div _ngcontent-ng-c3658205329="" class="section-header"><div _ngcontent-ng-c3658205329="" class="section-title"><h2 _ngcontent-ng-c3658205329=""><i _ngcontent-ng-c3658205329="" class="bi bi-award"></i> Certifications</h2></div><button _ngcontent-ng-c3658205329="" type="button" class="add-btn"><i _ngcontent-ng-c3658205329="" class="bi bi-plus-circle-fill"></i> Add Another Certificate </button></div><div _ngcontent-ng-c3658205329="" class="form-group ng-untouched ng-pristine ng-invalid" ng-reflect-name="0"><div _ngcontent-ng-c3658205329="" class="card"><div _ngcontent-ng-c3658205329="" class="card-header"><h3 _ngcontent-ng-c3658205329="">Certificate 1</h3><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div><div _ngcontent-ng-c3658205329="" class="form-row"><div _ngcontent-ng-c3658205329="" class="form-field"><label _ngcontent-ng-c3658205329="" for="certName0">Certificate Name</label><input _ngcontent-ng-c3658205329="" type="text" formcontrolname="name" placeholder="e.g., Plumbing Certification" ng-reflect-name="name" id="certName0" value="" class="ng-untouched ng-pristine ng-invalid"><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div><div _ngcontent-ng-c3658205329="" class="form-field"><label _ngcontent-ng-c3658205329="" for="issuer0">Issuing Organization</label><input _ngcontent-ng-c3658205329="" type="text" formcontrolname="issuer" placeholder="e.g., ABC Institute" ng-reflect-name="issuer" id="issuer0" value="" class="ng-untouched ng-pristine ng-invalid"><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div><div _ngcontent-ng-c3658205329="" class="form-field"><label _ngcontent-ng-c3658205329="" for="certYear0">Year Obtained</label><input _ngcontent-ng-c3658205329="" type="number" formcontrolname="year" min="1900" placeholder="Year" ng-reflect-min="1900" ng-reflect-name="year" id="certYear0" ng-reflect-max="2025" value="" class="ng-untouched ng-pristine ng-invalid" max="2025"><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div></div></div></div><!--bindings={
+  "ng-reflect-ng-for-of": "[object Object]"
+}--></div><div _ngcontent-ng-c3658205329="" formarrayname="pastProjects" class="form-section ng-untouched ng-pristine ng-invalid" ng-reflect-name="pastProjects"><div _ngcontent-ng-c3658205329="" class="section-header"><div _ngcontent-ng-c3658205329="" class="section-title"><h2 _ngcontent-ng-c3658205329=""><i _ngcontent-ng-c3658205329="" class="bi bi-journal-check"></i> Past Projects</h2></div><button _ngcontent-ng-c3658205329="" type="button" class="add-btn"><i _ngcontent-ng-c3658205329="" class="bi bi-plus-circle-fill"></i> Add Another Project </button></div><div _ngcontent-ng-c3658205329="" class="form-group ng-untouched ng-pristine ng-invalid" ng-reflect-name="0"><div _ngcontent-ng-c3658205329="" class="card"><div _ngcontent-ng-c3658205329="" class="card-header"><h3 _ngcontent-ng-c3658205329="">Project 1</h3><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div><div _ngcontent-ng-c3658205329="" class="form-row"><div _ngcontent-ng-c3658205329="" class="form-field full-width"><label _ngcontent-ng-c3658205329="" for="projectTitle0">Project Title</label><input _ngcontent-ng-c3658205329="" type="text" formcontrolname="title" placeholder="e.g., House Renovation" ng-reflect-name="title" id="projectTitle0" value="" class="ng-untouched ng-pristine ng-invalid"><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div><div _ngcontent-ng-c3658205329="" class="form-field full-width"><label _ngcontent-ng-c3658205329="" for="projectDesc0">Project Description</label><textarea _ngcontent-ng-c3658205329="" formcontrolname="description" rows="3" placeholder="Describe the project and your role..." ng-reflect-name="description" id="projectDesc0" class="ng-untouched ng-pristine ng-invalid"></textarea><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div><div _ngcontent-ng-c3658205329="" class="form-field"><label _ngcontent-ng-c3658205329="" for="projectYear0">Year Completed</label><input _ngcontent-ng-c3658205329="" type="number" formcontrolname="year" min="1900" placeholder="Year" ng-reflect-min="1900" ng-reflect-name="year" id="projectYear0" ng-reflect-max="2025" value="" class="ng-untouched ng-pristine ng-invalid" max="2025"><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div></div></div></div><!--bindings={
+  "ng-reflect-ng-for-of": "[object Object]"
+}--></div><div _ngcontent-ng-c3658205329="" class="form-actions"><button _ngcontent-ng-c3658205329="" type="submit" class="submit-btn"><span _ngcontent-ng-c3658205329="">Submit Verification Request <i _ngcontent-ng-c3658205329="" class="bi bi-send-fill"></i></span><!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></button></div><div _ngcontent-ng-c3658205329="" class="messages"><!--bindings={
+  "ng-reflect-ng-if": null
+}--><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div></form></div><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></app-become-partener><!--container--><app-footer _ngcontent-ng-c4070505595="" _nghost-ng-c903572364="" ngh="2"><footer _ngcontent-ng-c903572364="" class="footer"><div _ngcontent-ng-c903572364="" class="footer-container"><div _ngcontent-ng-c903572364="" class="footer-section"><div _ngcontent-ng-c903572364="" class="footer-logo"><img _ngcontent-ng-c903572364="" src="assets/oo.png" alt="Company Logo" class="logo-footer"></div><p _ngcontent-ng-c903572364="" class="footer-description">Providing high-quality services to clients worldwide. We aim to enhance your online experience.</p></div><div _ngcontent-ng-c903572364="" class="footer-section"><h4 _ngcontent-ng-c903572364="">Useful Links</h4><ul _ngcontent-ng-c903572364="" class="footer-links"><li _ngcontent-ng-c903572364=""><a _ngcontent-ng-c903572364="" href="#">Home</a></li><li _ngcontent-ng-c903572364=""><a _ngcontent-ng-c903572364="" href="#">About Us</a></li><li _ngcontent-ng-c903572364=""><a _ngcontent-ng-c903572364="" href="#">Services</a></li><li _ngcontent-ng-c903572364=""><a _ngcontent-ng-c903572364="" href="#">Contact Us</a></li><li _ngcontent-ng-c903572364=""><a _ngcontent-ng-c903572364="" href="#">FAQ</a></li></ul></div><div _ngcontent-ng-c903572364="" class="footer-section"><h4 _ngcontent-ng-c903572364="">Contact Information</h4><p _ngcontent-ng-c903572364="">Email: <a _ngcontent-ng-c903572364="" href="#">info</a></p><p _ngcontent-ng-c903572364="">Phone: +1 (234) 567-890</p><p _ngcontent-ng-c903572364="">Address: 1234 Business Ave, Suite 567, City, Country</p></div><h4 _ngcontent-ng-c903572364="">Follow Us</h4><div _ngcontent-ng-c903572364="" class="social-icons"><a _ngcontent-ng-c903572364="" href="#" class="social-icon"><img _ngcontent-ng-c903572364="" src="assets/facebook.png" alt="Facebook" class="social-icon-img"></a><a _ngcontent-ng-c903572364="" href="#" class="social-icon"><img _ngcontent-ng-c903572364="" src="assets/twitter.png" alt="Twitter" class="social-icon-img"></a><a _ngcontent-ng-c903572364="" href="#" class="social-icon"><img _ngcontent-ng-c903572364="" src="assets/instagram.png" alt="Instagram" class="social-icon-img"></a></div></div><div _ngcontent-ng-c903572364="" class="footer-subscription"><h4 _ngcontent-ng-c903572364="">Subscribe to Our Newsletter</h4><p _ngcontent-ng-c903572364="">Stay updated with our latest news and offers.</p><form _ngcontent-ng-c903572364="" class="subscribe-form"><input _ngcontent-ng-c903572364="" type="email" placeholder="Enter your email" required="" class="subscribe-input"><button _ngcontent-ng-c903572364="" type="submit" class="btn subscribe-btn">Subscribe</button></form></div><div _ngcontent-ng-c903572364="" class="footer-bottom"><p _ngcontent-ng-c903572364="">© 2025 Your Company. All rights reserved.</p></div></footer></app-footer></app-root>
+<script src="polyfills.js" type="module"></script><script src="scripts.js" defer=""></script><script src="main.js" type="module"></script>
+
+<script id="ng-state" type="application/json">{"430375140":{"b":{"success":true,"message":"Jobs retrieved successfully","data":[{"id":2,"name":"building","description":"sdfghj,;","icon":"data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgdmlld0JveD0iMCAwIDI0IDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMyAyMWg1VjloNnYxMmgyIi8+PHBhdGggZD0iTTE4IDIxaDJWMTFoLTJ2MTAiLz48L3N2Zz4=\r\n"},{"id":4,"name":"Carpenter","description":"Expert in woodworking, furniture making, and structural carpentry. Specializes in building, installing, and repairing wooden structures and fixtures.","icon":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTkgMjFhMiAyIDAgMCAxLTIgMkg3YTIgMiAwIDAgMS0yLTJWNWEyIDIgMCAwIDEgMi0yaDEwYTIgMiAwIDAgMSAyIDJ2MTZ6Ii8+PHBhdGggZD0iTTkgMjFWN2g2djE0Ii8+PC9zdmc+"},{"id":3,"name":"Electrician","description":"Electrical work and repairs","icon":"data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgdmlld0JveD0iMCAwIDI0IDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTMgM3Y0aDRsLTUgNmgybC0xIDVoNHYtNGwtNSA2aDJ2LTRoLTRsNSA2di00bC01IDYiLz48L3N2Zz4=\r\n"},{"id":7,"name":"Flooring Specialist","description":"Expert in installing and repairing various types of flooring including hardwood, laminate, tile, and carpet. Specializes in floor preparation and finishing.","icon":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMyA5aDE4djZIM3oiLz48cGF0aCBkPSJNMyA5VjVhMiAyIDAgMCAxIDItMmgxNGEyIDIgMCAwIDEgMiAydjQiLz48cGF0aCBkPSJNMyAxNXY0YTIgMiAwIDAgMCAyIDJoMTRhMiAyIDAgMCAwIDItMnYtNCIvPjwvc3ZnPg=="},{"id":10,"name":"HVAC Technician","description":"Specialist in heating, ventilation, and air conditioning systems. Expert in installation, maintenance, and repair of climate control systems.","icon":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgM2M0Ljk3IDAgOSA0LjAzIDkgOXMtNC4wMyA5LTkgOS05LTQuMDMtOS05IDQuMDMtOSA5LTl6Ii8+PHBhdGggZD0iTTEyIDh2OCIvPjxwYXRoIGQ9Ik04IDEyaDgiLz48L3N2Zz4="},{"id":11,"name":"Interior Designer","description":"Professional in space planning, color schemes, and interior decoration. Expert in creating functional and aesthetically pleasing indoor environments.","icon":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTkgMjFhMiAyIDAgMCAxLTIgMkg3YTIgMiAwIDAgMS0yLTJWNWEyIDIgMCAwIDEgMi0yaDEwYTIgMiAwIDAgMSAyIDJ2MTZ6Ii8+PHBhdGggZD0iTTkgMjFWN2g2djE0Ii8+PC9zdmc+"},{"id":9,"name":"Landscaper","description":"Professional in garden design, lawn maintenance, and outdoor space improvement. Expert in plant care, irrigation systems, and hardscaping.","icon":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgM2M0Ljk3IDAgOSA0LjAzIDkgOXMtNC4wMyA5LTkgOS05LTQuMDMtOS05IDQuMDMtOSA5LTl6Ii8+PHBhdGggZD0iTTEyIDh2OCIvPjxwYXRoIGQ9Ik04IDEyaDgiLz48L3N2Zz4="},{"id":6,"name":"Mason","description":"Skilled in bricklaying, stone masonry, and concrete work. Expert in building and repairing walls, patios, and structural elements.","icon":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIzIiB5PSIxMSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjgiIHJ4PSIyIiByeT0iMiIvPjxwYXRoIGQ9Ik0zIDExVjVhMiAyIDAgMCAxIDItMmgxNGEyIDIgMCAwIDEgMiAydjYiLz48L3N2Zz4="},{"id":5,"name":"Painter","description":"Professional in interior and exterior painting, surface preparation, and decorative finishes. Expert in color matching and various painting techniques.","icon":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgMTkuNWM0LjE0MiAwIDcuNS0zLjM1OCA3LjUtNy41UzE2LjE0MiA0LjUgMTIgNC41IDQuNSA3Ljg1OCA0LjUgMTIgNy44NTggMTkuNSAxMiAxOS41eiIvPjxwYXRoIGQ9Ik0xMiAxNnYtOCIvPjxwYXRoIGQ9Ik0xNiAxMmgtOCIvPjwvc3ZnPg=="},{"id":1,"name":"plumbing","description":"sdfghjklm","icon":"data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgdmlld0JveD0iMCAwIDI0IDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTUgM3Y0YTEgMSAwIDAgMCAxIDEgaDFhMSAxIDAgMCAwIDEtMXYtNEgxNXptLTYuNSAxNEg1YTIgMiAwIDAgMS0yLTJ2LTZhMiAyIDAgMCAxIDItMmgzLjVtMTEgMEgyM2EyIDIgMCAwIDEgMiAydjZhMiAyIDAgMCAxLTIgMmgtMy41TTggMTZ2LTQiLz48L3N2Zz4=\r\n"},{"id":8,"name":"Roofing Expert","description":"Specialist in roof installation, repair, and maintenance. Expert in various roofing materials and techniques for different types of buildings.","icon":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgM2w4IDRoLTE2eiIvPjxwYXRoIGQ9Ik0zIDdoMTh2MTBIM3oiLz48L3N2Zz4="}]},"h":{},"s":200,"st":"OK","u":"http://localhost:3004/worker/jobs","rt":"json"},"__nghData__":[{"t":{"8":"t0","9":"t2","15":"t3","16":"t4","17":"t5","21":"t6","23":"t7","24":"t8"},"c":{"8":[{"i":"t0","r":4,"e":{"0":3},"t":{"9":"t1"},"c":{"9":[]}}],"9":[],"15":[],"16":[],"17":[],"21":[],"23":[{"i":"t7","r":2,"e":{"0":1}}],"24":[]}},{"t":{"17":"t14","27":"t15","37":"t20","47":"t25","50":"t30","51":"t31","53":"t32","54":"t33","55":"t34"},"c":{"17":[],"27":[{"i":"t15","r":1,"t":{"5":"t16","13":"t17","14":"t18","19":"t19"},"c":{"5":[],"13":[{"i":"t17","r":1,"x":11}],"14":[],"19":[]}}],"37":[{"i":"t20","r":1,"t":{"5":"t21","11":"t22","16":"t23","21":"t24"},"c":{"5":[],"11":[],"16":[],"21":[]}}],"47":[{"i":"t25","r":1,"t":{"5":"t26","11":"t27","16":"t28","21":"t29"},"c":{"5":[],"11":[],"16":[],"21":[]}}],"50":[{"i":"t30","r":1}],"51":[],"53":[],"54":[],"55":[]}},{},{"c":{"4":[{"i":"c3658205329","r":1}]}}]}</script></body></html>

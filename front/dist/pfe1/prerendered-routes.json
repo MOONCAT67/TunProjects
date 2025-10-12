@@ -1,0 +1,24 @@
+{
+  "routes": [
+    "/about-us",
+    "/admin/dashboard",
+    "/auth",
+    "/become-partner",
+    "/body",
+    "/building",
+    "/carpenter",
+    "/client/projects",
+    "/electrician",
+    "/get-team",
+    "/messagerie",
+    "/painter",
+    "/plumber",
+    "/postproject",
+    "/profile",
+    "/search-worker",
+    "/team",
+    "/tilier",
+    "/worker",
+    "/worker/current-projects"
+  ]
+}

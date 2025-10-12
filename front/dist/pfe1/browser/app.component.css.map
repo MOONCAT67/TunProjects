@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/app.component.css"],
+  "sourcesContent": [":host {\r\n    display: flex;\r\n    flex-direction: column;\r\n    min-height: 100vh;\r\n  }\r\n  \r\n  /* Reset global box sizing and spacing */\r\n  * {\r\n    box-sizing: border-box;\r\n    margin: 0;\r\n    padding: 0;\r\n  }\r\n  \r\n  /* Force html/body to fill full height */\r\n  html, body {\r\n    height: 100%;\r\n    margin: 0;\r\n    padding: 0;\r\n    overflow-x: hidden;\r\n  }\r\n  \r\n  /* Navbar and footer always visible without extra margin */\r\n  app-navbar, app-footer {\r\n    display: block;\r\n    width: 100%;\r\n  }\r\n  \r\n  /* router-outlet should grow to fill space between header and footer */\r\n  router-outlet {\r\n    flex: 1;\r\n    display: block;\r\n  }\r\n  "],
+  "mappings": ";AAAA;AACI,WAAS;AACT,kBAAgB;AAChB,cAAY;AACd;AAGA;AACE,cAAY;AACZ,UAAQ;AACR,WAAS;AACX;AAGA;AAAM;AACJ,UAAQ;AACR,UAAQ;AACR,WAAS;AACT,cAAY;AACd;AAGA;AAAY;AACV,WAAS;AACT,SAAO;AACT;AAGA;AACE,QAAM;AACN,WAAS;AACX;",
+  "names": []
+}
