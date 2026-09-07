@@ -178,12 +178,18 @@ export class PostprojectComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.map = L.map('map-modal').setView([36.8065, 10.1815], 13);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
         attribution: '© OpenStreetMap contributors'
       }).addTo(this.map);
       this.map.on('click', (e: any) => {
         this.updateMarker(e.latlng, L, pinIcon);
       });
-    }, 0);
+      setTimeout(() => {
+        if (this.map) {
+          this.map.invalidateSize();
+        }
+      }, 250);
+    }, 50);
   }
 
   async selectCurrentLocation() {

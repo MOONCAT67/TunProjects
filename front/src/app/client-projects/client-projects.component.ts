@@ -420,6 +420,7 @@ export class ClientProjectsComponent implements OnInit, OnDestroy {
     // Initialize new map
     const map = L.map(`map-${projectId}`).setView([coords.lat, coords.lng], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
@@ -432,6 +433,11 @@ export class ClientProjectsComponent implements OnInit, OnDestroy {
 
     // Store map reference
     this.maps.set(projectId, map);
+    setTimeout(() => {
+      if (map) {
+        map.invalidateSize();
+      }
+    }, 200);
   }
 
   parseCoordinates(location: string): { lat: number, lng: number } | null {

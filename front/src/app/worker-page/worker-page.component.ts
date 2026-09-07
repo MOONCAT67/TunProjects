@@ -163,12 +163,18 @@ export class WorkerPageComponent implements OnInit, AfterViewInit, OnDestroy {
         });
         
         this.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
           attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
         this.L.marker([lat, lng], { icon: this.customIcon }).addTo(map);
 
         this.maps[mapId] = map;
+        setTimeout(() => {
+          if (map) {
+            map.invalidateSize();
+          }
+        }, 200);
         console.log('Map created successfully');
       } catch (error) {
         console.error('Error creating map:', error);

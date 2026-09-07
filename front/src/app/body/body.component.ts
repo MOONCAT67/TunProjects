@@ -200,8 +200,14 @@ export class BodyComponent implements OnInit, OnDestroy {
     }
     this.map = L.map('tunisia-map').setView([34.0, 9.0], 6.3);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
+    setTimeout(() => {
+      if (this.map) {
+        this.map.invalidateSize();
+      }
+    }, 200);
     this.circles = [];
     for (const worker of this.workerLocations) {
       const marker = L.marker([worker.lat, worker.lng], { icon: workerIcon }).addTo(this.map).bindPopup(worker.fullname + '<br>' + worker.location);

@@ -281,10 +281,16 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
           });
 
           this.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
             attribution: '© OpenStreetMap contributors'
           }).addTo(this.projectMap);
 
           this.L.marker([coordinates.lat, coordinates.lng], { icon: this.projectMapIcon }).addTo(this.projectMap);
+          setTimeout(() => {
+            if (this.projectMap) {
+              this.projectMap.invalidateSize();
+            }
+          }, 200);
         } catch (error) {
           console.error('Error initializing project map:', error);
         }
