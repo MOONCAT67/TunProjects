@@ -1,13 +1,17 @@
 const mysql = require('mysql2/promise'); // Must use promise version
 
+const host = (process.env.DB_HOST || 'localhost').trim();
+const user = (process.env.DB_USER || 'root').trim();
+const password = (process.env.DB_PASSWORD || '').trim();
+const database = (process.env.DB_NAME || 'tunprojects').trim();
 const isSslEnabled = process.env.DB_SSL === 'true' || process.env.DB_SSL === '1';
 
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'tunprojects',
-  port: parseInt(process.env.DB_PORT || '3306', 10),
+  host,
+  user,
+  password,
+  database,
+  port: parseInt((process.env.DB_PORT || '3306').toString().trim(), 10),
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
