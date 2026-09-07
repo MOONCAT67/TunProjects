@@ -206,6 +206,7 @@ export class BodyComponent implements OnInit, OnDestroy {
     this.map = L.map('tunisia-map').setView([34.0, 9.0], 6.3);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
+      subdomains: ['a', 'b', 'c'],
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
     setTimeout(() => {

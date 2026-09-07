@@ -173,6 +173,7 @@ export class WorkerPageComponent implements OnInit, AfterViewInit, OnDestroy {
         
         this.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
+          subdomains: ['a', 'b', 'c'],
           attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
