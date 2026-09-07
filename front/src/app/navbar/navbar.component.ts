@@ -89,7 +89,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.loadNotifications();
   }
 
   ngOnDestroy() {
@@ -376,17 +375,18 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   loadNotifications(): void {
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
     this.notificationService.getUserNotifications().subscribe({
       next: (response: any) => {
         if (response && response.data) {
           this.notifications = response.data;
-          console.log('Loaded notifications:', this.notifications);
           // Check signature status for each project notification
           this.notifications.forEach(notification => {
-            if (notification.type === 'project' && 
-                notification.title === 'Application Accepted' && 
+            if (notification.type === 'project' &&
+                notification.title === 'Application Accepted' &&
                 notification.extra) {
-              console.log('Checking contract signature for notification:', notification);
               this.checkContractSignature(notification.extra);
             }
           });

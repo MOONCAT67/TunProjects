@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, EMPTY } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthService } from './authService';
 
@@ -48,35 +48,36 @@ export class NotificationService {
     });
   }
 
-  private getUserId(): number {
+  private getUserId(): number | null {
     const user = this.authService.getCurrentUser();
-    if (!user || !user.id) {
-      throw new Error('User not authenticated');
-    }
-    return user.id;
+    return user?.id ?? null;
   }
 
   getUserNotifications(): Observable<NotificationResponse> {
-    const headers = this.getHeaders();
     const userId = this.getUserId();
+    if (!userId) return EMPTY;
+    const headers = this.getHeaders();
     return this.http.get<NotificationResponse>(`${this.baseUrl}/${userId}`, { headers });
   }
 
   getUnreadCount(): Observable<UnreadCountResponse> {
-    const headers = this.getHeaders();
     const userId = this.getUserId();
+    if (!userId) return EMPTY;
+    const headers = this.getHeaders();
     return this.http.get<UnreadCountResponse>(`${this.baseUrl}/${userId}/unread-count`, { headers });
   }
 
   markAsRead(notificationId: number): Observable<any> {
-    const headers = this.getHeaders();
     const userId = this.getUserId();
+    if (!userId) return EMPTY;
+    const headers = this.getHeaders();
     return this.http.put(`${this.baseUrl}/${userId}/${notificationId}/read`, {}, { headers });
   }
 
   deleteNotification(notificationId: number): Observable<any> {
-    const headers = this.getHeaders();
     const userId = this.getUserId();
+    if (!userId) return EMPTY;
+    const headers = this.getHeaders();
     return this.http.delete(`${this.baseUrl}/${userId}/${notificationId}`, { headers });
   }
-} 
+}
