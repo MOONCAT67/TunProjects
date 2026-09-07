@@ -56,9 +56,9 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       workType: ['solo', Validators.required]
     });
     if (isPlatformBrowser(this.platformId)) {
-      import('leaflet').then(L => {
-        this.L = L;
-        this.projectMapIcon = L.icon({
+      import('leaflet').then(mod => {
+        this.L = mod.default || mod;
+        this.projectMapIcon = this.L.icon({
           iconUrl: 'assets/pin.png',
           iconSize: [32, 32],
           iconAnchor: [16, 32],
@@ -267,7 +267,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   private async initializeProjectMap(address: string) {
     if (!isPlatformBrowser(this.platformId)) return;
     if (!this.L) {
-      this.L = await import('leaflet');
+      const mod = await import('leaflet');
+      this.L = mod.default || mod;
       this.projectMapIcon = this.L.icon({
         iconUrl: 'assets/pin.png',
         iconSize: [32, 32],

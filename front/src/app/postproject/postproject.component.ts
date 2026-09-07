@@ -165,8 +165,10 @@ export class PostprojectComponent implements OnInit, AfterViewInit {
   }
 
   async initMap() {
+    if (!isPlatformBrowser(this.platformId)) return;
     if (!this.leafletModule) {
-      this.leafletModule = await import('leaflet');
+      const mod = await import('leaflet');
+      this.leafletModule = mod.default || mod;
     }
     const L = this.leafletModule;
     const pinIcon = L.icon({

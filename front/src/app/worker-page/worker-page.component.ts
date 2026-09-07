@@ -31,9 +31,9 @@ export class WorkerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     if (isPlatformBrowser(this.platformId)) {
-      import('leaflet').then(L => {
-        this.L = L;
-        this.customIcon = L.icon({
+      import('leaflet').then(mod => {
+        this.L = mod.default || mod;
+        this.customIcon = this.L.icon({
           iconUrl: 'assets/pin.png',
           iconSize: [32, 32],
           iconAnchor: [16, 32],
@@ -110,7 +110,8 @@ export class WorkerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private async initializeMaps() {
     if (!isPlatformBrowser(this.platformId)) return;
     if (!this.L) {
-      this.L = await import('leaflet');
+      const mod = await import('leaflet');
+      this.L = mod.default || mod;
       this.customIcon = this.L.icon({
         iconUrl: 'assets/pin.png',
         iconSize: [32, 32],
