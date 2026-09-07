@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3004'
+  apiUrl: 'https://tun-projects.vercel.app'
 }; 

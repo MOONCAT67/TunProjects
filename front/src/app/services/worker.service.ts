@@ -189,7 +189,7 @@ export interface CompletedProjectsResponse {
 })
 export class WorkerService {
   private apiUrl = `${environment.apiUrl}/worker`;
-  private baseUrl = 'http://localhost:3004/worker';
+  private baseUrl = `${environment.apiUrl}/worker`;
 
   constructor(
     private http: HttpClient,

@@ -33,7 +33,7 @@ export interface UnreadCountResponse {
   providedIn: 'root'
 })
 export class NotificationService {
-  private baseUrl = 'http://localhost:3004/notifications';
+  private baseUrl = `${environment.apiUrl}/notifications`;
 
   constructor(
     private http: HttpClient,

@@ -6,10 +6,10 @@ This project consists of a full-stack web application with a frontend built usin
 ## Project Structure
 
 ### Frontend (`/front`)
-The frontend is an Angular 13.3.0 application that provides the user interface for the application.
+The frontend is an Angular 17.3.0 application that provides the user interface for the application.
 
 #### Key Features
-- Built with Angular 13.3.0
+- Built with Angular 17.3.0
 - TypeScript for type safety
 - Responsive design
 - Component-based architecture

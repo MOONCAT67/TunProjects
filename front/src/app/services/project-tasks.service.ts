@@ -168,7 +168,7 @@ export interface SubtaskCreationInput {
 })
 export class ProjectTasksService {
   private apiUrl = environment.apiUrl;
-  private baseUrl = 'http://localhost:3004/task';
+  private baseUrl = `${environment.apiUrl}/task`;
 
   constructor(private http: HttpClient) {}
 

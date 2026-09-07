@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 export interface User {
   id: number;
@@ -29,7 +30,7 @@ interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3004/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   private isBrowser: boolean;

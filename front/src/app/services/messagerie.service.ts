@@ -31,8 +31,7 @@ export interface CreateConversationResponseData {
 
 @Injectable({ providedIn: 'root' })
 export class MessagerieService {
-  private baseUrl = 'http://localhost:3004/message';
-  private apiUrl = environment.apiUrl;
+  private baseUrl = `${environment.apiUrl}/message`;
 
   constructor(private http: HttpClient) {}
 
