@@ -79,8 +79,10 @@ export class AuthComponent implements AfterViewInit {
   }
 
   async initMap() {
+    if (!isPlatformBrowser(this.platformId)) return;
     if (!this.leafletModule) {
-      this.leafletModule = await import('leaflet');
+      const mod = await import('leaflet');
+      this.leafletModule = mod.default || mod;
     }
     const L = this.leafletModule;
     // Define custom pin icon
@@ -93,6 +95,8 @@ export class AuthComponent implements AfterViewInit {
     setTimeout(() => {
       this.map = L.map('map-modal').setView([36.8065, 10.1815], 13);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        subdomains: ['a', 'b', 'c'],
         attribution: '© OpenStreetMap contributors'
       }).addTo(this.map);
       // If already selected, show marker
@@ -102,7 +106,12 @@ export class AuthComponent implements AfterViewInit {
       this.map.on('click', (e: any) => {
         this.updateMarker(e.latlng, L, pinIcon);
       });
-    }, 0);
+      setTimeout(() => {
+        if (this.map) {
+          this.map.invalidateSize();
+        }
+      }, 250);
+    }, 50);
   }
 
   async selectCurrentLocation() {
