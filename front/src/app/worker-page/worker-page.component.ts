@@ -107,8 +107,17 @@ export class WorkerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private initializeMaps() {
-    if (!this.L || !isPlatformBrowser(this.platformId)) return;
+  private async initializeMaps() {
+    if (!isPlatformBrowser(this.platformId)) return;
+    if (!this.L) {
+      this.L = await import('leaflet');
+      this.customIcon = this.L.icon({
+        iconUrl: 'assets/pin.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      });
+    }
 
     console.log('Initializing maps for projects:', this.projects);
     this.projects.forEach(project => {

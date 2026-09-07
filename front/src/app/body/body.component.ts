@@ -112,6 +112,10 @@ export class BodyComponent implements OnInit, OnDestroy {
   async loadAllWorkersAndLocations() {
     if (!isPlatformBrowser(this.platformId)) return;
 
+    // Immediately render base map
+    this.showTunisiaMap = true;
+    setTimeout(() => this.initMap(), 50);
+
     try {
       const allWorkers = await this.workerService.getAllWorkers().toPromise();
       if (!allWorkers) return;
@@ -147,8 +151,8 @@ export class BodyComponent implements OnInit, OnDestroy {
           }
         }
       }
-      this.showTunisiaMap = true;
-      setTimeout(() => this.initMap(), 0);
+      // Refresh map with worker markers once loaded
+      this.initMap();
 
     } catch (error) {
       console.error('Error loading all workers and locations:', error);
@@ -181,6 +185,7 @@ export class BodyComponent implements OnInit, OnDestroy {
   }
 
   async initMap() {
+    if (!isPlatformBrowser(this.platformId)) return;
     if (!this.leafletModule) {
       this.leafletModule = await import('leaflet');
     }
